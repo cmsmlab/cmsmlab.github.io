@@ -21,10 +21,12 @@ author: Berkin Dortdivanlioglu
 
 navbar-links:
   Home: "/"
-  About: "/aboutme/"
+  People: "/people/"
   Research: "/research/"
   Publications: "/publications/"
+  Teaching: "/teaching/"
   Contact: "/contact/"
+  News: "/news/"
   # Resources:
   #   - Beautiful Jekyll: "https://beautifuljekyll.com"
   #   - Learn markdown: "https://www.markdowntutorial.com/"
@@ -36,7 +38,7 @@ navbar-links:
 
 # Image to show in the navigation bar - works best with a square image
 # Remove this parameter if you don't want an image in the navbar
-avatar: "/assets/img/avatar-icon.png"
+avatar: "/assets/img/ut.png"
 
 # By default, the image is cut into a circle. You can disable this behaviour by setting 'round-avatar: false'
 round-avatar: true
@@ -56,12 +58,12 @@ round-avatar: true
 social-network-links:
   email: "someone@example.com"
   rss: true  # remove this line if you don't want to show an RSS link at the bottom
-  facebook: deanattali
+#  facebook: deanattali
   github: daattali
-  twitter: daattali
-  patreon: DeanAttali
-  youtube: "@daattali"
-  whatsapp: 15551212
+#  twitter: daattali
+#  patreon: DeanAttali
+#  youtube: "@daattali"
+#  whatsapp: 15551212
 #  medium: yourname
 #  reddit: yourname or r/yoursubreddit
 #  linkedin: daattali
@@ -79,7 +81,7 @@ social-network-links:
 #  mastodon: instance.url/@username
 #  bluesky: yourname
 #  ORCID: your ORCID ID
-#  google-scholar: your google scholar
+  google-scholar: https://scholar.google.com/citations?hl=en&user=pDLO61kAAAAJ&view_op=list_works&sortby=pubdate
 #  discord: "invite_code" or "users/userid" or "invite/invite_code"
 #  kaggle: yourname
 #  hackerrank: yourname
@@ -98,15 +100,15 @@ rss-description: This website is a virtual proof that I'm awesome
 
 # Select which social network share links to show in posts
 share-links-active:
-  twitter: true
-  facebook: true
-  linkedin: true
+  twitter: false
+  facebook: false
+  linkedin: false
   vk: false
   reddit: false
 
 # How to display the link to your website in the footer
 # Remove this if you don't want a link in the footer
-url-pretty: "MyWebsite.com"
+url-pretty: "MyResearchWebsite.com"
 
 # Add the website title to the title of every page
 title-on-all-pages: true
@@ -140,17 +142,29 @@ navbar-var-length: false
 
 # Personalize the colours in your website. Colour values can be any valid CSS colour
 
-page-col: "#FFFFFF"
-text-col: "#404040"
-link-col: "#008AFF"
-hover-col: "#0085A1"
-navbar-col: "#EAEAEA"
-navbar-text-col: "#404040"
-navbar-border-col: "#DDDDDD"
-footer-col: "#EAEAEA"
-footer-text-col: "#777777"
-footer-link-col: "#404040"
-footer-hover-col: "#0085A1"
+# page-col: "#FFFFFF"
+# text-col: "#404040"
+# link-col: "#008AFF"
+# hover-col: "#0085A1"
+# navbar-col: "#EAEAEA"
+# navbar-text-col: "#404040"
+# navbar-border-col: "#DDDDDD"
+# footer-col: "#EAEAEA"
+# footer-text-col: "#777777"
+# footer-link-col: "#404040"
+# footer-hover-col: "#0085A1"
+
+page-col: "#FFFFFF"          # UT White background
+text-col: "#000000"          # Black text for high contrast
+link-col: "#BF5700"          # UT Burnt Orange for links
+hover-col: "#A34900"         # A darker burnt orange on hover
+navbar-col: "#BF5700"        # UT Burnt Orange navbar background
+navbar-text-col: "#FFFFFF"   # White text on the navbar
+navbar-border-col: "#BF5700"  # Matching Burnt Orange border (or adjust as needed)
+footer-col: "#BF5700"        # UT Burnt Orange footer background
+footer-text-col: "#FFFFFF"   # White footer text
+footer-link-col: "#FFFFFF"   # White links in the footer
+footer-hover-col: "#A34900"  # Darker burnt orange for footer link hover
 
 # Alternatively, the navbar, footer, and page background can be set to an image
 # instead of colour
@@ -264,7 +278,7 @@ date_format: "%B %-d, %Y"
 #################################################################################
 
 # Output options (more information on Jekyll's site)
-timezone: "America/Toronto"
+timezone: "America/Chicago"
 markdown: kramdown
 highlighter: rouge
 permalink: /:year-:month-:day-:title/
