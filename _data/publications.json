@@ -1,37 +1,97 @@
 [
     {
-        "id": "http://zotero.org/groups/2386072/items/NU9LTX7C",
+        "id": "dortdivanliogluSwellingInduced2021",
         "type": "article-journal",
-        "title": "Segmentation of Nuclei in Histopathology Images by Deep Regression of the Distance Map",
-        "container-title": "IEEE Transactions on Medical Imaging",
-        "page": "448-459",
-        "volume": "38",
-        "issue": "2",
-        "source": "IEEE Xplore",
-        "abstract": "The advent of digital pathology provides us with the challenging opportunity to automatically analyze whole slides of diseased tissue in order to derive quantitative profiles that can be used for diagnosis and prognosis tasks. In particular, for the development of interpretable models, the detection and segmentation of cell nuclei is of the utmost importance. In this paper, we describe a new method to automatically segment nuclei from Haematoxylin and Eosin (H&E) stained histopathology data with fully convolutional networks. In particular, we address the problem of segmenting touching nuclei by formulating the segmentation problem as a regression task of the distance map. We demonstrate superior performance of this approach as compared to other approaches using Convolutional Neural Networks.",
-        "DOI": "10.1109/TMI.2018.2865709",
+        "abstract": "Two dissimilar hydrogel layers bonded together become unstable when the compressive stresses due to diffusion-driven swelling of the layers reach a critical point and creases form at the interface. Although creasing instabilities observed on surfaces of soft solids subjected to large compressions are well studied, the transient nature and critical conditions for the emergence of interface creases as a result of swelling behavior of hydrogels remain elusive. Here, we investigate the formation and transient growth of interface creases in bilayer hydrogels through experimental and computational approaches. Equipped with a mixed isogeometric analysis that accounts for large swelling deformations along with dissipative fluid transport phenomena, we show that both the equilibrium and the transient characteristics of interface creases can be tuned by controlling the material properties, in contrast to the reported material-independent behavior of creases in elastomers. The effects of material parameters on the onset and growth of interface creases are quantified in terms of the critical swelling ratio and critical chemical potential, and these values are compared to the critical conditions for the emergence of wrinkling instabilities. In agreement with our experimental observations of swelling bilayer hydrogels, our computational results demonstrate that the formation of creases is energetically more favorable than wrinkle formation at the interface.",
+        "container-title": "Journal of Elasticity",
+        "DOI": "10.1007/s10659-020-09810-8",
+        "ISSN": "1573-2681",
+        "issue": "1",
+        "journalAbbreviation": "J Elast",
+        "language": "en",
+        "page": "31-47",
+        "source": "Springer Link",
+        "title": "Swelling-Induced Interface Crease Instabilities at Hydrogel Bilayers",
+        "URL": "https://doi.org/10.1007/s10659-020-09810-8",
+        "volume": "145",
         "author": [
             {
-                "family": "Naylor",
-                "given": "P."
+                "family": "Dortdivanlioglu",
+                "given": "Berkin"
             },
             {
-                "family": "Laé",
-                "given": "M."
+                "family": "Yilmaz",
+                "given": "Nil Ezgi Dincer"
             },
             {
-                "family": "Reyal",
-                "given": "F."
+                "family": "Goh",
+                "given": "K. B."
             },
             {
-                "family": "Walter",
-                "given": "T."
+                "family": "Zheng",
+                "given": "Xiaolin"
+            },
+            {
+                "family": "Linder",
+                "given": "Christian"
             }
         ],
+        "accessed": {
+            "date-parts": [
+                [
+                    "2023",
+                    11,
+                    1
+                ]
+            ]
+        },
         "issued": {
             "date-parts": [
                 [
-                    "2019",
+                    "2021",
+                    8,
+                    1
+                ]
+            ]
+        }
+    },
+    {
+        "id": "dortdivanliogluBoundary2021",
+        "type": "article-journal",
+        "abstract": "Use of surface elasticity theory has experienced a prolific growth recently due to its utility in understanding the mechanics of nanomaterials and soft solids at small scales. Various extensions of surface elasticity theory have been proposed. The main objective of this contribution is to formulate a finite deformation theory for boundary viscoelasticity in principal stretches by accounting for strain-dependent boundary stresses. We present a model that utilizes a nonlinear evolution law and thus is not restricted to the states that are close to the thermodynamic equilibrium. Boundary contributions include both surface and curve effects wherein boundary elasticity as well as boundary tension are accounted for. The boundary constitutive models are formulated such that fluid-like and solid-like viscoelastic behavior of boundaries are considered. A geometrically exact computational framework using isogeometric analysis inherently suited to account for boundaries is developed. Equipped with the theoretical and computational framework, the influence of boundary viscoelasticity on the material response is illustrated. Non-equilibrium counterpart of surface tension is introduced and its effects are elucidated via examples. Through numerical examples, various applications of the bulk–boundary coupled formulation which require further investigation are highlighted.",
+        "container-title": "Computer Methods in Applied Mechanics and Engineering",
+        "DOI": "10.1016/j.cma.2020.113579",
+        "ISSN": "00457825",
+        "journalAbbreviation": "Computer Methods in Applied Mechanics and Engineering",
+        "language": "en",
+        "page": "113579",
+        "source": "DOI.org (Crossref)",
+        "title": "Boundary viscoelasticity theory at finite deformations and computational implementation using isogeometric analysis",
+        "URL": "https://linkinghub.elsevier.com/retrieve/pii/S0045782520307647",
+        "volume": "374",
+        "author": [
+            {
+                "family": "Dortdivanlioglu",
+                "given": "Berkin"
+            },
+            {
+                "family": "Javili",
+                "given": "Ali"
+            }
+        ],
+        "accessed": {
+            "date-parts": [
+                [
+                    "2024",
+                    3,
+                    18
+                ]
+            ]
+        },
+        "issued": {
+            "date-parts": [
+                [
+                    "2021",
                     2
                 ]
             ]
