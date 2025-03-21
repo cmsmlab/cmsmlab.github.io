@@ -23,7 +23,7 @@ navbar-links:
   Home: "/"
   People: "/people/"
   Research: "/research/"
-  Publications: "/aboutme/"
+  Publications: "/publications/"
   Teaching: "/teaching/"
   Contact: "/contact/"
   News: "/news/"
