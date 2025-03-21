@@ -4,47 +4,49 @@ title: Publications
 permalink: /publications/
 ---
 
-<h1>{{page.title}}</h1>
+<h1>{{ page.title }}</h1>
 
 <div class="panel-group" id="accordion">
-    <div class="panel panel-default">
+  {% for publi in site.data.publications %}
+    <div class="panel panel-default mb-3 p-3 border rounded">
+      <div class="panel-heading">
+        <h4>
+          {{ forloop.index }}. 
+          <!-- Authors -->
+          {% assign authors = "" | split:"/" %}
+          {% for author in publi.author %}
+            {% assign authors = authors | push: author.family %}
+          {% endfor %}
+          {{ authors | array_to_sentence_string }},
 
-    {% for publi in site.data.publications %}
-        <div class="panel-heading">
-            <a data-toggle="collapse" data-parent="#accordion"
-               href="#collapse{{forloop.index}}"
-               style="color: inherit;">
-            <!-- authors -->
-            {% assign authors = "" | split:"/" %}
-            {% for author in publi.author %}
-                {% assign authors = authors | push: author.family %}
-            {% endfor %}
-            {{ authors | array_to_sentence_string }},
+          <!-- Title with link -->
+          "<i>{{ publi.title }}</i>",
 
-            <!-- title with link -->
-            "{{ publi.title }}",
+          <!-- Container -->
+          <b>{{ publi['container-title'] }}</b>
 
-            <!-- container -->
-            <b>{{ publi.container-title }}</b>
+          <!-- Year -->
+          {% assign year = publi.issued['date-parts'][0][0] %}
+          ({{ year }})
 
-            <!-- issued date -->
-            ({{ publi.issued.date-parts | jsonify | slice: 3,4 }}),
+          <!-- DOI -->
+          {% if publi.DOI %}
+            — <a href="https://doi.org/{{ publi.DOI }}">DOI: {{ publi.DOI }}</a>
+          {% endif %}
+        </h4>
+      </div>
 
-            <!-- DOI -->
-            {% if publi.DOI %}
-                <a href="https://doi.org/{{publi.DOI}}">DOI:{{publi.DOI}}</a>
-            {% endif %}
-            </a>
+      <div id="collapse{{ forloop.index }}" class="panel-collapse collapse">
+        <div class="panel-body">
+          {% if publi.abstract %}
+            <p><strong>Abstract:</strong> {{ publi.abstract }}</p>
+          {% endif %}
+
+          {% if publi.DOI %}
+            <a class="btn btn-sm btn-outline-primary" href="https://doi.org/{{ publi.DOI }}" target="_blank">View Publication</a>
+          {% endif %}
         </div>
-
-        <div id="collapse{{forloop.index}}" class="panel-collapse collapse">
-            <div class="panel-body">
-                <p>{{ publi.abstract }}</p>
-
-                <a class="btn btn-outline-primary" href="https://doi.org/{{publi.DOI}}"
-                   role="button" target="blank">Link</a>
-            </div>
-        </div>
-    {% endfor %}
+      </div>
     </div>
+  {% endfor %}
 </div>
