@@ -1,13 +1,26 @@
-[
+{
+  "id": "http://zotero.org/groups/2386072/items/NU9LTX7C",
+  "type": "article-journal",
+  "title": "Foo",
+  "container-title": "IEEE Transactions on Medical Imaging",
+  "page": "448-459",
+  "volume": "38",
+  "issue": "2",
+  "source": "IEEE Xplore",
+  "abstract": "Bar",
+  "DOI": "10.1109/TMI.2018.2865709",
+  "author": [
     {
-        "doi": "10.1016/j.cma.2020.113579",
-        "pages": "113579",
-        "volume": "374",
-        "journal": "Computer Methods in Applied Mechanics and Engineering",
-        "year": "2021",
-        "author": "Dortdivanlioglu, Berkin and Javili, Ali",
-        "title": "Boundary Viscoelasticity Theory at Finite Deformations and Computational Implementation Using Isogeometric Analysis",
-        "ENTRYTYPE": "article",
-        "ID": "dortdivanliogluBoundary2021"
-    }
-]
+      "family": "",
+      "given": ""
+    },
+  ],
+  "issued": {
+    "date-parts": [
+      [
+        "2019",
+        2
+      ]
+    ]
+  }
+}
