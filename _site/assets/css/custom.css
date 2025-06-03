@@ -1,0 +1,48 @@
+.carousel {
+  height: 400px; /* Set a fixed height for the entire carousel */
+  overflow: hidden;
+}
+
+.carousel-inner {
+  height: 100%;
+}
+
+.carousel-item {
+  height: 100%;
+}
+
+.carousel-item img {
+  height: 100%;
+  width: auto;
+  object-fit: contain; /* shows the whole image */  /* cover - Ensures the image covers the container without distortion */
+}
+
+.post-title {
+  font-size: 1.3rem !important;
+}
+
+/* 1) The “hero‐title‐wrapper” spans full browser width and uses a background image */
+.hero-title-wrapper {
+  width: 100%;
+  background: url('/assets/img/beam.png') 
+              no-repeat center center;
+  background-size: cover;
+  padding: 4rem 0;             /* adjust vertical padding as desired */
+  text-align: center;
+  position: relative;
+}
+
+/* 2) Style the actual text on top (make it legible against the image) */
+.hero-title-wrapper .hero-title {
+  margin: 0;
+  color: white;
+  font-size: 2.5rem;           /* adjust as needed */
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
+}
+
+.hero-title-wrapper .hero-subtitle {
+  margin: 0.5rem 0 0;
+  color: white;
+  font-size: 1.25rem;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+}

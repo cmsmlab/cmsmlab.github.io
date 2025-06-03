@@ -1,0 +1,1 @@
+python bib2json/bib2json.py my22b.bib ../_data/publications.json --include_bibtex

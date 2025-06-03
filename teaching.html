@@ -1,0 +1,179 @@
+---
+layout: default
+full-width: true
+title: Teaching
+permalink: /teaching/
+---
+<style>
+  /* Basic styling for the teaching page */
+  .teaching-header {
+    background-color: #f7f7f7;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .teaching-header h1 {
+    margin-bottom: 0.5rem;
+  }
+  .course-row {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+  }
+  .course-img {
+    width: 100%;
+    height: 300px;
+    object-fit: contain;
+  }
+  .course-details {
+    padding-left: 1rem;
+  }
+  .course-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  .course-term,
+  .course-desc,
+  .course-prereq {
+    margin-bottom: 0.5rem;
+  }
+  .highlight-orange {
+  background-color: rgba(255, 165, 0, 0.15); /* light translucent orange */
+  border-left: 6px solid #FFA500;           /* optional: bold orange stripe on the left */
+  }
+  .border-right-bold {
+  border-right: 6px solid #333; /* dark bold right border */
+  }
+</style>
+
+
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <h2>Courses at UT Austin</h2>
+    </div>
+  </div>
+
+<!-- Courses Section: Each course in its own row -->
+
+<!-- Course Row: CE381P -->
+  <div class="row course-row border-right-bold">
+<div class="col-md-6 d-flex align-items-center justify-content-center">
+  <a href="#" data-toggle="modal" data-target="#ce381pModal">
+    <img src="/assets/img/ce381p.png" class="course-img" alt="CE381P">
+  </a>
+</div>
+    <div class="col-md-6 course-details">
+      <div class="course-title">CE381P: Computer Methods in Structural Analysis</div>
+      <div class="course-term"><em>Offered: Usually in Fall.</em></div>
+      <div class="course-desc">
+        This graduate-level course focuses on the computational modeling and analysis of structural systems undergoing large deformations. Emphasis is placed on geometrically nonlinear behavior in truss, beam, and frame structures, including those with complex or nonstandard material properties. Topics include stiffness and flexibility methods, derivation of stiffness matrices using the principle of virtual displacements (PVD), Euler–Bernoulli beams, Hermite finite elements, and structural stability analysis.
+      </div>
+       <a href="https://www.mastan2.com/textbook.html" class="fas fa-book" target="_blank">
+      Course book
+    </a>
+    </div>
+  </div>
+
+
+
+<!-- Course Row: CE311K with image on the right -->
+<div class="row course-row highlight-orange">
+  <!-- Left Column: Course Details (now comes first) -->
+  <div class="col-md-6 course-details order-md-1">
+    <div class="course-title">CE311K: Introduction to Computer Methods</div>
+    <div class="course-term"><em>Offered: Usually in Spring.</em></div>
+    <div class="course-desc">
+This undergraduate course introduces core concepts in scientific computing and programming for engineering analysis. Students learn to design and implement numerical algorithms using conditional logic, control structures, and function-based programming, while addressing floating-point arithmetic and error propagation. Topics include root-finding methods (bisection, Newton-Raphson), numerical differentiation, and solution of linear systems (Ax = b). The course also covers matrix operations, data fitting, and basic modeling of physical systems. MATLAB is used to develop and test numerical methods in practical engineering contexts.
+    </div>
+    <a href="https://drive.mathworks.com/sharing/9975a1b4-3db1-4bdb-989a-2e2626e0e446" class="btn btn-primary" target="_blank">
+      View Lecture Notes
+    </a>
+  </div>
+  
+  <!-- Right Column: Course Image (now appears on the right) -->
+  <div class="col-md-6 d-flex align-items-center justify-content-center order-md-2">
+    <a href="#" data-toggle="modal" data-target="#ce311kModal">
+      <img src="/assets/gifs/ce311k.gif" class="course-img" alt="CE311K">
+    </a>
+  </div>
+</div>
+
+  <!-- Course Row: CE329 -->
+  <div class="row course-row border-right-bold">
+<div class="col-md-6 d-flex align-items-center justify-content-center">
+ <a href="#" data-toggle="modal" data-target="#ce329Modal">
+  <img src="/assets/img/ce329.png" class="course-img" alt="CE329">
+</a>
+</div>
+    <div class="col-md-6 course-details">
+      <div class="course-title">CE329: Structural Analysis</div>
+      <div class="course-term"><em>Offered: Usually in Spring.</em></div>
+      <div class="course-desc">
+        This undergraduate course introduces fundamental principles of structural mechanics and classical methods of analysis for both statically determinate and indeterminate systems. Students develop the ability to evaluate internal forces, support reactions, and deflections in trusses, beams, and frames. The course emphasizes idealized structural models and equips students with analytical tools essential for further study in structural and architectural engineering.
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Additional Teaching Activities or Resources 
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <h2>Co-organizing and mentoring at CAEE/hackathon</h2>
+      <p>
+        Beyond
+      </p>
+      <a href="/teaching/outreach" class="btn btn-secondary">Learn More About Outreach</a>
+    </div>
+  </div>
+</div>-->
+
+<div class="modal fade" id="ce381pModal" tabindex="-1" role="dialog" aria-labelledby="ce381pModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ce381pModalLabel">CE 381P: Computer Methods in Structural Analysis</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="/assets/img/ce381p.png" class="img-fluid" alt="CE381P">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ce311kModal" tabindex="-1" role="dialog" aria-labelledby="ce311kModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ce311kModalLabel">CE311K: Lecture GIF</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="/assets/gifs/ce311k.gif" class="img-fluid" alt="CE311K">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ce329Modal" tabindex="-1" role="dialog" aria-labelledby="ce329ModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ce329ModalLabel">CE329: Structural Analysis</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="/assets/img/ce329.png" class="img-fluid" alt="CE329 - Large">
+      </div>
+    </div>
+  </div>
+</div>
