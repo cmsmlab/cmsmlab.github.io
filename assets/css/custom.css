@@ -46,3 +46,50 @@
   font-size: 1.25rem;
   text-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
 }
+
+/* shrink the page‐header <h1> */
+.intro-header .page-heading h1 {
+  /* your new size here */
+  font-size: 2.625rem;
+}
+
+
+/* if you’re using intro-header.big-img instead */
+.intro-header.big-img {
+  /* move it down 20% from the top */
+  background-position: center 0% !important;
+  /* you can also add extra top‐padding if you like */
+  margin-bottom: 0rem;  /* default is around 2.1875rem */
+}
+
+
+/* 1) Give the header a fixed height so it never “jumps” when the background swaps */
+.intro-header.big-img {
+  position: relative;
+  height: 350px;              /* pick whatever fixed height works for you */
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;     /* always cover the box */
+  overflow: hidden;
+}
+
+/* 2) Ensure your transition layer is the _same_ size and is GPU-accelerated */
+.intro-header.big-img .big-img-transition {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover !important;
+  
+  opacity: 0;
+  transition: opacity 20s linear;
+  
+  /* hint to the browser to promote this layer to its own compositing layer */
+  will-change: opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+
