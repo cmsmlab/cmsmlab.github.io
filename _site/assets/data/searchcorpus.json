@@ -1,9 +1,25 @@
 [ 
  
 { 
+"title"    : "SES 2025: Two talks on Strain-Gradient Effects and Polarization in Soft Materials", 
+"desc"     : "SES 2025: Two talks on Strain-Gradient Effects and Polarization in Soft Materials", 
+"category" : "news, featured", 
+"url"      : "/2025-10-10-SES2025/", 
+"date"     : "October 10, 2025" 
+}, 
+ 
+{ 
+"title"    : "USNCCM18 conference attandence", 
+"desc"     : "USNCCM18 conference attandence", 
+"category" : "news", 
+"url"      : "/2025-07-25-IGA2025/", 
+"date"     : "July 25, 2025" 
+}, 
+ 
+{ 
 "title"    : "EMI 2025: Talk on size effects in soft materials", 
 "desc"     : "EMI 2025: Talk on size effects in soft materials", 
-"category" : "EMI, Instabilities, Strain-Gradient, Biological Materials", 
+"category" : "news", 
 "url"      : "/2025-06-01-EMI2025/", 
 "date"     : "June  1, 2025" 
 }, 
@@ -11,7 +27,7 @@
 { 
 "title"    : "Berkin is elected as the new editor of the newsletter for the ASME technical committee of Mechanics of Soft Materials", 
 "desc"     : "Berkin is elected as the new editor of the newsletter for the ASME technical committee of Mechanics of Soft Materials", 
-"category" : "news", 
+"category" : "news, featured", 
 "url"      : "/2025-02-25-berkin-is-elected-as-the-new-editor-of-the-newsletter-for-the-asme-technical-committee-of-mechanics-of-soft-materials/", 
 "date"     : "February 25, 2025" 
 }, 
@@ -19,7 +35,7 @@
 { 
 "title"    : "We recieved the NSF CAREER Award!", 
 "desc"     : "We recieved the NSF CAREER Award!", 
-"category" : "news", 
+"category" : "news, featured", 
 "url"      : "/2025-02-13-NSFCAREER/", 
 "date"     : "February 13, 2025" 
 }, 

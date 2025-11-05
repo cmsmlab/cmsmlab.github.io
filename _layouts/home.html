@@ -9,16 +9,11 @@ layout: page
 {{ content }}
 <!-- Recent News Section -->
 <div class="container my-5">
-  <h2 class="text-center mb-4">Latest News</h2>
+  <h2 class="text-center mb-4">Featured News</h2>
   <!-- make the row stretch its children -->
   <div class="row align-items-stretch">
-    {% assign recent = site.posts
-         | where_exp: "post","post.layout == 'post'"
-         | sort: "date"
-         | reverse
-         | slice: 0,3 %}
-    {% for post in recent %}
-      <!-- make each column a flex container -->
+      {% assign featured = site.posts | where_exp: "post", "post.tags contains 'featured'" | sort: "date" | reverse %}
+      {% for post in featured %}      <!-- make each column a flex container -->
       <div class="col-md-4 mb-4 d-flex">
         <!-- flex-fill makes the card fill its column -->
         <div class="card flex-fill shadow-sm d-flex flex-column">

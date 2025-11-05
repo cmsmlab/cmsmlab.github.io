@@ -12,6 +12,34 @@
     
     
       <item>
+        <title>SES 2025: Two talks on Strain-Gradient Effects and Polarization in Soft Materials</title>
+        
+        <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
+        
+        <description>
+          
+          Presented two talks at the Society of Engineering Science (SES) 2025 Conference in Atlanta, GA: B. Dortdivanlioglu, J. Wang, A. Umurhan — A Micromechanical, Coupled Mechanics Approach to Strain-Gradient-Driven Polarization in Soft Polymers J. Wang, B. Dortdivanlioglu — Size Effects in Soft Material Instabilities Using a Strain-Gradient Approach Both presentations...
+        </description>
+        <pubDate>Fri, 10 Oct 2025 10:00:00 -0500</pubDate>
+        <link>http://localhost:4000/2025-10-10-SES2025/</link>
+        <guid isPermaLink="true">http://localhost:4000/2025-10-10-SES2025/</guid>
+      </item>
+    
+      <item>
+        <title>USNCCM18 conference attandence</title>
+        
+        <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
+        
+        <description>
+          
+          Presented two talks at the 18th U.S. National Congress on Computational Mechanics (USNCCM18) in Chicago, IL, July 2025. “Strain-Gradient Effects on Instabilities in Soft Materials at Small Scales” — B. Dortdivanlioglu, J. Wang “A Nitsche-Enhanced Extended B-Spline Mixed Material Point Method for Coupled Problems in Soft Materials” — A. A....
+        </description>
+        <pubDate>Fri, 25 Jul 2025 10:00:00 -0500</pubDate>
+        <link>http://localhost:4000/2025-07-25-IGA2025/</link>
+        <guid isPermaLink="true">http://localhost:4000/2025-07-25-IGA2025/</guid>
+      </item>
+    
+      <item>
         <title>EMI 2025: Talk on size effects in soft materials</title>
         
         <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
@@ -321,40 +349,6 @@ modeling the adhesive interfaces between soft materials.
         <pubDate>Fri, 24 Mar 2023 12:29:40 -0500</pubDate>
         <link>http://localhost:4000/2023-03-24-derya-won-the-best-presentation-in-the-4th-caee-graduate-symposium/</link>
         <guid isPermaLink="true">http://localhost:4000/2023-03-24-derya-won-the-best-presentation-in-the-4th-caee-graduate-symposium/</guid>
-      </item>
-    
-      <item>
-        <title>Derya presented her work at the APS March Meeting 2023</title>
-        
-        <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
-        
-        <description>
-          
-          Derya presented her work on the numerical modeling of the elasto-adhesive
-behavior of soft materials at the APS March Meeting 2023
-in Las Vegas. Derya attended the meeting with funds from the DSOFT Future
-Investigator Conference Travel Award and the UT Professional Development
-Award.
-
-
-        </description>
-        <pubDate>Tue, 07 Mar 2023 11:11:41 -0600</pubDate>
-        <link>http://localhost:4000/2023-03-07-derya-presented-her-work-at-the-aps-march-meeting-2023/</link>
-        <guid isPermaLink="true">http://localhost:4000/2023-03-07-derya-presented-her-work-at-the-aps-march-meeting-2023/</guid>
-      </item>
-    
-      <item>
-        <title>Animesh won the best poster award at IMECE 2022!</title>
-        
-        <dc:creator><![CDATA[ bd24583 ]]></dc:creator>
-        
-        <description>
-          
-          Congratulations Animesh for winning the BEST poster award in Computing in Applied Mechanics! (IMECE2022) Huge congratulations to my graduate student @AnimeshRastog20 from @ut_caee for winning the BEST poster award in Computing in Applied Mechanics at IMECE 2022! @ut_caee @UTAustin @OdenInstitute @ASMEdotorg @MembraneLab #IMECE2022 pic.twitter.com/8djW1Mn9rd – Berkin Dortdivanlioglu (@brkn4) November 2,...
-        </description>
-        <pubDate>Mon, 07 Nov 2022 08:44:23 -0600</pubDate>
-        <link>http://localhost:4000/2022-11-07-animesh-won-the-best-poster-award-at-imece-2022/</link>
-        <guid isPermaLink="true">http://localhost:4000/2022-11-07-animesh-won-the-best-poster-award-at-imece-2022/</guid>
       </item>
     
   </channel>
