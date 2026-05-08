@@ -26,13 +26,13 @@
       </item>
     
       <item>
-        <title>USNCCM18 conference attandence</title>
+        <title>USNCCM18: Two talks on strain-gradient soft mechanics and an MPM scheme</title>
         
         <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
         
         <description>
           
-          Presented two talks at the 18th U.S. National Congress on Computational Mechanics (USNCCM18) in Chicago, IL, July 2025. “Strain-Gradient Effects on Instabilities in Soft Materials at Small Scales” — B. Dortdivanlioglu, J. Wang “A Nitsche-Enhanced Extended B-Spline Mixed Material Point Method for Coupled Problems in Soft Materials” — A. A....
+          Presented two talks at the 18th U.S. National Congress on Computational Mechanics (USNCCM18) in Chicago, IL: B. Dortdivanlioglu, J. Wang — Strain-Gradient Effects on Instabilities in Soft Materials at Small Scales A. A. Madadi, B. Dortdivanlioglu — A Nitsche-Enhanced Extended B-Spline Mixed Material Point Method for Coupled Problems in Soft...
         </description>
         <pubDate>Fri, 25 Jul 2025 10:00:00 -0500</pubDate>
         <link>http://localhost:4000/2025-07-25-IGA2025/</link>
@@ -46,8 +46,7 @@
         
         <description>
           
-          Gave a talk on “Size-Dependent Instabilities in Highly Deformable Strain-Gradient Materials” at EMI 2025 in Anaheim, CA. Credit goes to the PhD student Jun for his work on this topic.
-
+          Gave a talk at the Engineering Mechanics Institute Conference (EMI) 2025 in Anaheim, CA: B. Dortdivanlioglu, J. Wang — Size-Dependent Instabilities in Highly Deformable Strain-Gradient Materials The work behind this talk is led by PhD student Jun Wang and develops a strain-gradient framework for predicting how length-scale effects shift the...
         </description>
         <pubDate>Sun, 01 Jun 2025 10:00:00 -0500</pubDate>
         <link>http://localhost:4000/2025-06-01-EMI2025/</link>
@@ -73,14 +72,13 @@ then as vice chair, and finally as chair over the next four years.
       </item>
     
       <item>
-        <title>We recieved the NSF CAREER Award!</title>
+        <title>Our group received the NSF CAREER Award</title>
         
-        <dc:creator><![CDATA[ bd24583 ]]></dc:creator>
+        <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
         
         <description>
           
-          National Science Foundation (NSF) CAREER Award on CAREER: Multiscale Mechanics of Highly Deformable Strain-Gradient Electric Generators
-
+          The National Science Foundation has selected our group’s proposal CAREER: Multiscale Mechanics of Highly Deformable Strain-Gradient Electric Generators for the NSF CAREER Award. The project develops theory and simulation tools to understand how strain-gradient effects, finite deformation, and electromechanical coupling come together in soft polymeric generators — and how those...
         </description>
         <pubDate>Thu, 13 Feb 2025 19:01:01 -0600</pubDate>
         <link>http://localhost:4000/2025-02-13-NSFCAREER/</link>

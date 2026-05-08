@@ -1,1 +1,8 @@
 /user_BIBTEX
+
+# Claude Code context files — local-only, do not ship
+CLAUDE.md
+STRUCTURE.md
+.claude/
+_site/CLAUDE.md
+_site/STRUCTURE.md
