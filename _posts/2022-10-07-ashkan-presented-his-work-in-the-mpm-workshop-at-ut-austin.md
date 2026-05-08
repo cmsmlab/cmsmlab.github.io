@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Ashkan presented his work in the MPM workshop at UT Austin"
+title: "MPM Workshop 2022 (UT Austin): Subdivision-stabilized B-spline MPM for nonlinear nearly incompressible solids"
 date: 2022-10-07 18:51:39
 author: ar67966
 tags: [news]

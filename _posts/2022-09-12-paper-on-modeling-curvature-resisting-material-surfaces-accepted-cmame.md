@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Paper on modeling curvature-resisting material surfaces accepted @CMAME"
+title: "CMAME: Modeling curvature-resisting material surfaces with isogeometric analysis"
 date: 2022-09-12 01:12:18
 author: bd24583
 tags: [news]

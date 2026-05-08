@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Welcome, Animesh!"
+title: "Welcome, new M.S. student"
 date: 2020-09-12 02:24:04
 author: bd24583
 tags: [news]

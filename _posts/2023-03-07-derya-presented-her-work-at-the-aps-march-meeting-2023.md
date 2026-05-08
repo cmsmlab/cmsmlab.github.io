@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Derya presented her work at the APS March Meeting 2023"
+title: "APS March Meeting 2023: Numerical modeling of elasto-adhesive behavior in soft materials"
 date: 2023-03-07 17:11:41
 author: jw55692
 tags: [news]

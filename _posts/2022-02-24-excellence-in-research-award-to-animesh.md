@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Excellence in Research award to Animesh!"
+title: "Excellence in Research Award, UT GAIN Symposium"
 date: 2022-02-24 02:33:03
 author: bd24583
 tags: [news]

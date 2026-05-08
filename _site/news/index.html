@@ -18,17 +18,7 @@
   <meta name="author" content="Berkin Dortdivanlioglu">
   
 
-  <meta name="description" content="{{ page.title }}
-  
-    {% for post in site.posts %}
-      {% if post.tags contains &quot;news&quot; %}
-      
-        {{ post.title }}
-        {{ post.date | date: &quot;%B %-d, %Y&quot; }}
-        {{ post.excerpt | strip_html | truncatewords: 50 }}
-      
-      {% endif %}
-    {% endfor %}">
+  <meta name="description" content="Latest news, awards, talks, and updates from the Computational Mechanics of Soft Materials Lab at UT Austin.">
 
   
 
@@ -94,17 +84,7 @@
   
   <meta property="og:site_name" content="Computational Soft Materials Lab">
   <meta property="og:title" content="News &amp; Updates | Computational Soft Materials Lab">
-  <meta property="og:description" content="{{ page.title }}
-  
-    {% for post in site.posts %}
-      {% if post.tags contains &quot;news&quot; %}
-      
-        {{ post.title }}
-        {{ post.date | date: &quot;%B %-d, %Y&quot; }}
-        {{ post.excerpt | strip_html | truncatewords: 50 }}
-      
-      {% endif %}
-    {% endfor %}">
+  <meta property="og:description" content="Latest news, awards, talks, and updates from the Computational Mechanics of Soft Materials Lab at UT Austin.">
 
   
   <meta property="og:image" content="http://localhost:4000/assets/img/ut.png">
@@ -123,17 +103,7 @@
   <meta name="twitter:creator" content="@">
 
   <meta property="twitter:title" content="News &amp; Updates | Computational Soft Materials Lab">
-  <meta property="twitter:description" content="{{ page.title }}
-  
-    {% for post in site.posts %}
-      {% if post.tags contains &quot;news&quot; %}
-      
-        {{ post.title }}
-        {{ post.date | date: &quot;%B %-d, %Y&quot; }}
-        {{ post.excerpt | strip_html | truncatewords: 50 }}
-      
-      {% endif %}
-    {% endfor %}">
+  <meta property="twitter:description" content="Latest news, awards, talks, and updates from the Computational Mechanics of Soft Materials Lab at UT Austin.">
 
   
   <meta name="twitter:image" content="http://localhost:4000/assets/img/ut.png">
@@ -145,6 +115,8 @@
   
 
   
+  
+  <link rel="icon" type="image/png" href="/assets/img/ut.png" />
   
 
   
@@ -260,372 +232,620 @@
     <div class=" col ">
       
 
-      <div class="container">
-  <h1>News & Updates</h1>
-  <ul class="list-unstyled">
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2025-10-10-SES2025/">SES 2025: Two talks on Strain-Gradient Effects and Polarization in Soft Materials</a></h2>
-        <p class="post-meta">October 10, 2025</p>
-        <p>Presented two talks at the Society of Engineering Science (SES) 2025 Conference in Atlanta, GA:
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2025-07-25-IGA2025/">USNCCM18: Two talks on strain-gradient soft mechanics and an MPM scheme</a></h2>
-        <p class="post-meta">July 25, 2025</p>
-        <p>Presented two talks at the 18th U.S. National Congress on Computational Mechanics (USNCCM18) in Chicago, IL:
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2025-06-01-EMI2025/">EMI 2025: Talk on size effects in soft materials</a></h2>
-        <p class="post-meta">June 1, 2025</p>
-        <p>Gave a talk at the Engineering Mechanics Institute Conference (EMI) 2025 in Anaheim, CA:
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2025-02-25-berkin-is-elected-as-the-new-editor-of-the-newsletter-for-the-asme-technical-committee-of-mechanics-of-soft-materials/">Berkin is elected as the new editor of the newsletter for the ASME technical committee of Mechanics of Soft Materials</a></h2>
-        <p class="post-meta">February 25, 2025</p>
-        <p>Berkin has been elected as the new editor of the ASME (Applied Mechanics
-Division) Technical Committee on Mechanics of Soft Materials.
-According to the policy, he will continue to serve the committee as secretary,
-then as vice chair, and finally as chair over the next four years.
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2025-02-13-NSFCAREER/">Our group received the NSF CAREER Award</a></h2>
-        <p class="post-meta">February 13, 2025</p>
-        <p>The National Science Foundation has selected our group’s proposal CAREER: Multiscale Mechanics of Highly Deformable Strain-Gradient Electric Generators for the NSF CAREER Award.
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2024-10-31-ashkan-received-the-kolodzey-travel-award/">Ashkan Received the Kolodzey Travel Award</a></h2>
-        <p class="post-meta">October 31, 2024</p>
-        <p>Ashkan received the Kolodzey Travel Award from the CAEE department at UT
-Austin, which allowed him to attend the MPM Workshop in Berkeley, CA, where he
-presented his research on Mechanics of Polymeric Porous Membranes using a
-Stabilized Extended B-Spline Material Point Method.
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2024-09-09-ashkan-ali-madadi-presents-at-the-15th-annual-mpm-workshop/">Ashkan Ali Madadi Presents at the 15th Annual MPM Workshop</a></h2>
-        <p class="post-meta">September 9, 2024</p>
-        <p>Ashkan attended the 15th Annual MPM Workshop at the University of California,
-Berkeley, held from September 5-6, 2024. He gave a presentation titled
-Mechanics of Porous Polymeric Membranes Using Stabilized Extended B-spline
-Material Point Method. Well done, Ashkan!
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2024-08-12-congratulations-to-our-lab-s-ph-d-students-on-receiving-the-george-j-heuer-jr-ph-d-endowed-fellowship/">Congratulations to Our Lab's Ph.D. Students on Receiving the George J. Heuer, Jr. Ph.D. Endowed Fellowship</a></h2>
-        <p class="post-meta">August 12, 2024</p>
-        <p>Three of our lab’s Ph.D. students—Ashkan Ali Madadi, Ekim Ekiz, and Jun
-Wang—have been awarded the George J. Heuer, Jr. Ph.D. Endowed Fellowship from
-the Cockrell School of Engineering for the 2024-2025 academic year. This
-fellowship recognizes and supports their outstanding research and
-contributions in their fields.
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2024-05-31-ashkan-ali-madadi-presents-at-the-engineering-mechanics-institute-conference-2024/">Ashkan Ali Madadi Presents at the Engineering Mechanics Institute Conference 2024</a></h2>
-        <p class="post-meta">May 31, 2024</p>
-        <p>Ashkan Ali Madadi, a Ph.D. student in our lab, presented his research titled “Stabilized Extended B-Spline Material Point Method for Multi-Field Soft Materials with Nitsche Imposition of Boundary Conditions” at the Engineering Mechanics Institute Conference (EMI 2024). The conference was held in Chicago from May 28 to 31. Congratulations to...</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2024-05-17-ashkan-ali-madadi-and-ekim-ekiz-present-collaborative-research-at-the-fracture-of-soft-materials-symposium/">Ashkan Ali Madadi and Ekim Ekiz Present Collaborative Research at the Fracture of Soft Materials Symposium</a></h2>
-        <p class="post-meta">May 17, 2024</p>
-        <p>Ashkan Ali Madadi and Ekim Ekiz, Ph.D. students in our lab, presented their collaborative research titled “Modeling Nearly Incompressible Behavior in Soft Solids Using the Material Point Method” at the Fracture of Soft Materials Symposium, held in Austin from May 12 to 16, 2024. Their work, co-authored with Richard Noh,...</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2024-05-08-prof-berkin-receives-caee-s-2024-faculty-teaching-award/">Prof. Berkin Receives CAEE's 2024 Faculty Teaching Award</a></h2>
-        <p class="post-meta">May 8, 2024</p>
-        <p>Prof. Berkin is the 2024 recipient of CAEE’s Faculty Teaching Award! He was
-nominated by CAEE students, and selected by a committee of previous award
-recipients. Congratulations to Prof. Berkin!
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2024-03-08-ashkan-ali-madadi-presents-at-the-american-physical-society-march-meeting-2024/">Ashkan Ali Madadi Presents at the American Physical Society March Meeting 2024</a></h2>
-        <p class="post-meta">March 8, 2024</p>
-        <p>Ashkan Ali Madadi, a Ph.D. student in our lab, presented his research titled
-“Diffusion-Induced Swelling of Shape Morphing Hydrogels” at the American
-Physical Society (APS) March Meeting 2024. The conference took place in
-Minneapolis from March 3 to 8. Congratulations to Ashkan!
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2023-12-12-end-of-year-gathering-2023/">End-of-Year Gathering 2023!</a></h2>
-        <p class="post-meta">December 12, 2023</p>
-        <p>
+      <style>
+  .news-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 3rem;
+  }
+  .news-year {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #444;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .news-year:first-of-type {
+    margin-top: 0.5rem;
+  }
+  .news-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: flex-start;
+  }
+  .news-item:last-child {
+    border-bottom: none;
+  }
+  .news-date {
+    flex: 0 0 70px;
+    text-align: center;
+    color: #777;
+    line-height: 1.1;
+    padding-top: 0.15rem;
+  }
+  .news-date .news-month {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .news-date .news-day {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #333;
+    margin-top: 0.1rem;
+  }
+  .news-body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .news-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.35rem 0;
+    line-height: 1.35;
+  }
+  .news-title a {
+    color: #222;
+    text-decoration: none;
+  }
+  .news-title a:hover {
+    color: #BF5700;
+    text-decoration: none;
+  }
+  .news-excerpt {
+    margin: 0;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  @media (max-width: 576px) {
+    .news-item {
+      gap: 1rem;
+    }
+    .news-date {
+      flex-basis: 55px;
+    }
+    .news-date .news-day {
+      font-size: 1.3rem;
+    }
+    .news-title {
+      font-size: 1rem;
+    }
+  }
+</style>
 
-</p>
-      </li>
+<div class="news-container">
+  
+  
+
+  
+    <h2 class="news-year">2025</h2>
+    <div class="news-year-list">
       
-    
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Oct</span>
+            <span class="news-day">10</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2025-10-10-SES2025/">SES 2025: Strain-gradient effects and polarization in soft materials</a></h3>
+            
+            
+              <p class="news-excerpt">Presented two talks at the Society of Engineering Science (SES) 2025 Conference in Atlanta, GA:</p>
+            
+          </div>
+        </article>
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2023-10-12-our-group-attends-the-2023-ses-conference-in-minneapolis/">Our group attends the 2023 SES Conference in Minneapolis</a></h2>
-        <p class="post-meta">October 12, 2023</p>
-        <p>Minneapolis, October 8-11, 2023
-</p>
-      </li>
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Jul</span>
+            <span class="news-day">25</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2025-07-25-IGA2025/">USNCCM18: Strain-gradient soft mechanics and an MPM scheme</a></h3>
+            
+            
+              <p class="news-excerpt">Presented two talks at the 18th U.S. National Congress on Computational Mechanics (USNCCM18) in Chicago, IL:</p>
+            
+          </div>
+        </article>
       
-    
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Jun</span>
+            <span class="news-day">1</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2025-06-01-EMI2025/">EMI 2025: Size effects in soft materials</a></h3>
+            
+            
+              <p class="news-excerpt">Gave a talk at the Engineering Mechanics Institute Conference (EMI) 2025 in Anaheim, CA:</p>
+            
+          </div>
+        </article>
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2023-09-29-caee-department-naming-event/">CAEE Department Naming Event</a></h2>
-        <p class="post-meta">September 29, 2023</p>
-        <p>Fariborz Maseeh Department of Civil, Architectural, and Environmental
-Engineering
-</p>
-      </li>
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Feb</span>
+            <span class="news-day">25</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2025-02-25-berkin-is-elected-as-the-new-editor-of-the-newsletter-for-the-asme-technical-committee-of-mechanics-of-soft-materials/">Editor of the ASME Mechanics of Soft Materials Newsletter</a></h3>
+            
+            
+              <p class="news-excerpt">Berkin has been elected as the new editor of the ASME (Applied Mechanics Division) Technical Committee on Mechanics of Soft Materials. According to the policy, he will continue to serve the committee as secretary, then...</p>
+            
+          </div>
+        </article>
       
-    
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Feb</span>
+            <span class="news-day">13</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2025-02-13-NSFCAREER/">NSF CAREER Award</a></h3>
+            
+            
+              <p class="news-excerpt">The National Science Foundation has selected our group’s proposal CAREER: Multiscale Mechanics of Highly Deformable Strain-Gradient Electric Generators for the NSF CAREER Award.</p>
+            
+          </div>
+        </article>
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2023-08-31-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-17th-usnccm-conference/">Ashkan Ali Madadi and Dr. Berkin Dortdivanlioglu attended the 17th USNCCM conference</a></h2>
-        <p class="post-meta">August 31, 2023</p>
-        <p>Ashkan Madadi and Dr. Berkin Dortdivanlioglu presented their research at the
-17th U.S. National Congress on Computational Mechanics (USNCCM) held in
-Albuquerque, New Mexico.
-</p>
-      </li>
+    </div>
+  
+    <h2 class="news-year">2024</h2>
+    <div class="news-year-list">
       
-    
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Oct</span>
+            <span class="news-day">31</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2024-10-31-ashkan-received-the-kolodzey-travel-award/">Kolodzey Travel Award</a></h3>
+            
+            
+              <p class="news-excerpt">Ashkan received the Kolodzey Travel Award from the CAEE department at UT Austin, which allowed him to attend the MPM Workshop in Berkeley, CA, where he presented his research on Mechanics of Polymeric Porous Membranes...</p>
+            
+          </div>
+        </article>
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2023-08-30-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-emi2023-conference/">Ashkan Ali Madadi and Dr. Berkin Dortdivanlioglu attended the EMI2023  conference</a></h2>
-        <p class="post-meta">August 30, 2023</p>
-        <p>Ashkan and Dr. Dortdivanlioglu attended the Engineering Mechanics Institute
-Conference (EMI) held in Atlanta, Georgia in June 2023. Ashkan presented his
-work on “Bspline Material Point Method for Strongly Coupled Poroelastic
-Materials,” and Dr. Dortdivanlioglu talked about modeling adhesive and
-capillary forces in soft materials.
-</p>
-      </li>
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Sep</span>
+            <span class="news-day">9</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2024-09-09-ashkan-ali-madadi-presents-at-the-15th-annual-mpm-workshop/">15th Annual MPM Workshop (UC Berkeley): Porous polymeric membranes via stabilized extended B-spline MPM</a></h3>
+            
+            
+              <p class="news-excerpt">Ashkan attended the 15th Annual MPM Workshop at the University of California, Berkeley, held from September 5-6, 2024. He gave a presentation titled Mechanics of Porous Polymeric Membranes Using Stabilized Extended B-spline Material Point Method....</p>
+            
+          </div>
+        </article>
       
-    
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Aug</span>
+            <span class="news-day">12</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2024-08-12-congratulations-to-our-lab-s-ph-d-students-on-receiving-the-george-j-heuer-jr-ph-d-endowed-fellowship/">George J. Heuer, Jr. Endowed Fellowship awarded to three lab Ph.D. students</a></h3>
+            
+            
+              <p class="news-excerpt">Three of our lab’s Ph.D. students—Ashkan, Ekim, and Jun—have been awarded the George J. Heuer, Jr. Ph.D. Endowed Fellowship from the Cockrell School of Engineering for the 2024-2025 academic year. This fellowship recognizes and supports...</p>
+            
+          </div>
+        </article>
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2023-08-26-richard-noh-awarded-prestigious-dr-marco-antonio-zuniga-izaguirre-endowed-scholarship/">Richard Noh Awarded Prestigious Dr. Marco Antonio Zuniga Izaguirre Endowed Scholarship</a></h2>
-        <p class="post-meta">August 26, 2023</p>
-        <p>Richard Noh has been selected as the recipient of the prestigious Dr. Marco
-Antonio Zuniga Izaguirre Endowed Scholarship in Engineering and Physics.
-</p>
-      </li>
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">May</span>
+            <span class="news-day">31</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2024-05-31-ashkan-ali-madadi-presents-at-the-engineering-mechanics-institute-conference-2024/">EMI 2024: Stabilized extended B-spline MPM for multi-field soft materials with Nitsche BCs</a></h3>
+            
+            
+              <p class="news-excerpt">Ashkan, a Ph.D. student in our lab, presented his research titled “Stabilized Extended B-Spline Material Point Method for Multi-Field Soft Materials with Nitsche Imposition of Boundary Conditions” at the Engineering Mechanics Institute Conference (EMI 2024)....</p>
+            
+          </div>
+        </article>
       
-    
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">May</span>
+            <span class="news-day">17</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2024-05-17-ashkan-ali-madadi-and-ekim-ekiz-present-collaborative-research-at-the-fracture-of-soft-materials-symposium/">Fracture of Soft Materials Symposium: Modeling nearly incompressible behavior in soft solids with MPM</a></h3>
+            
+            
+              <p class="news-excerpt">Ashkan and Ekim, Ph.D. students in our lab, presented their collaborative research titled “Modeling Nearly Incompressible Behavior in Soft Solids Using the Material Point Method” at the Fracture of Soft Materials Symposium, held in Austin...</p>
+            
+          </div>
+        </article>
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2023-05-23-richard-noh-has-been-awarded-the-2023-ivo-amp-renata-babuska-scholarship-in-cse/">Richard Noh has been awarded the 2023 Ivo &amp; Renata Babuska Scholarship in CSE</a></h2>
-        <p class="post-meta">May 23, 2023</p>
-        <p> Richard Noh has been awarded the 2023 Ivo &amp; Renata Babuska Scholarship in
-Computational Science and Engineering. This award was established
-to recognize and support the studies of exceptional senior-level undergraduate
-students at the university who are undertaking research at the Oden Institute
-for Computational Engineering and Sciences.
-</p>
-      </li>
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">May</span>
+            <span class="news-day">8</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2024-05-08-prof-berkin-receives-caee-s-2024-faculty-teaching-award/">CAEE 2024 Faculty Teaching Award</a></h3>
+            
+            
+              <p class="news-excerpt">Berkin is the 2024 recipient of CAEE’s Faculty Teaching Award! Nominated by
+CAEE students and selected by a committee of previous award recipients.</p>
+            
+          </div>
+        </article>
       
-    
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Mar</span>
+            <span class="news-day">8</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2024-03-08-ashkan-ali-madadi-presents-at-the-american-physical-society-march-meeting-2024/">APS March Meeting 2024: Diffusion-induced swelling of shape morphing hydrogels</a></h3>
+            
+            
+              <p class="news-excerpt">Ashkan, a Ph.D. student in our lab, presented his research titled “Diffusion-Induced Swelling of Shape Morphing Hydrogels” at the American Physical Society (APS) March Meeting 2024. The conference took place in Minneapolis from March 3...</p>
+            
+          </div>
+        </article>
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2023-03-24-derya-won-the-best-presentation-in-the-4th-caee-graduate-symposium/">Derya won the best presentation in the 4th CAEE Graduate Symposium</a></h2>
-        <p class="post-meta">March 24, 2023</p>
-        <p>Derya received the first-place prize for best presentation in the 4th CAEE
+    </div>
+  
+    <h2 class="news-year">2023</h2>
+    <div class="news-year-list">
+      
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Dec</span>
+            <span class="news-day">12</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2023-12-12-end-of-year-gathering-2023/">End-of-year gathering, 2023</a></h3>
+            
+            
+              <p class="news-excerpt">Our group’s end-of-year gathering, December 2023.</p>
+            
+          </div>
+        </article>
+      
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Oct</span>
+            <span class="news-day">12</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2023-10-12-our-group-attends-the-2023-ses-conference-in-minneapolis/">SES 2023 (Minneapolis)</a></h3>
+            
+            
+              <p class="news-excerpt">Minneapolis, October 8-11, 2023</p>
+            
+          </div>
+        </article>
+      
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Sep</span>
+            <span class="news-day">29</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2023-09-29-caee-department-naming-event/">CAEE renamed: Fariborz Maseeh Department of Civil, Architectural, and Environmental Engineering</a></h3>
+            
+            
+              <p class="news-excerpt">We attended the renaming ceremony at UT Austin.</p>
+            
+          </div>
+        </article>
+      
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Aug</span>
+            <span class="news-day">31</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2023-08-31-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-17th-usnccm-conference/">USNCCM17: Stabilized MPM for porous hydrogels and viscoelasto-capillary soft materials</a></h3>
+            
+            
+              <p class="news-excerpt">We presented our research at the 17th U.S. National Congress on Computational
+Mechanics (USNCCM) held in Albuquerque, New Mexico.</p>
+            
+          </div>
+        </article>
+      
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Aug</span>
+            <span class="news-day">30</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2023-08-30-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-emi2023-conference/">EMI 2023: B-spline MPM for poroelastic materials and adhesive–capillary forces in soft materials</a></h3>
+            
+            
+              <p class="news-excerpt">We attended the Engineering Mechanics Institute Conference (EMI) held in Atlanta, Georgia in June 2023. Ashkan presented his work on “B-spline Material Point Method for Strongly Coupled Poroelastic Materials,” and Berkin talked about modeling adhesive...</p>
+            
+          </div>
+        </article>
+      
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Aug</span>
+            <span class="news-day">26</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2023-08-26-richard-noh-awarded-prestigious-dr-marco-antonio-zuniga-izaguirre-endowed-scholarship/">Dr. Marco Antonio Zuniga Izaguirre Endowed Scholarship</a></h3>
+            
+            
+              <p class="news-excerpt">Richard has been selected as the recipient of the prestigious Dr. Marco
+Antonio Zuniga Izaguirre Endowed Scholarship in Engineering and Physics.</p>
+            
+          </div>
+        </article>
+      
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">May</span>
+            <span class="news-day">23</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2023-05-23-richard-noh-has-been-awarded-the-2023-ivo-amp-renata-babuska-scholarship-in-cse/">2023 Ivo & Renata Babuska Scholarship in CSE</a></h3>
+            
+            
+              <p class="news-excerpt">Richard has been awarded the 2023 Ivo &amp; Renata Babuska Scholarship in Computational Science and Engineering. This award was established to recognize and support the studies of exceptional senior-level undergraduate students at the university who...</p>
+            
+          </div>
+        </article>
+      
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Mar</span>
+            <span class="news-day">24</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2023-03-24-derya-won-the-best-presentation-in-the-4th-caee-graduate-symposium/">Best Presentation, 4th CAEE Graduate Symposium</a></h3>
+            
+            
+              <p class="news-excerpt">Derya received the first-place prize for best presentation in the 4th CAEE
 Graduate Symposium held at UT Austin on March 24, with her presentation on
-modeling the adhesive interfaces between soft materials.
-
-</p>
-      </li>
+modeling the adhesive interfaces between soft materials.</p>
+            
+          </div>
+        </article>
       
-    
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Mar</span>
+            <span class="news-day">7</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2023-03-07-derya-presented-her-work-at-the-aps-march-meeting-2023/">APS March Meeting 2023: Numerical modeling of elasto-adhesive behavior in soft materials</a></h3>
+            
+            
+              <p class="news-excerpt">Derya presented her work on the numerical modeling of the elasto-adhesive behavior of soft materials at the APS March Meeting 2023 in Las Vegas. Derya attended the meeting with funds from the DSOFT Future Investigator...</p>
+            
+          </div>
+        </article>
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2023-03-07-derya-presented-her-work-at-the-aps-march-meeting-2023/">Derya presented her work at the APS March Meeting 2023</a></h2>
-        <p class="post-meta">March 7, 2023</p>
-        <p>Derya presented her work on the numerical modeling of the elasto-adhesive
-behavior of soft materials at the APS March Meeting 2023
-in Las Vegas. Derya attended the meeting with funds from the DSOFT Future
-Investigator Conference Travel Award and the UT Professional Development
-Award.
-
-</p>
-      </li>
+    </div>
+  
+    <h2 class="news-year">2022</h2>
+    <div class="news-year-list">
       
-    
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Nov</span>
+            <span class="news-day">7</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2022-11-07-animesh-won-the-best-poster-award-at-imece-2022/">Best Poster Award, IMECE 2022 — Computing in Applied Mechanics</a></h3>
+            
+            
+              <p class="news-excerpt">Congratulations Animesh for winning the BEST poster award in Computing in
+Applied Mechanics! (IMECE2022)</p>
+            
+          </div>
+        </article>
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2022-11-07-animesh-won-the-best-poster-award-at-imece-2022/">Animesh won the best poster award at IMECE 2022!</a></h2>
-        <p class="post-meta">November 7, 2022</p>
-        <p>Congratulations Animesh for winning the BEST poster award in Computing in
-Applied Mechanics! (IMECE2022)
-
-</p>
-      </li>
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Oct</span>
+            <span class="news-day">7</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2022-10-07-ashkan-presented-his-work-in-the-mpm-workshop-at-ut-austin/">MPM Workshop 2022 (UT Austin): Subdivision-stabilized B-spline MPM for nonlinear nearly incompressible solids</a></h3>
+            
+            
+              <p class="news-excerpt">Ashkan gave a talk titled “A subdivision-stabilized B-spline material point method for nonlinear nearly incompressible solids” in the Material Point Method Workshop . The workshop was held at UT Austin from 29th to 30th September...</p>
+            
+          </div>
+        </article>
       
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2022-10-07-ashkan-presented-his-work-in-the-mpm-workshop-at-ut-austin/">Ashkan presented his work in the MPM workshop at UT Austin</a></h2>
-        <p class="post-meta">October 7, 2022</p>
-        <p>Ashkan gave a talk titled “A subdivision-stabilized B-spline material point
-method for nonlinear nearly incompressible solids” in the Material Point
-Method Workshop . The workshop was held at UT
-Austin from 29th to 30th September 2022. Kudos to Ashkan for this fantastic
-talk!
-
-</p>
-      </li>
-      
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2022-09-30-haythornthwaite-foundation-student-travel-award-to-ashkan/">Haythornthwaite Foundation Student Travel Award to Ashkan!</a></h2>
-        <p class="post-meta">September 30, 2022</p>
-        <p>Ashkan received Haythornthwaite Foundation Student Travel Award to attend
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Sep</span>
+            <span class="news-day">30</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2022-09-30-haythornthwaite-foundation-student-travel-award-to-ashkan/">Haythornthwaite Foundation Student Travel Award</a></h3>
+            
+            
+              <p class="news-excerpt">Ashkan received Haythornthwaite Foundation Student Travel Award to attend
 IMECE 2022 conference and present in the Track: Mechanics of Solids,
-Structures and Fluids.
-</p>
-      </li>
+Structures and Fluids.</p>
+            
+          </div>
+        </article>
       
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2022-09-29-presented-our-research-at-the-biophysics-seminar-at-ut-austin/">Presented our research at the Biophysics Seminar at UT Austin</a></h2>
-        <p class="post-meta">September 29, 2022</p>
-        <p>We presented our research on the Computationally Driven Design of Tissue-
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Sep</span>
+            <span class="news-day">29</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2022-09-29-presented-our-research-at-the-biophysics-seminar-at-ut-austin/">Biophysics Seminar (UT Austin): Computationally driven design of tissue-inspired multifunctional materials</a></h3>
+            
+            
+              <p class="news-excerpt">We presented our research on the Computationally Driven Design of Tissue-
 Inspired Multifunctional Materials in the Biophysics seminar at UT Austin.
-More info!
-</p>
-      </li>
+More info!</p>
+            
+          </div>
+        </article>
       
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2022-09-11-paper-on-modeling-curvature-resisting-material-surfaces-accepted-cmame/">Paper on modeling curvature-resisting material surfaces accepted @CMAME</a></h2>
-        <p class="post-meta">September 11, 2022</p>
-        <p>Paper titled “Modeling curvature-resisting material surfaces with
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Sep</span>
+            <span class="news-day">11</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2022-09-11-paper-on-modeling-curvature-resisting-material-surfaces-accepted-cmame/">CMAME: Modeling curvature-resisting material surfaces with isogeometric analysis</a></h3>
+            
+            
+              <p class="news-excerpt">Paper titled “Modeling curvature-resisting material surfaces with
 isogeometric analysis” is
-accepted @CMAME. Huge congratulations to Animesh on this substantial work!
-</p>
-      </li>
+accepted @CMAME. Huge congratulations to Animesh on this substantial work!</p>
+            
+          </div>
+        </article>
       
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2022-08-09-ashkan-receives-travel-award-to-ses2022/">Ashkan receives travel award to SES2022</a></h2>
-        <p class="post-meta">August 9, 2022</p>
-        <p>Ashkan received a travel award to present his research on “A Subdivision-
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Aug</span>
+            <span class="news-day">9</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2022-08-09-ashkan-receives-travel-award-to-ses2022/">SES 2022 Travel Award</a></h3>
+            
+            
+              <p class="news-excerpt">Ashkan received a travel award to present his research on “A Subdivision-
 stabilized B-spline Material Point Method for Nonlinear Nearly Incompressible
 Solids” at SES2022.
-Congrats, Ashkan!
-</p>
-      </li>
+Congrats, Ashkan!</p>
+            
+          </div>
+        </article>
       
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2022-05-31-best-poster-award-congrats-animesh/">Best poster award. Congrats, Animesh!</a></h2>
-        <p class="post-meta">May 31, 2022</p>
-        <p>Animesh received the best poster award in the 2022 Graduate Symposium at UT
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">May</span>
+            <span class="news-day">31</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2022-05-31-best-poster-award-congrats-animesh/">Best Poster Award, 2022 CAEE Graduate Symposium</a></h3>
+            
+            
+              <p class="news-excerpt">Animesh received the best poster award in the 2022 Graduate Symposium at UT
 Austin where he presented his recent research on “modeling curvature-
-resisting material surfaces.”
-</p>
-      </li>
+resisting material surfaces.”</p>
+            
+          </div>
+        </article>
       
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2022-04-21-poster-awards-to-undergraduate-researcher-nate/">Poster awards to undergraduate researcher, Nate!</a></h2>
-        <p class="post-meta">April 21, 2022</p>
-        <p>Nathaniel T Markusic received the third best poster award in the 2022
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Apr</span>
+            <span class="news-day">21</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2022-04-21-poster-awards-to-undergraduate-researcher-nate/">Two poster awards: 3rd-best at 2022 CAEE Graduate Symposium and Honorable Mention at Longhorn Undergraduate Research Week</a></h3>
+            
+            
+              <p class="news-excerpt">Nathaniel received the third best poster award in the 2022
 Graduate Symposium at UT Austin and an Honorable Mention for his poster
 presentation and design at the Longhorn Undergraduate Research
-Week.
-</p>
-      </li>
+Week.</p>
+            
+          </div>
+        </article>
       
-    
-      
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2022-02-23-excellence-in-research-award-to-animesh/">Excellence in Research award to Animesh!</a></h2>
-        <p class="post-meta">February 23, 2022</p>
-        <p>Animesh received the Excellence in Research award for his presentation on
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Feb</span>
+            <span class="news-day">23</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2022-02-23-excellence-in-research-award-to-animesh/">Excellence in Research Award, UT GAIN Symposium</a></h3>
+            
+            
+              <p class="news-excerpt">Animesh received the Excellence in Research award for his presentation on
 Modeling Energetic Surfaces with Curvature-Resistance in Soft Solids and
 Nanostructures at the UT GAIN
-symposium.
-</p>
-      </li>
+symposium.</p>
+            
+          </div>
+        </article>
       
-    
+    </div>
+  
+    <h2 class="news-year">2021</h2>
+    <div class="news-year-list">
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2021-09-11-welcome-ashkan/">Welcome, Ashkan!</a></h2>
-        <p class="post-meta">September 11, 2021</p>
-        <p>Ashkan joins our group as a Ph.D. student in Fall 2021 after receiving his
-master’s degree at Sharif University of Technology, Iran. Welcome, Ashkan!
-</p>
-      </li>
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Sep</span>
+            <span class="news-day">11</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2021-09-11-welcome-ashkan/">Welcome, new Ph.D. student</a></h3>
+            
+            
+              <p class="news-excerpt">Ashkan joins our group as a Ph.D. student in Fall 2021 after receiving his
+master’s degree at Sharif University of Technology, Iran. Welcome, Ashkan!</p>
+            
+          </div>
+        </article>
       
-    
+    </div>
+  
+    <h2 class="news-year">2020</h2>
+    <div class="news-year-list">
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2020-09-11-welcome-animesh/">Welcome, Animesh!</a></h2>
-        <p class="post-meta">September 11, 2020</p>
-        <p>Animesh joins our group as an M.S. student in Fall 2020 after receiving his
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Sep</span>
+            <span class="news-day">11</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2020-09-11-welcome-animesh/">Welcome, new M.S. student</a></h3>
+            
+            
+              <p class="news-excerpt">Animesh joins our group as an M.S. student in Fall 2020 after receiving his
 B.S. degree at the Indian Institute of Technology Gandhinagar. Welcome,
-Animesh!
-</p>
-      </li>
+Animesh!</p>
+            
+          </div>
+        </article>
       
-    
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">Apr</span>
+            <span class="news-day">30</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="/2020-04-30-welcome-to-the-lab/">Welcome to the Lab!</a></h3>
+            
+            
+              <p class="news-excerpt">We develop advanced computational modeling and physics-based simulation techniques for i) enhancing our understanding of dynamic shape, topology, and functional changes in soft materials in nature, ii) elucidating the complete interplay between multi-physics materials and...</p>
+            
+          </div>
+        </article>
       
-      <li class="mb-4">
-        <h2><a href="http://localhost:4000/2020-04-30-welcome-to-the-lab/">Welcome to the Lab!</a></h2>
-        <p class="post-meta">April 30, 2020</p>
-        <p>We develop advanced computational modeling and physics-based simulation techniques for i) enhancing our understanding of dynamic shape, topology, and functional changes in soft materials in nature, ii) elucidating the complete interplay between multi-physics materials and their physical/(bio)chemical stimuli, and iii) capturing lower-dimensional energetics linked to surfaces, interfaces, and fibers across...</p>
-      </li>
-      
-    
-  </ul>
+    </div>
+  
 </div>
+
 
       
 

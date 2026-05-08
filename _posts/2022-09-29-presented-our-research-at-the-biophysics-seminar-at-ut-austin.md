@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Presented our research at the Biophysics Seminar at UT Austin"
+title: "Biophysics Seminar (UT Austin): Computationally driven design of tissue-inspired multifunctional materials"
 date: 2022-09-29 15:29:53
 author: ar67966
 tags: [news]

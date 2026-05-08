@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Ashkan Ali Madadi Presents at the 15th Annual MPM Workshop"
+title: "15th Annual MPM Workshop (UC Berkeley): Porous polymeric membranes via stabilized extended B-spline MPM"
 date: 2024-09-09 17:55:01
 author: jw55692
 tags: [news]

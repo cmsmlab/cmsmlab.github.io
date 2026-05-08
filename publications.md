@@ -3,6 +3,7 @@ layout: default
 full-width: true
 title: Publications
 permalink: /publications/
+share-description: "Peer-reviewed publications from the Computational Mechanics of Soft Materials Lab at UT Austin, led by Berkin Dortdivanlioglu."
 ---
 
 <style>
