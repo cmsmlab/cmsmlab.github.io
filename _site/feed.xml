@@ -12,6 +12,21 @@
     
     
       <item>
+        <title>Vice Chair, EMI Elasticity Committee</title>
+        
+        <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
+        
+        <description>
+          
+          Berkin has been elected Vice Chair of the ASCE Engineering Mechanics Institute (EMI) Elasticity Committee.
+
+        </description>
+        <pubDate>Mon, 01 Dec 2025 09:00:00 -0600</pubDate>
+        <link>http://localhost:4000/2025-12-01-EMI-Elasticity-Vice-Chair/</link>
+        <guid isPermaLink="true">http://localhost:4000/2025-12-01-EMI-Elasticity-Vice-Chair/</guid>
+      </item>
+    
+      <item>
         <title>SES 2025: Strain-gradient effects and polarization in soft materials</title>
         
         <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
@@ -23,6 +38,25 @@
         <pubDate>Fri, 10 Oct 2025 10:00:00 -0500</pubDate>
         <link>http://localhost:4000/2025-10-10-SES2025/</link>
         <guid isPermaLink="true">http://localhost:4000/2025-10-10-SES2025/</guid>
+      </item>
+    
+      <item>
+        <title>IGA 2025 (Eindhoven): Surface and strain-gradient driven mechanics of soft materials using isogeometric analysis</title>
+        
+        <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
+        
+        <description>
+          
+          Gave a talk at the 13th International Conference on Isogeometric Analysis (IGA 2025) in Eindhoven, Netherlands:
+
+
+  B. Dortdivanlioglu — Surface and Strain-Gradient Driven Mechanics of Soft Materials Using Isogeometric Analysis (Mini-Symposium IS004: IGA for Solids and Structures)
+
+
+        </description>
+        <pubDate>Mon, 15 Sep 2025 10:00:00 -0500</pubDate>
+        <link>http://localhost:4000/2025-09-15-IGA2025-eindhoven/</link>
+        <guid isPermaLink="true">http://localhost:4000/2025-09-15-IGA2025-eindhoven/</guid>
       </item>
     
       <item>
@@ -319,45 +353,6 @@ Congrats, Richard on this well-deserved recognition!
         <pubDate>Sat, 26 Aug 2023 10:29:39 -0500</pubDate>
         <link>http://localhost:4000/2023-08-26-richard-noh-awarded-prestigious-dr-marco-antonio-zuniga-izaguirre-endowed-scholarship/</link>
         <guid isPermaLink="true">http://localhost:4000/2023-08-26-richard-noh-awarded-prestigious-dr-marco-antonio-zuniga-izaguirre-endowed-scholarship/</guid>
-      </item>
-    
-      <item>
-        <title>2023 Ivo &amp; Renata Babuska Scholarship in CSE</title>
-        
-        <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
-        
-        <description>
-          
-           Richard has been awarded the 2023 Ivo &amp;amp; Renata Babuska Scholarship in
-Computational Science and Engineering. This award was established
-to recognize and support the studies of exceptional senior-level undergraduate
-students at the university who are undertaking research at the Oden Institute
-for Computational Engineering and Sciences.
-
-
-
-        </description>
-        <pubDate>Tue, 23 May 2023 14:46:28 -0500</pubDate>
-        <link>http://localhost:4000/2023-05-23-richard-noh-has-been-awarded-the-2023-ivo-amp-renata-babuska-scholarship-in-cse/</link>
-        <guid isPermaLink="true">http://localhost:4000/2023-05-23-richard-noh-has-been-awarded-the-2023-ivo-amp-renata-babuska-scholarship-in-cse/</guid>
-      </item>
-    
-      <item>
-        <title>Best Presentation, 4th CAEE Graduate Symposium</title>
-        
-        <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
-        
-        <description>
-          
-          Derya received the first-place prize for best presentation in the 4th CAEE
-Graduate Symposium held at UT Austin on March 24, with her presentation on
-modeling the adhesive interfaces between soft materials.
-
-
-        </description>
-        <pubDate>Fri, 24 Mar 2023 12:29:40 -0500</pubDate>
-        <link>http://localhost:4000/2023-03-24-derya-won-the-best-presentation-in-the-4th-caee-graduate-symposium/</link>
-        <guid isPermaLink="true">http://localhost:4000/2023-03-24-derya-won-the-best-presentation-in-the-4th-caee-graduate-symposium/</guid>
       </item>
     
   </channel>

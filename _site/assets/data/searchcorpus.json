@@ -1,11 +1,27 @@
 [ 
  
 { 
+"title"    : "Vice Chair, EMI Elasticity Committee", 
+"desc"     : "Vice Chair, EMI Elasticity Committee", 
+"category" : "news, featured", 
+"url"      : "/2025-12-01-EMI-Elasticity-Vice-Chair/", 
+"date"     : "December  1, 2025" 
+}, 
+ 
+{ 
 "title"    : "SES 2025: Strain-gradient effects and polarization in soft materials", 
 "desc"     : "SES 2025: Strain-gradient effects and polarization in soft materials", 
 "category" : "news, featured", 
 "url"      : "/2025-10-10-SES2025/", 
 "date"     : "October 10, 2025" 
+}, 
+ 
+{ 
+"title"    : "IGA 2025 (Eindhoven): Surface and strain-gradient driven mechanics of soft materials using isogeometric analysis", 
+"desc"     : "IGA 2025 (Eindhoven): Surface and strain-gradient driven mechanics of soft materials using isogeometric analysis", 
+"category" : "news", 
+"url"      : "/2025-09-15-IGA2025-eindhoven/", 
+"date"     : "September 15, 2025" 
 }, 
  
 { 
