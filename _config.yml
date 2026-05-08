@@ -189,7 +189,7 @@ footer-hover-col: "#A34900"  # Darker burnt orange for footer link hover
 #################################
 
 # Fill in your Google Analytics tag ID (or "Measurement ID") to track your website usage
-#gtag: "G-XXXXXXXXXX"
+gtag: "G-1Q0KQ8HJH4"
 
 # Fill in your Cloudflare Analytics beacon token to track your website using Cloudflare Analytics
 #cloudflare_analytics: ""
