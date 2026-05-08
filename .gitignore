@@ -6,3 +6,6 @@ STRUCTURE.md
 .claude/
 _site/CLAUDE.md
 _site/STRUCTURE.md
+
+# Local archive of orphan/legacy files — kept on disk, not in git
+archive/
