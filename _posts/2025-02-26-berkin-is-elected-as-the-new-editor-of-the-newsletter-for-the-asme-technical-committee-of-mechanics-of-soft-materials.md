@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Berkin is elected as the new editor of the newsletter for the ASME technical committee of Mechanics of Soft Materials"
+title: "Editor of the ASME Mechanics of Soft Materials Newsletter"
 date: 2025-02-26 04:34:24
 author: bd24583
 tags: [news, featured]

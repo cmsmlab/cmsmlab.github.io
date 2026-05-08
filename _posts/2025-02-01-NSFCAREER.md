@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Our group received the NSF CAREER Award"
+title: "NSF CAREER Award"
 date: 2025-02-14 01:01:01
 author: Berkin Dortdivanlioglu
 tags: [news, featured]

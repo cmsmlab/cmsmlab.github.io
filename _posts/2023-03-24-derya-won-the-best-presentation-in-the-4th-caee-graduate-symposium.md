@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Derya won the best presentation in the 4th CAEE Graduate Symposium"
+title: "Best Presentation, 4th CAEE Graduate Symposium"
 date: 2023-03-24 17:29:40
 author: jw55692
 tags: [news]

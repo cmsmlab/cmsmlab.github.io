@@ -1,256 +1,256 @@
 [ 
  
 { 
-"title"    : "SES 2025: Two talks on Strain-Gradient Effects and Polarization in Soft Materials", 
-"desc"     : "SES 2025: Two talks on Strain-Gradient Effects and Polarization in Soft Materials", 
+"title"    : "SES 2025: Strain-gradient effects and polarization in soft materials", 
+"desc"     : "SES 2025: Strain-gradient effects and polarization in soft materials", 
 "category" : "news, featured", 
 "url"      : "/2025-10-10-SES2025/", 
 "date"     : "October 10, 2025" 
 }, 
  
 { 
-"title"    : "USNCCM18: Two talks on strain-gradient soft mechanics and an MPM scheme", 
-"desc"     : "USNCCM18: Two talks on strain-gradient soft mechanics and an MPM scheme", 
+"title"    : "USNCCM18: Strain-gradient soft mechanics and an MPM scheme", 
+"desc"     : "USNCCM18: Strain-gradient soft mechanics and an MPM scheme", 
 "category" : "news", 
 "url"      : "/2025-07-25-IGA2025/", 
 "date"     : "July 25, 2025" 
 }, 
  
 { 
-"title"    : "EMI 2025: Talk on size effects in soft materials", 
-"desc"     : "EMI 2025: Talk on size effects in soft materials", 
+"title"    : "EMI 2025: Size effects in soft materials", 
+"desc"     : "EMI 2025: Size effects in soft materials", 
 "category" : "news", 
 "url"      : "/2025-06-01-EMI2025/", 
 "date"     : "June  1, 2025" 
 }, 
  
 { 
-"title"    : "Berkin is elected as the new editor of the newsletter for the ASME technical committee of Mechanics of Soft Materials", 
-"desc"     : "Berkin is elected as the new editor of the newsletter for the ASME technical committee of Mechanics of Soft Materials", 
+"title"    : "Editor of the ASME Mechanics of Soft Materials Newsletter", 
+"desc"     : "Editor of the ASME Mechanics of Soft Materials Newsletter", 
 "category" : "news, featured", 
 "url"      : "/2025-02-25-berkin-is-elected-as-the-new-editor-of-the-newsletter-for-the-asme-technical-committee-of-mechanics-of-soft-materials/", 
 "date"     : "February 25, 2025" 
 }, 
  
 { 
-"title"    : "Our group received the NSF CAREER Award", 
-"desc"     : "Our group received the NSF CAREER Award", 
+"title"    : "NSF CAREER Award", 
+"desc"     : "NSF CAREER Award", 
 "category" : "news, featured", 
 "url"      : "/2025-02-13-NSFCAREER/", 
 "date"     : "February 13, 2025" 
 }, 
  
 { 
-"title"    : "Ashkan Received the Kolodzey Travel Award", 
-"desc"     : "Ashkan Received the Kolodzey Travel Award", 
+"title"    : "Kolodzey Travel Award", 
+"desc"     : "Kolodzey Travel Award", 
 "category" : "news", 
 "url"      : "/2024-10-31-ashkan-received-the-kolodzey-travel-award/", 
 "date"     : "October 31, 2024" 
 }, 
  
 { 
-"title"    : "Ashkan Ali Madadi Presents at the 15th Annual MPM Workshop", 
-"desc"     : "Ashkan Ali Madadi Presents at the 15th Annual MPM Workshop", 
+"title"    : "15th Annual MPM Workshop (UC Berkeley): Porous polymeric membranes via stabilized extended B-spline MPM", 
+"desc"     : "15th Annual MPM Workshop (UC Berkeley): Porous polymeric membranes via stabilized extended B-spline MPM", 
 "category" : "news", 
 "url"      : "/2024-09-09-ashkan-ali-madadi-presents-at-the-15th-annual-mpm-workshop/", 
 "date"     : "September  9, 2024" 
 }, 
  
 { 
-"title"    : "Congratulations to Our Lab&#39;s Ph.D. Students on Receiving the George J. Heuer, Jr. Ph.D. Endowed Fellowship", 
-"desc"     : "Congratulations to Our Lab&#39;s Ph.D. Students on Receiving the George J. Heuer, Jr. Ph.D. Endowed Fellowship", 
+"title"    : "George J. Heuer, Jr. Endowed Fellowship awarded to three lab Ph.D. students", 
+"desc"     : "George J. Heuer, Jr. Endowed Fellowship awarded to three lab Ph.D. students", 
 "category" : "news", 
 "url"      : "/2024-08-12-congratulations-to-our-lab-s-ph-d-students-on-receiving-the-george-j-heuer-jr-ph-d-endowed-fellowship/", 
 "date"     : "August 12, 2024" 
 }, 
  
 { 
-"title"    : "Ashkan Ali Madadi Presents at the Engineering Mechanics Institute Conference 2024", 
-"desc"     : "Ashkan Ali Madadi Presents at the Engineering Mechanics Institute Conference 2024", 
+"title"    : "EMI 2024: Stabilized extended B-spline MPM for multi-field soft materials with Nitsche BCs", 
+"desc"     : "EMI 2024: Stabilized extended B-spline MPM for multi-field soft materials with Nitsche BCs", 
 "category" : "news", 
 "url"      : "/2024-05-31-ashkan-ali-madadi-presents-at-the-engineering-mechanics-institute-conference-2024/", 
 "date"     : "May 31, 2024" 
 }, 
  
 { 
-"title"    : "Ashkan Ali Madadi and Ekim Ekiz Present Collaborative Research at the Fracture of Soft Materials Symposium", 
-"desc"     : "Ashkan Ali Madadi and Ekim Ekiz Present Collaborative Research at the Fracture of Soft Materials Symposium", 
+"title"    : "Fracture of Soft Materials Symposium: Modeling nearly incompressible behavior in soft solids with MPM", 
+"desc"     : "Fracture of Soft Materials Symposium: Modeling nearly incompressible behavior in soft solids with MPM", 
 "category" : "news", 
 "url"      : "/2024-05-17-ashkan-ali-madadi-and-ekim-ekiz-present-collaborative-research-at-the-fracture-of-soft-materials-symposium/", 
 "date"     : "May 17, 2024" 
 }, 
  
 { 
-"title"    : "Prof. Berkin Receives CAEE&#39;s 2024 Faculty Teaching Award", 
-"desc"     : "Prof. Berkin Receives CAEE&#39;s 2024 Faculty Teaching Award", 
+"title"    : "CAEE 2024 Faculty Teaching Award", 
+"desc"     : "CAEE 2024 Faculty Teaching Award", 
 "category" : "news", 
 "url"      : "/2024-05-08-prof-berkin-receives-caee-s-2024-faculty-teaching-award/", 
 "date"     : "May  8, 2024" 
 }, 
  
 { 
-"title"    : "Ashkan Ali Madadi Presents at the American Physical Society March Meeting 2024", 
-"desc"     : "Ashkan Ali Madadi Presents at the American Physical Society March Meeting 2024", 
+"title"    : "APS March Meeting 2024: Diffusion-induced swelling of shape morphing hydrogels", 
+"desc"     : "APS March Meeting 2024: Diffusion-induced swelling of shape morphing hydrogels", 
 "category" : "news", 
 "url"      : "/2024-03-08-ashkan-ali-madadi-presents-at-the-american-physical-society-march-meeting-2024/", 
 "date"     : "March  8, 2024" 
 }, 
  
 { 
-"title"    : "End-of-Year Gathering 2023!", 
-"desc"     : "End-of-Year Gathering 2023!", 
+"title"    : "End-of-year gathering, 2023", 
+"desc"     : "End-of-year gathering, 2023", 
 "category" : "news", 
 "url"      : "/2023-12-12-end-of-year-gathering-2023/", 
 "date"     : "December 12, 2023" 
 }, 
  
 { 
-"title"    : "Our group attends the 2023 SES Conference in Minneapolis", 
-"desc"     : "Our group attends the 2023 SES Conference in Minneapolis", 
+"title"    : "SES 2023 (Minneapolis)", 
+"desc"     : "SES 2023 (Minneapolis)", 
 "category" : "news", 
 "url"      : "/2023-10-12-our-group-attends-the-2023-ses-conference-in-minneapolis/", 
 "date"     : "October 12, 2023" 
 }, 
  
 { 
-"title"    : "CAEE Department Naming Event", 
-"desc"     : "CAEE Department Naming Event", 
+"title"    : "CAEE renamed: Fariborz Maseeh Department of Civil, Architectural, and Environmental Engineering", 
+"desc"     : "CAEE renamed: Fariborz Maseeh Department of Civil, Architectural, and Environmental Engineering", 
 "category" : "news", 
 "url"      : "/2023-09-29-caee-department-naming-event/", 
 "date"     : "September 29, 2023" 
 }, 
  
 { 
-"title"    : "Ashkan Ali Madadi and Dr. Berkin Dortdivanlioglu attended the 17th USNCCM conference", 
-"desc"     : "Ashkan Ali Madadi and Dr. Berkin Dortdivanlioglu attended the 17th USNCCM conference", 
+"title"    : "USNCCM17: Stabilized MPM for porous hydrogels and viscoelasto-capillary soft materials", 
+"desc"     : "USNCCM17: Stabilized MPM for porous hydrogels and viscoelasto-capillary soft materials", 
 "category" : "news", 
 "url"      : "/2023-08-31-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-17th-usnccm-conference/", 
 "date"     : "August 31, 2023" 
 }, 
  
 { 
-"title"    : "Ashkan Ali Madadi and Dr. Berkin Dortdivanlioglu attended the EMI2023  conference", 
-"desc"     : "Ashkan Ali Madadi and Dr. Berkin Dortdivanlioglu attended the EMI2023  conference", 
+"title"    : "EMI 2023: B-spline MPM for poroelastic materials and adhesive–capillary forces in soft materials", 
+"desc"     : "EMI 2023: B-spline MPM for poroelastic materials and adhesive–capillary forces in soft materials", 
 "category" : "news", 
 "url"      : "/2023-08-30-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-emi2023-conference/", 
 "date"     : "August 30, 2023" 
 }, 
  
 { 
-"title"    : "Richard Noh Awarded Prestigious Dr. Marco Antonio Zuniga Izaguirre Endowed Scholarship", 
-"desc"     : "Richard Noh Awarded Prestigious Dr. Marco Antonio Zuniga Izaguirre Endowed Scholarship", 
+"title"    : "Dr. Marco Antonio Zuniga Izaguirre Endowed Scholarship", 
+"desc"     : "Dr. Marco Antonio Zuniga Izaguirre Endowed Scholarship", 
 "category" : "news", 
 "url"      : "/2023-08-26-richard-noh-awarded-prestigious-dr-marco-antonio-zuniga-izaguirre-endowed-scholarship/", 
 "date"     : "August 26, 2023" 
 }, 
  
 { 
-"title"    : "Richard Noh has been awarded the 2023 Ivo &amp;amp; Renata Babuska Scholarship in CSE", 
-"desc"     : "Richard Noh has been awarded the 2023 Ivo &amp;amp; Renata Babuska Scholarship in CSE", 
+"title"    : "2023 Ivo &amp; Renata Babuska Scholarship in CSE", 
+"desc"     : "2023 Ivo &amp; Renata Babuska Scholarship in CSE", 
 "category" : "news", 
 "url"      : "/2023-05-23-richard-noh-has-been-awarded-the-2023-ivo-amp-renata-babuska-scholarship-in-cse/", 
 "date"     : "May 23, 2023" 
 }, 
  
 { 
-"title"    : "Derya won the best presentation in the 4th CAEE Graduate Symposium", 
-"desc"     : "Derya won the best presentation in the 4th CAEE Graduate Symposium", 
+"title"    : "Best Presentation, 4th CAEE Graduate Symposium", 
+"desc"     : "Best Presentation, 4th CAEE Graduate Symposium", 
 "category" : "news", 
 "url"      : "/2023-03-24-derya-won-the-best-presentation-in-the-4th-caee-graduate-symposium/", 
 "date"     : "March 24, 2023" 
 }, 
  
 { 
-"title"    : "Derya presented her work at the APS March Meeting 2023", 
-"desc"     : "Derya presented her work at the APS March Meeting 2023", 
+"title"    : "APS March Meeting 2023: Numerical modeling of elasto-adhesive behavior in soft materials", 
+"desc"     : "APS March Meeting 2023: Numerical modeling of elasto-adhesive behavior in soft materials", 
 "category" : "news", 
 "url"      : "/2023-03-07-derya-presented-her-work-at-the-aps-march-meeting-2023/", 
 "date"     : "March  7, 2023" 
 }, 
  
 { 
-"title"    : "Animesh won the best poster award at IMECE 2022!", 
-"desc"     : "Animesh won the best poster award at IMECE 2022!", 
+"title"    : "Best Poster Award, IMECE 2022 — Computing in Applied Mechanics", 
+"desc"     : "Best Poster Award, IMECE 2022 — Computing in Applied Mechanics", 
 "category" : "news", 
 "url"      : "/2022-11-07-animesh-won-the-best-poster-award-at-imece-2022/", 
 "date"     : "November  7, 2022" 
 }, 
  
 { 
-"title"    : "Ashkan presented his work in the MPM workshop at UT Austin", 
-"desc"     : "Ashkan presented his work in the MPM workshop at UT Austin", 
+"title"    : "MPM Workshop 2022 (UT Austin): Subdivision-stabilized B-spline MPM for nonlinear nearly incompressible solids", 
+"desc"     : "MPM Workshop 2022 (UT Austin): Subdivision-stabilized B-spline MPM for nonlinear nearly incompressible solids", 
 "category" : "news", 
 "url"      : "/2022-10-07-ashkan-presented-his-work-in-the-mpm-workshop-at-ut-austin/", 
 "date"     : "October  7, 2022" 
 }, 
  
 { 
-"title"    : "Haythornthwaite Foundation Student Travel Award to Ashkan!", 
-"desc"     : "Haythornthwaite Foundation Student Travel Award to Ashkan!", 
+"title"    : "Haythornthwaite Foundation Student Travel Award", 
+"desc"     : "Haythornthwaite Foundation Student Travel Award", 
 "category" : "news", 
 "url"      : "/2022-09-30-haythornthwaite-foundation-student-travel-award-to-ashkan/", 
 "date"     : "September 30, 2022" 
 }, 
  
 { 
-"title"    : "Presented our research at the Biophysics Seminar at UT Austin", 
-"desc"     : "Presented our research at the Biophysics Seminar at UT Austin", 
+"title"    : "Biophysics Seminar (UT Austin): Computationally driven design of tissue-inspired multifunctional materials", 
+"desc"     : "Biophysics Seminar (UT Austin): Computationally driven design of tissue-inspired multifunctional materials", 
 "category" : "news", 
 "url"      : "/2022-09-29-presented-our-research-at-the-biophysics-seminar-at-ut-austin/", 
 "date"     : "September 29, 2022" 
 }, 
  
 { 
-"title"    : "Paper on modeling curvature-resisting material surfaces accepted @CMAME", 
-"desc"     : "Paper on modeling curvature-resisting material surfaces accepted @CMAME", 
+"title"    : "CMAME: Modeling curvature-resisting material surfaces with isogeometric analysis", 
+"desc"     : "CMAME: Modeling curvature-resisting material surfaces with isogeometric analysis", 
 "category" : "news", 
 "url"      : "/2022-09-11-paper-on-modeling-curvature-resisting-material-surfaces-accepted-cmame/", 
 "date"     : "September 11, 2022" 
 }, 
  
 { 
-"title"    : "Ashkan receives travel award to SES2022", 
-"desc"     : "Ashkan receives travel award to SES2022", 
+"title"    : "SES 2022 Travel Award", 
+"desc"     : "SES 2022 Travel Award", 
 "category" : "news", 
 "url"      : "/2022-08-09-ashkan-receives-travel-award-to-ses2022/", 
 "date"     : "August  9, 2022" 
 }, 
  
 { 
-"title"    : "Best poster award. Congrats, Animesh!", 
-"desc"     : "Best poster award. Congrats, Animesh!", 
+"title"    : "Best Poster Award, 2022 CAEE Graduate Symposium", 
+"desc"     : "Best Poster Award, 2022 CAEE Graduate Symposium", 
 "category" : "news", 
 "url"      : "/2022-05-31-best-poster-award-congrats-animesh/", 
 "date"     : "May 31, 2022" 
 }, 
  
 { 
-"title"    : "Poster awards to undergraduate researcher, Nate!", 
-"desc"     : "Poster awards to undergraduate researcher, Nate!", 
+"title"    : "Two poster awards: 3rd-best at 2022 CAEE Graduate Symposium and Honorable Mention at Longhorn Undergraduate Research Week", 
+"desc"     : "Two poster awards: 3rd-best at 2022 CAEE Graduate Symposium and Honorable Mention at Longhorn Undergraduate Research Week", 
 "category" : "news", 
 "url"      : "/2022-04-21-poster-awards-to-undergraduate-researcher-nate/", 
 "date"     : "April 21, 2022" 
 }, 
  
 { 
-"title"    : "Excellence in Research award to Animesh!", 
-"desc"     : "Excellence in Research award to Animesh!", 
+"title"    : "Excellence in Research Award, UT GAIN Symposium", 
+"desc"     : "Excellence in Research Award, UT GAIN Symposium", 
 "category" : "news", 
 "url"      : "/2022-02-23-excellence-in-research-award-to-animesh/", 
 "date"     : "February 23, 2022" 
 }, 
  
 { 
-"title"    : "Welcome, Ashkan!", 
-"desc"     : "Welcome, Ashkan!", 
+"title"    : "Welcome, new Ph.D. student", 
+"desc"     : "Welcome, new Ph.D. student", 
 "category" : "news", 
 "url"      : "/2021-09-11-welcome-ashkan/", 
 "date"     : "September 11, 2021" 
 }, 
  
 { 
-"title"    : "Welcome, Animesh!", 
-"desc"     : "Welcome, Animesh!", 
+"title"    : "Welcome, new M.S. student", 
+"desc"     : "Welcome, new M.S. student", 
 "category" : "news", 
 "url"      : "/2020-09-11-welcome-animesh/", 
 "date"     : "September 11, 2020" 

@@ -3,19 +3,120 @@ layout: page
 title: News & Updates
 full-width: true
 permalink: /news/
+share-description: "Latest news, awards, talks, and updates from the Computational Mechanics of Soft Materials Lab at UT Austin."
 ---
 
-<div class="container">
-  <h1>{{ page.title }}</h1>
-  <ul class="list-unstyled">
-    {% for post in site.posts %}
-      {% if post.tags contains "news" %}
-      <li class="mb-4">
-        <h2><a href="{{ post.url | absolute_url }}">{{ post.title }}</a></h2>
-        <p class="post-meta">{{ post.date | date: "%B %-d, %Y" }}</p>
-        <p>{{ post.excerpt | strip_html | truncatewords: 50 }}</p>
-      </li>
-      {% endif %}
-    {% endfor %}
-  </ul>
+<style>
+  .news-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 3rem;
+  }
+  .news-year {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #444;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .news-year:first-of-type {
+    margin-top: 0.5rem;
+  }
+  .news-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: flex-start;
+  }
+  .news-item:last-child {
+    border-bottom: none;
+  }
+  .news-date {
+    flex: 0 0 70px;
+    text-align: center;
+    color: #777;
+    line-height: 1.1;
+    padding-top: 0.15rem;
+  }
+  .news-date .news-month {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .news-date .news-day {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #333;
+    margin-top: 0.1rem;
+  }
+  .news-body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .news-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 0.35rem 0;
+    line-height: 1.35;
+  }
+  .news-title a {
+    color: #222;
+    text-decoration: none;
+  }
+  .news-title a:hover {
+    color: #BF5700;
+    text-decoration: none;
+  }
+  .news-excerpt {
+    margin: 0;
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  @media (max-width: 576px) {
+    .news-item {
+      gap: 1rem;
+    }
+    .news-date {
+      flex-basis: 55px;
+    }
+    .news-date .news-day {
+      font-size: 1.3rem;
+    }
+    .news-title {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<div class="news-container">
+  {% assign news_posts = site.posts | where_exp: "post", "post.tags contains 'news'" %}
+  {% assign posts_by_year = news_posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+
+  {% for year_group in posts_by_year %}
+    <h2 class="news-year">{{ year_group.name }}</h2>
+    <div class="news-year-list">
+      {% for post in year_group.items %}
+        <article class="news-item">
+          <div class="news-date">
+            <span class="news-month">{{ post.date | date: "%b" }}</span>
+            <span class="news-day">{{ post.date | date: "%-d" }}</span>
+          </div>
+          <div class="news-body">
+            <h3 class="news-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+            {% assign excerpt_text = post.excerpt | strip_html | strip %}
+            {% if excerpt_text != "" %}
+              <p class="news-excerpt">{{ excerpt_text | truncatewords: 35 }}</p>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% endfor %}
 </div>

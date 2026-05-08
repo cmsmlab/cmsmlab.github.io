@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Welcome, Ashkan!"
+title: "Welcome, new Ph.D. student"
 date: 2021-09-12 02:16:36
 author: bd24583
 tags: [news]

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Animesh won the best poster award at IMECE 2022!"
+title: "Best Poster Award, IMECE 2022 — Computing in Applied Mechanics"
 date: 2022-11-07 14:44:23
 author: bd24583
 tags: [news]

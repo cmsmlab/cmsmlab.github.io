@@ -12,7 +12,7 @@
     
     
       <item>
-        <title>SES 2025: Two talks on Strain-Gradient Effects and Polarization in Soft Materials</title>
+        <title>SES 2025: Strain-gradient effects and polarization in soft materials</title>
         
         <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
         
@@ -26,7 +26,7 @@
       </item>
     
       <item>
-        <title>USNCCM18: Two talks on strain-gradient soft mechanics and an MPM scheme</title>
+        <title>USNCCM18: Strain-gradient soft mechanics and an MPM scheme</title>
         
         <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
         
@@ -40,13 +40,13 @@
       </item>
     
       <item>
-        <title>EMI 2025: Talk on size effects in soft materials</title>
+        <title>EMI 2025: Size effects in soft materials</title>
         
         <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
         
         <description>
           
-          Gave a talk at the Engineering Mechanics Institute Conference (EMI) 2025 in Anaheim, CA: B. Dortdivanlioglu, J. Wang — Size-Dependent Instabilities in Highly Deformable Strain-Gradient Materials The work behind this talk is led by PhD student Jun Wang and develops a strain-gradient framework for predicting how length-scale effects shift the...
+          Gave a talk at the Engineering Mechanics Institute Conference (EMI) 2025 in Anaheim, CA: B. Dortdivanlioglu, J. Wang — Size-Dependent Instabilities in Highly Deformable Strain-Gradient Materials The work behind this talk is led by PhD student Jun and develops a strain-gradient framework for predicting how length-scale effects shift the onset...
         </description>
         <pubDate>Sun, 01 Jun 2025 10:00:00 -0500</pubDate>
         <link>http://localhost:4000/2025-06-01-EMI2025/</link>
@@ -54,7 +54,7 @@
       </item>
     
       <item>
-        <title>Berkin is elected as the new editor of the newsletter for the ASME technical committee of Mechanics of Soft Materials</title>
+        <title>Editor of the ASME Mechanics of Soft Materials Newsletter</title>
         
         <dc:creator><![CDATA[ bd24583 ]]></dc:creator>
         
@@ -72,7 +72,7 @@ then as vice chair, and finally as chair over the next four years.
       </item>
     
       <item>
-        <title>Our group received the NSF CAREER Award</title>
+        <title>NSF CAREER Award</title>
         
         <dc:creator><![CDATA[ Berkin Dortdivanlioglu ]]></dc:creator>
         
@@ -86,7 +86,7 @@ then as vice chair, and finally as chair over the next four years.
       </item>
     
       <item>
-        <title>Ashkan Received the Kolodzey Travel Award</title>
+        <title>Kolodzey Travel Award</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
@@ -104,7 +104,7 @@ Stabilized Extended B-Spline Material Point Method.
       </item>
     
       <item>
-        <title>Ashkan Ali Madadi Presents at the 15th Annual MPM Workshop</title>
+        <title>15th Annual MPM Workshop (UC Berkeley): Porous polymeric membranes via stabilized extended B-spline MPM</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
@@ -124,14 +124,13 @@ Material Point Method. Well done, Ashkan!
       </item>
     
       <item>
-        <title>Congratulations to Our Lab&apos;s Ph.D. Students on Receiving the George J. Heuer, Jr. Ph.D. Endowed Fellowship</title>
+        <title>George J. Heuer, Jr. Endowed Fellowship awarded to three lab Ph.D. students</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-          Three of our lab’s Ph.D. students—Ashkan Ali Madadi, Ekim Ekiz, and Jun
-Wang—have been awarded the George J. Heuer, Jr. Ph.D. Endowed Fellowship from
+          Three of our lab’s Ph.D. students—Ashkan, Ekim, and Jun—have been awarded the George J. Heuer, Jr. Ph.D. Endowed Fellowship from
 the Cockrell School of Engineering for the 2024-2025 academic year. This
 fellowship recognizes and supports their outstanding research and
 contributions in their fields.
@@ -143,13 +142,20 @@ contributions in their fields.
       </item>
     
       <item>
-        <title>Ashkan Ali Madadi Presents at the Engineering Mechanics Institute Conference 2024</title>
+        <title>EMI 2024: Stabilized extended B-spline MPM for multi-field soft materials with Nitsche BCs</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-          Ashkan Ali Madadi, a Ph.D. student in our lab, presented his research titled “Stabilized Extended B-Spline Material Point Method for Multi-Field Soft Materials with Nitsche Imposition of Boundary Conditions” at the Engineering Mechanics Institute Conference (EMI 2024). The conference was held in Chicago from May 28 to 31. Congratulations to...
+          Ashkan, a Ph.D. student in our lab, presented his research titled
+“Stabilized Extended B-Spline Material Point Method for Multi-Field Soft
+Materials with Nitsche Imposition of Boundary Conditions” at the Engineering
+Mechanics Institute Conference (EMI 2024). The conference was held in Chicago
+from May 28 to 31. Congratulations to Ashkan!
+
+
+
         </description>
         <pubDate>Fri, 31 May 2024 14:57:00 -0500</pubDate>
         <link>http://localhost:4000/2024-05-31-ashkan-ali-madadi-presents-at-the-engineering-mechanics-institute-conference-2024/</link>
@@ -157,13 +163,13 @@ contributions in their fields.
       </item>
     
       <item>
-        <title>Ashkan Ali Madadi and Ekim Ekiz Present Collaborative Research at the Fracture of Soft Materials Symposium</title>
+        <title>Fracture of Soft Materials Symposium: Modeling nearly incompressible behavior in soft solids with MPM</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-          Ashkan Ali Madadi and Ekim Ekiz, Ph.D. students in our lab, presented their collaborative research titled “Modeling Nearly Incompressible Behavior in Soft Solids Using the Material Point Method” at the Fracture of Soft Materials Symposium, held in Austin from May 12 to 16, 2024. Their work, co-authored with Richard Noh,...
+          Ashkan and Ekim, Ph.D. students in our lab, presented their collaborative research titled “Modeling Nearly Incompressible Behavior in Soft Solids Using the Material Point Method” at the Fracture of Soft Materials Symposium, held in Austin from May 12 to 16, 2024. Their work, co-authored with Richard, was showcased during the...
         </description>
         <pubDate>Fri, 17 May 2024 15:05:00 -0500</pubDate>
         <link>http://localhost:4000/2024-05-17-ashkan-ali-madadi-and-ekim-ekiz-present-collaborative-research-at-the-fracture-of-soft-materials-symposium/</link>
@@ -171,15 +177,14 @@ contributions in their fields.
       </item>
     
       <item>
-        <title>Prof. Berkin Receives CAEE&apos;s 2024 Faculty Teaching Award</title>
+        <title>CAEE 2024 Faculty Teaching Award</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-          Prof. Berkin is the 2024 recipient of CAEE’s Faculty Teaching Award! He was
-nominated by CAEE students, and selected by a committee of previous award
-recipients. Congratulations to Prof. Berkin!
+          Berkin is the 2024 recipient of CAEE’s Faculty Teaching Award! Nominated by
+CAEE students and selected by a committee of previous award recipients.
 
 
 
@@ -190,13 +195,13 @@ recipients. Congratulations to Prof. Berkin!
       </item>
     
       <item>
-        <title>Ashkan Ali Madadi Presents at the American Physical Society March Meeting 2024</title>
+        <title>APS March Meeting 2024: Diffusion-induced swelling of shape morphing hydrogels</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-          Ashkan Ali Madadi, a Ph.D. student in our lab, presented his research titled
+          Ashkan, a Ph.D. student in our lab, presented his research titled
 “Diffusion-Induced Swelling of Shape Morphing Hydrogels” at the American
 Physical Society (APS) March Meeting 2024. The conference took place in
 Minneapolis from March 3 to 8. Congratulations to Ashkan!
@@ -210,16 +215,18 @@ Minneapolis from March 3 to 8. Congratulations to Ashkan!
       </item>
     
       <item>
-        <title>End-of-Year Gathering 2023!</title>
+        <title>End-of-year gathering, 2023</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-          
+          Our group’s end-of-year gathering, December 2023.
 
 
-(left to right) Zahra, Ashkan, Ekim, Derya, BD, Rirchard, Dat Le, Jun, Seda
+
+
+(left to right) Zahra, Ashkan, Ekim, Derya, BD, Richard, Dat, Jun, Seda
 
         </description>
         <pubDate>Tue, 12 Dec 2023 06:50:00 -0600</pubDate>
@@ -228,7 +235,7 @@ Minneapolis from March 3 to 8. Congratulations to Ashkan!
       </item>
     
       <item>
-        <title>Our group attends the 2023 SES Conference in Minneapolis</title>
+        <title>SES 2023 (Minneapolis)</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
@@ -242,14 +249,13 @@ Minneapolis from March 3 to 8. Congratulations to Ashkan!
       </item>
     
       <item>
-        <title>CAEE Department Naming Event</title>
+        <title>CAEE renamed: Fariborz Maseeh Department of Civil, Architectural, and Environmental Engineering</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-          Fariborz Maseeh Department of Civil, Architectural, and Environmental
-Engineering
+          We attended the renaming ceremony at UT Austin.
 
 
 
@@ -260,13 +266,19 @@ Engineering
       </item>
     
       <item>
-        <title>Ashkan Ali Madadi and Dr. Berkin Dortdivanlioglu attended the 17th USNCCM conference</title>
+        <title>USNCCM17: Stabilized MPM for porous hydrogels and viscoelasto-capillary soft materials</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-          Ashkan Madadi and Dr. Berkin Dortdivanlioglu presented their research at the 17th U.S. National Congress on Computational Mechanics (USNCCM) held in Albuquerque, New Mexico. At the conference, Ashkan made a presentation titled “Stabilized Material Point Method for Self-Contacting Porous Hydrogels.” and Dr. Dortdivanlioglu talked about modeling viscoelasto-capillary deformations in soft...
+          We presented our research at the 17th U.S. National Congress on Computational
+Mechanics (USNCCM) held in Albuquerque, New Mexico.
+
+Ashkan gave a presentation titled “Stabilized Material Point Method for
+Self-Contacting Porous Hydrogels,” and Berkin talked about modeling
+viscoelasto-capillary deformations in soft materials.
+
         </description>
         <pubDate>Thu, 31 Aug 2023 17:29:27 -0500</pubDate>
         <link>http://localhost:4000/2023-08-31-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-17th-usnccm-conference/</link>
@@ -274,17 +286,16 @@ Engineering
       </item>
     
       <item>
-        <title>Ashkan Ali Madadi and Dr. Berkin Dortdivanlioglu attended the EMI2023  conference</title>
+        <title>EMI 2023: B-spline MPM for poroelastic materials and adhesive–capillary forces in soft materials</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-          Ashkan and Dr. Dortdivanlioglu attended the Engineering Mechanics Institute
-Conference (EMI) held in Atlanta, Georgia in June 2023. Ashkan presented his
-work on “Bspline Material Point Method for Strongly Coupled Poroelastic
-Materials,” and Dr. Dortdivanlioglu talked about modeling adhesive and
-capillary forces in soft materials.
+          We attended the Engineering Mechanics Institute Conference (EMI) held in
+Atlanta, Georgia in June 2023. Ashkan presented his work on “B-spline
+Material Point Method for Strongly Coupled Poroelastic Materials,” and Berkin
+talked about modeling adhesive and capillary forces in soft materials.
 
         </description>
         <pubDate>Wed, 30 Aug 2023 17:30:51 -0500</pubDate>
@@ -293,13 +304,13 @@ capillary forces in soft materials.
       </item>
     
       <item>
-        <title>Richard Noh Awarded Prestigious Dr. Marco Antonio Zuniga Izaguirre Endowed Scholarship</title>
+        <title>Dr. Marco Antonio Zuniga Izaguirre Endowed Scholarship</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-          Richard Noh has been selected as the recipient of the prestigious Dr. Marco
+          Richard has been selected as the recipient of the prestigious Dr. Marco
 Antonio Zuniga Izaguirre Endowed Scholarship in Engineering and Physics.
 
 Congrats, Richard on this well-deserved recognition!
@@ -311,13 +322,13 @@ Congrats, Richard on this well-deserved recognition!
       </item>
     
       <item>
-        <title>Richard Noh has been awarded the 2023 Ivo &amp;amp; Renata Babuska Scholarship in CSE</title>
+        <title>2023 Ivo &amp; Renata Babuska Scholarship in CSE</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         
         <description>
           
-           Richard Noh has been awarded the 2023 Ivo &amp;amp; Renata Babuska Scholarship in
+           Richard has been awarded the 2023 Ivo &amp;amp; Renata Babuska Scholarship in
 Computational Science and Engineering. This award was established
 to recognize and support the studies of exceptional senior-level undergraduate
 students at the university who are undertaking research at the Oden Institute
@@ -332,7 +343,7 @@ for Computational Engineering and Sciences.
       </item>
     
       <item>
-        <title>Derya won the best presentation in the 4th CAEE Graduate Symposium</title>
+        <title>Best Presentation, 4th CAEE Graduate Symposium</title>
         
         <dc:creator><![CDATA[ jw55692 ]]></dc:creator>
         

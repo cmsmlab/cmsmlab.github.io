@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Our group attends the 2023 SES Conference in Minneapolis"
+title: "SES 2023 (Minneapolis)"
 date: 2023-10-12 17:34:05
 author: jw55692
 tags: [news]
@@ -27,10 +27,10 @@ interfaces", focused on modeling and validation of soft hydrogel interfaces.
 ![](https://sites.utexas.edu/berkin/files/2023/10/DeryaPresentSES2023-1024x768.jpg)Derya
 presenting at the SES 2023 conference.
 
-Dr. Dortdivanlioglu co-hosted the session Adhesion, Friction, and Fracture at
-Soft Interfaces: Theory and Experiment at the conference.
+Berkin co-hosted the session "Adhesion, Friction, and Fracture at Soft
+Interfaces: Theory and Experiment" at the conference.
 
-![](https://sites.utexas.edu/berkin/files/2023/11/BerkinHostSES2023.jpg)Dr.
-Dortdivanlioglu hosting the session at SES 2023 conference.
+![](https://sites.utexas.edu/berkin/files/2023/11/BerkinHostSES2023.jpg)Berkin
+hosting the session at SES 2023 conference.
 ![](https://sites.utexas.edu/berkin/files/2023/10/PHDStudentsSES2023-1024x768.jpg)PhD
 students attending the SES 2023 conference.

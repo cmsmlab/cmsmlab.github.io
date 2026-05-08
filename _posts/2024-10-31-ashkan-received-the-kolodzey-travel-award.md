@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Ashkan Received the Kolodzey Travel Award"
+title: "Kolodzey Travel Award"
 date: 2024-10-31 16:20:44
 author: jw55692
 tags: [news]

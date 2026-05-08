@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Best poster award. Congrats, Animesh!"
+title: "Best Poster Award, 2022 CAEE Graduate Symposium"
 date: 2022-06-01 02:08:47
 author: bd24583
 tags: [news]

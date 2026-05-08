@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Ashkan receives travel award to SES2022"
+title: "SES 2022 Travel Award"
 date: 2022-08-10 02:05:09
 author: bd24583
 tags: [news]
