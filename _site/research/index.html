@@ -27,7 +27,7 @@
   
 
   
-  <link rel="alternate" type="application/rss+xml" title="Computational Soft Materials Lab" href="http://localhost:4000/feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="Computational Soft Materials Lab" href="/feed.xml">
   
 
   
@@ -87,13 +87,13 @@
   <meta property="og:description" content="Research in the CMSM Lab — theory, simulation, and table-top experiments on soft polymeric and biomimetic multifunctional materials at UT Austin.">
 
   
-  <meta property="og:image" content="http://localhost:4000/assets/img/ut.png">
+  <meta property="og:image" content="/assets/img/ut.png">
   
 
   
   <meta property="og:type" content="website">
-  <meta property="og:url" content="http://localhost:4000/research/">
-  <link rel="canonical" href="http://localhost:4000/research/">
+  <meta property="og:url" content="/research/">
+  <link rel="canonical" href="/research/">
   
 
   
@@ -106,7 +106,7 @@
   <meta property="twitter:description" content="Research in the CMSM Lab — theory, simulation, and table-top experiments on soft polymeric and biomimetic multifunctional materials at UT Austin.">
 
   
-  <meta name="twitter:image" content="http://localhost:4000/assets/img/ut.png">
+  <meta name="twitter:image" content="/assets/img/ut.png">
   
 
   
@@ -128,7 +128,7 @@
   
 
 
-  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="http://localhost:4000/">Computational Soft Materials Lab</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="/">Computational Soft Materials Lab</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
@@ -168,7 +168,7 @@
   
     <div class="avatar-container">
       <div class="avatar-img-border">
-        <a href="http://localhost:4000/">
+        <a href="/">
           <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/ut.png" />
         </a>
       </div>
@@ -247,121 +247,153 @@
     </div>
   </div>
 
-  <h2 class="text-center mb-4">Active Research Projects</h2>
+  <h2 class="text-center mb-4">Active Funded Projects</h2>
+
+  <style>
+    .funding-badge {
+      flex: 0 0 110px;
+      text-align: center;
+      margin-right: 1rem;
+    }
+    .funding-badge .badge {
+      font-size: 0.85rem;
+      padding: 0.45rem 0.6rem;
+      width: 100%;
+    }
+    .project-title {
+      font-weight: 700;
+      color: #222;
+    }
+    .project-subtitle {
+      font-style: italic;
+      color: #777;
+      font-size: 0.9rem;
+      margin-top: 0.15rem;
+    }
+    .project-tags .badge {
+      margin-right: 0.25rem;
+    }
+    .project-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .project-body {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .project-logo {
+      flex: 0 0 auto;
+      margin-left: 1rem;
+    }
+    @media (max-width: 576px) {
+      .funding-badge { flex-basis: 90px; }
+      .project-row { flex-wrap: wrap; }
+    }
+  </style>
 
   <ul class="list-group list-group-flush">
 
     <!-- Project 1 -->
     <li class="list-group-item">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="font-weight-bold text-dark">Multiscale Mechanics of Highly Deformable Strain-Gradient Electric Generators</div>
-        <div class="d-flex align-items-center">
-          <span class="badge badge-secondary mx-1">NSF CAREER</span>
-          <span class="badge badge-info mx-1">Soft Polymers</span>
-          <span class="badge badge-info mx-1">Flexoelectricity</span>
-          <a href="https://www.nsf.gov/" target="_blank"><img src="/assets/img/NSF_logo.png" alt="NSF" style="height:30px; margin-left:10px;"></a>
+      <div class="project-row">
+        <div class="funding-badge"><span class="badge badge-secondary">NSF CAREER</span></div>
+        <div class="project-body">
+          <div class="project-title">Multiscale Mechanics of Highly Deformable Strain-Gradient Electric Generators</div>
+          <div class="project-tags mt-1">
+            <span class="badge badge-info">Soft Polymers</span>
+            <span class="badge badge-info">Flexoelectricity</span>
+          </div>
+        </div>
+        <div class="project-logo">
+          <a href="https://www.nsf.gov/" target="_blank"><img src="/assets/img/NSF_logo.png" alt="NSF" style="height:30px;"></a>
         </div>
       </div>
     </li>
 
     <!-- Project 2 -->
     <li class="list-group-item">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="font-weight-bold text-dark">Designing 3D-Printable Materials that Mimic Soft Interfacial Gradients</div>
-        <div class="d-flex align-items-center">
-          <span class="badge badge-secondary mx-1">NSF MRSEC</span>
-          <span class="badge badge-info mx-1">Constitutive modeling</span>
-          <span class="badge badge-info mx-1">Digital materials</span>
-          <a href="https://www.nsf.gov/" target="_blank"><img src="/assets/img/NSF_logo.png" alt="NSF" style="height:30px; margin-left:10px;"></a>
-          <a href="https://www.utexas.edu/" target="_blank"><img src="/assets/img/ut_logo.png" alt="UT Austin" style="height:27px; margin-left:10px;"></a>
+      <div class="project-row">
+        <div class="funding-badge"><span class="badge badge-secondary">NSF MRSEC</span></div>
+        <div class="project-body">
+          <div class="project-title">Designing 3D-Printable Materials that Mimic Soft Interfacial Gradients</div>
+          <div class="project-subtitle">Center for Dynamics and Control of Materials, UT Austin</div>
+          <div class="project-tags mt-1">
+            <span class="badge badge-info">Constitutive modeling</span>
+            <span class="badge badge-info">Digital materials</span>
+          </div>
+        </div>
+        <div class="project-logo">
+          <a href="https://www.nsf.gov/" target="_blank"><img src="/assets/img/NSF_logo.png" alt="NSF" style="height:30px;"></a>
+          <a href="https://www.utexas.edu/" target="_blank"><img src="/assets/img/ut_logo.png" alt="UT Austin" style="height:27px; margin-left:6px;"></a>
         </div>
       </div>
     </li>
 
     <!-- Project 3 -->
     <li class="list-group-item">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="font-weight-bold text-dark">Computational Design of Synthetic Tissue-Like Multifunctional Materials</div>
-        <div class="d-flex align-items-center">
-          <span class="badge badge-secondary mx-1">NSF DMREF</span>
-          <span class="badge badge-info mx-1">Biomimetic cellular materials</span>
-          <span class="badge badge-info mx-1">Elastocapillary</span>
-          <a href="https://www.nsf.gov/" target="_blank"><img src="/assets/img/NSF_logo.png" alt="NSF" style="height:30px; margin-left:10px;"></a>
+      <div class="project-row">
+        <div class="funding-badge"><span class="badge badge-secondary">NSF DMREF</span></div>
+        <div class="project-body">
+          <div class="project-title">Computational Design of Synthetic Tissue-Like Multifunctional Materials</div>
+          <div class="project-tags mt-1">
+            <span class="badge badge-info">Biomimetic cellular materials</span>
+            <span class="badge badge-info">Elastocapillary</span>
+          </div>
+        </div>
+        <div class="project-logo">
+          <a href="https://www.nsf.gov/" target="_blank"><img src="/assets/img/NSF_logo.png" alt="NSF" style="height:30px;"></a>
         </div>
       </div>
     </li>
 
     <!-- Project 4 -->
     <li class="list-group-item">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="font-weight-bold text-dark">Mechanics of Ultra-Soft Inclusions in Fibrous Materials</div>
-        <div class="d-flex align-items-center">
-          <span class="badge badge-secondary mx-1">NSF</span>
-          <span class="badge badge-info mx-1">Fiber networks</span>
-          <span class="badge badge-info mx-1">Soft composite mechanics</span>
-          <a href="https://www.nsf.gov/" target="_blank"><img src="/assets/img/NSF_logo.png" alt="NSF" style="height:30px; margin-left:10px;"></a>
+      <div class="project-row">
+        <div class="funding-badge"><span class="badge badge-secondary">NSF</span></div>
+        <div class="project-body">
+          <div class="project-title">Mechanics of Ultra-Soft Inclusions in Fibrous Materials</div>
+          <div class="project-tags mt-1">
+            <span class="badge badge-info">Fiber networks</span>
+            <span class="badge badge-info">Soft composite mechanics</span>
+          </div>
+        </div>
+        <div class="project-logo">
+          <a href="https://www.nsf.gov/" target="_blank"><img src="/assets/img/NSF_logo.png" alt="NSF" style="height:30px;"></a>
         </div>
       </div>
     </li>
 
-       <!-- Project 5: DOE Official Title -->
+    <!-- Project 5 -->
     <li class="list-group-item">
-      <div class="d-flex justify-content-between align-items-center">
-<div class="font-weight-bold text-dark">Mechanics of Isoporous Membranes</div>
-         <div class="text-muted small"><em>Center for Materials for Water and Energy Systems (M-WET)</em></div>
-       <div class="d-flex align-items-center">
-          <span class="badge badge-secondary mx-1">DOE EFRC</span>
-          <span class="badge badge-info mx-1">Damage modeling</span>
-          <span class="badge badge-info mx-1">Porous materials</span>
+      <div class="project-row">
+        <div class="funding-badge"><span class="badge badge-secondary">DOE EFRC</span></div>
+        <div class="project-body">
+          <div class="project-title">Mechanics of Isoporous Membranes</div>
+          <div class="project-subtitle">Center for Materials for Water and Energy Systems (M-WET)</div>
+          <div class="project-tags mt-1">
+            <span class="badge badge-info">Damage modeling</span>
+            <span class="badge badge-info">Porous materials</span>
+          </div>
         </div>
       </div>
     </li>
 
-    <!-- Project 6: TxDOT Official Title -->
+    <!-- Project 6 -->
     <li class="list-group-item">
-      <div class="d-flex justify-content-between align-items-center">
-        <div class="font-weight-bold text-dark">Micromechanical modeling of transport and mechanics in nanoparticle-enhanced concrete</div>
-                <div class="text-muted small"><em>Evaluate Nanomaterials in Concrete for Improved Durability</em></div>
-        <div class="d-flex align-items-center">
-          <span class="badge badge-secondary mx-1">TxDOT</span>
-          <span class="badge badge-info mx-1">Multiscale modeling</span>
-          <span class="badge badge-info mx-1">Microstructure</span>
+      <div class="project-row">
+        <div class="funding-badge"><span class="badge badge-secondary">TxDOT</span></div>
+        <div class="project-body">
+          <div class="project-title">Micromechanical modeling of transport and mechanics in nanoparticle-enhanced concrete</div>
+          <div class="project-subtitle">Evaluate Nanomaterials in Concrete for Improved Durability</div>
+          <div class="project-tags mt-1">
+            <span class="badge badge-info">Multiscale modeling</span>
+            <span class="badge badge-info">Microstructure</span>
+          </div>
         </div>
       </div>
     </li>
 
-  </ul>
-
-  <!-- Current Funding -->
-  <h2 class="text-center mt-5 mb-4">Current Funding</h2>
-  <p class="text-center text-muted mb-4">Our research is supported by the following sponsors:</p>
-  <ul class="list-group list-group-flush">
-    <li class="list-group-item">
-      <span class="badge badge-secondary mr-2">NSF CAREER</span>
-      Multiscale Mechanics of Highly Deformable Strain-Gradient Electric Generators
-    </li>
-    <li class="list-group-item">
-      <span class="badge badge-secondary mr-2">NSF MRSEC</span>
-      Designing 3D-Printable Materials that Mimic Soft Interfacial Gradients
-      <span class="text-muted small">(Center for Dynamics and Control of Materials, UT Austin)</span>
-    </li>
-    <li class="list-group-item">
-      <span class="badge badge-secondary mr-2">NSF DMREF</span>
-      Computational Design of Synthetic Tissue-Like Multifunctional Materials
-    </li>
-    <li class="list-group-item">
-      <span class="badge badge-secondary mr-2">NSF</span>
-      Mechanics of Ultra-Soft Inclusions in Fibrous Materials
-    </li>
-    <li class="list-group-item">
-      <span class="badge badge-secondary mr-2">DOE EFRC</span>
-      Mechanics of Isoporous Membranes
-      <span class="text-muted small">(Center for Materials for Water and Energy Systems, M-WET)</span>
-    </li>
-    <li class="list-group-item">
-      <span class="badge badge-secondary mr-2">TxDOT</span>
-      Evaluate Nanomaterials in Concrete for Improved Durability
-    </li>
   </ul>
 </div>
 
@@ -417,7 +449,7 @@
       
         &nbsp;&bull;&nbsp;
         <span class="author-site">
-          <a href="http://localhost:4000/">https://cmsmlab.github.io/</a>
+          <a href="/">https://cmsmlab.github.io/</a>
         </span>
       
 

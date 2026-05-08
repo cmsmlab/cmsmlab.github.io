@@ -7,8 +7,8 @@
     
     <description>Group updates</description>
     
-    <link>http://localhost:4000/</link>
-    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+    <link>/</link>
+    <atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
     
     
       <item>
@@ -22,8 +22,8 @@
 
         </description>
         <pubDate>Mon, 01 Dec 2025 09:00:00 -0600</pubDate>
-        <link>http://localhost:4000/2025-12-01-EMI-Elasticity-Vice-Chair/</link>
-        <guid isPermaLink="true">http://localhost:4000/2025-12-01-EMI-Elasticity-Vice-Chair/</guid>
+        <link>/2025-12-01-EMI-Elasticity-Vice-Chair/</link>
+        <guid isPermaLink="true">/2025-12-01-EMI-Elasticity-Vice-Chair/</guid>
       </item>
     
       <item>
@@ -36,8 +36,8 @@
           Presented two talks at the Society of Engineering Science (SES) 2025 Conference in Atlanta, GA: B. Dortdivanlioglu, J. Wang, A. Umurhan — A Micromechanical, Coupled Mechanics Approach to Strain-Gradient-Driven Polarization in Soft Polymers J. Wang, B. Dortdivanlioglu — Size Effects in Soft Material Instabilities Using a Strain-Gradient Approach Both presentations...
         </description>
         <pubDate>Fri, 10 Oct 2025 10:00:00 -0500</pubDate>
-        <link>http://localhost:4000/2025-10-10-SES2025/</link>
-        <guid isPermaLink="true">http://localhost:4000/2025-10-10-SES2025/</guid>
+        <link>/2025-10-10-SES2025/</link>
+        <guid isPermaLink="true">/2025-10-10-SES2025/</guid>
       </item>
     
       <item>
@@ -55,8 +55,8 @@
 
         </description>
         <pubDate>Mon, 15 Sep 2025 10:00:00 -0500</pubDate>
-        <link>http://localhost:4000/2025-09-15-IGA2025-eindhoven/</link>
-        <guid isPermaLink="true">http://localhost:4000/2025-09-15-IGA2025-eindhoven/</guid>
+        <link>/2025-09-15-IGA2025-eindhoven/</link>
+        <guid isPermaLink="true">/2025-09-15-IGA2025-eindhoven/</guid>
       </item>
     
       <item>
@@ -69,8 +69,8 @@
           Presented two talks at the 18th U.S. National Congress on Computational Mechanics (USNCCM18) in Chicago, IL: B. Dortdivanlioglu, J. Wang — Strain-Gradient Effects on Instabilities in Soft Materials at Small Scales A. A. Madadi, B. Dortdivanlioglu — A Nitsche-Enhanced Extended B-Spline Mixed Material Point Method for Coupled Problems in Soft...
         </description>
         <pubDate>Fri, 25 Jul 2025 10:00:00 -0500</pubDate>
-        <link>http://localhost:4000/2025-07-25-IGA2025/</link>
-        <guid isPermaLink="true">http://localhost:4000/2025-07-25-IGA2025/</guid>
+        <link>/2025-07-25-IGA2025/</link>
+        <guid isPermaLink="true">/2025-07-25-IGA2025/</guid>
       </item>
     
       <item>
@@ -83,8 +83,8 @@
           Gave a talk at the Engineering Mechanics Institute Conference (EMI) 2025 in Anaheim, CA: B. Dortdivanlioglu, J. Wang — Size-Dependent Instabilities in Highly Deformable Strain-Gradient Materials The work behind this talk is led by PhD student Jun and develops a strain-gradient framework for predicting how length-scale effects shift the onset...
         </description>
         <pubDate>Sun, 01 Jun 2025 10:00:00 -0500</pubDate>
-        <link>http://localhost:4000/2025-06-01-EMI2025/</link>
-        <guid isPermaLink="true">http://localhost:4000/2025-06-01-EMI2025/</guid>
+        <link>/2025-06-01-EMI2025/</link>
+        <guid isPermaLink="true">/2025-06-01-EMI2025/</guid>
       </item>
     
       <item>
@@ -101,8 +101,8 @@ then as vice chair, and finally as chair over the next four years.
 
         </description>
         <pubDate>Tue, 25 Feb 2025 22:34:24 -0600</pubDate>
-        <link>http://localhost:4000/2025-02-25-berkin-is-elected-as-the-new-editor-of-the-newsletter-for-the-asme-technical-committee-of-mechanics-of-soft-materials/</link>
-        <guid isPermaLink="true">http://localhost:4000/2025-02-25-berkin-is-elected-as-the-new-editor-of-the-newsletter-for-the-asme-technical-committee-of-mechanics-of-soft-materials/</guid>
+        <link>/2025-02-25-berkin-is-elected-as-the-new-editor-of-the-newsletter-for-the-asme-technical-committee-of-mechanics-of-soft-materials/</link>
+        <guid isPermaLink="true">/2025-02-25-berkin-is-elected-as-the-new-editor-of-the-newsletter-for-the-asme-technical-committee-of-mechanics-of-soft-materials/</guid>
       </item>
     
       <item>
@@ -115,8 +115,8 @@ then as vice chair, and finally as chair over the next four years.
           The National Science Foundation has selected our group’s proposal CAREER: Multiscale Mechanics of Highly Deformable Strain-Gradient Electric Generators for the NSF CAREER Award. The project develops theory and simulation tools to understand how strain-gradient effects, finite deformation, and electromechanical coupling come together in soft polymeric generators — and how those...
         </description>
         <pubDate>Thu, 13 Feb 2025 19:01:01 -0600</pubDate>
-        <link>http://localhost:4000/2025-02-13-NSFCAREER/</link>
-        <guid isPermaLink="true">http://localhost:4000/2025-02-13-NSFCAREER/</guid>
+        <link>/2025-02-13-NSFCAREER/</link>
+        <guid isPermaLink="true">/2025-02-13-NSFCAREER/</guid>
       </item>
     
       <item>
@@ -133,8 +133,8 @@ Stabilized Extended B-Spline Material Point Method.
 
         </description>
         <pubDate>Thu, 31 Oct 2024 11:20:44 -0500</pubDate>
-        <link>http://localhost:4000/2024-10-31-ashkan-received-the-kolodzey-travel-award/</link>
-        <guid isPermaLink="true">http://localhost:4000/2024-10-31-ashkan-received-the-kolodzey-travel-award/</guid>
+        <link>/2024-10-31-ashkan-received-the-kolodzey-travel-award/</link>
+        <guid isPermaLink="true">/2024-10-31-ashkan-received-the-kolodzey-travel-award/</guid>
       </item>
     
       <item>
@@ -153,8 +153,8 @@ Material Point Method. Well done, Ashkan!
 
         </description>
         <pubDate>Mon, 09 Sep 2024 12:55:01 -0500</pubDate>
-        <link>http://localhost:4000/2024-09-09-ashkan-ali-madadi-presents-at-the-15th-annual-mpm-workshop/</link>
-        <guid isPermaLink="true">http://localhost:4000/2024-09-09-ashkan-ali-madadi-presents-at-the-15th-annual-mpm-workshop/</guid>
+        <link>/2024-09-09-ashkan-ali-madadi-presents-at-the-15th-annual-mpm-workshop/</link>
+        <guid isPermaLink="true">/2024-09-09-ashkan-ali-madadi-presents-at-the-15th-annual-mpm-workshop/</guid>
       </item>
     
       <item>
@@ -171,8 +171,8 @@ contributions in their fields.
 
         </description>
         <pubDate>Mon, 12 Aug 2024 12:57:19 -0500</pubDate>
-        <link>http://localhost:4000/2024-08-12-congratulations-to-our-lab-s-ph-d-students-on-receiving-the-george-j-heuer-jr-ph-d-endowed-fellowship/</link>
-        <guid isPermaLink="true">http://localhost:4000/2024-08-12-congratulations-to-our-lab-s-ph-d-students-on-receiving-the-george-j-heuer-jr-ph-d-endowed-fellowship/</guid>
+        <link>/2024-08-12-congratulations-to-our-lab-s-ph-d-students-on-receiving-the-george-j-heuer-jr-ph-d-endowed-fellowship/</link>
+        <guid isPermaLink="true">/2024-08-12-congratulations-to-our-lab-s-ph-d-students-on-receiving-the-george-j-heuer-jr-ph-d-endowed-fellowship/</guid>
       </item>
     
       <item>
@@ -192,8 +192,8 @@ from May 28 to 31. Congratulations to Ashkan!
 
         </description>
         <pubDate>Fri, 31 May 2024 14:57:00 -0500</pubDate>
-        <link>http://localhost:4000/2024-05-31-ashkan-ali-madadi-presents-at-the-engineering-mechanics-institute-conference-2024/</link>
-        <guid isPermaLink="true">http://localhost:4000/2024-05-31-ashkan-ali-madadi-presents-at-the-engineering-mechanics-institute-conference-2024/</guid>
+        <link>/2024-05-31-ashkan-ali-madadi-presents-at-the-engineering-mechanics-institute-conference-2024/</link>
+        <guid isPermaLink="true">/2024-05-31-ashkan-ali-madadi-presents-at-the-engineering-mechanics-institute-conference-2024/</guid>
       </item>
     
       <item>
@@ -206,8 +206,8 @@ from May 28 to 31. Congratulations to Ashkan!
           Ashkan and Ekim, Ph.D. students in our lab, presented their collaborative research titled “Modeling Nearly Incompressible Behavior in Soft Solids Using the Material Point Method” at the Fracture of Soft Materials Symposium, held in Austin from May 12 to 16, 2024. Their work, co-authored with Richard, was showcased during the...
         </description>
         <pubDate>Fri, 17 May 2024 15:05:00 -0500</pubDate>
-        <link>http://localhost:4000/2024-05-17-ashkan-ali-madadi-and-ekim-ekiz-present-collaborative-research-at-the-fracture-of-soft-materials-symposium/</link>
-        <guid isPermaLink="true">http://localhost:4000/2024-05-17-ashkan-ali-madadi-and-ekim-ekiz-present-collaborative-research-at-the-fracture-of-soft-materials-symposium/</guid>
+        <link>/2024-05-17-ashkan-ali-madadi-and-ekim-ekiz-present-collaborative-research-at-the-fracture-of-soft-materials-symposium/</link>
+        <guid isPermaLink="true">/2024-05-17-ashkan-ali-madadi-and-ekim-ekiz-present-collaborative-research-at-the-fracture-of-soft-materials-symposium/</guid>
       </item>
     
       <item>
@@ -224,8 +224,8 @@ CAEE students and selected by a committee of previous award recipients.
 
         </description>
         <pubDate>Wed, 08 May 2024 10:58:00 -0500</pubDate>
-        <link>http://localhost:4000/2024-05-08-prof-berkin-receives-caee-s-2024-faculty-teaching-award/</link>
-        <guid isPermaLink="true">http://localhost:4000/2024-05-08-prof-berkin-receives-caee-s-2024-faculty-teaching-award/</guid>
+        <link>/2024-05-08-prof-berkin-receives-caee-s-2024-faculty-teaching-award/</link>
+        <guid isPermaLink="true">/2024-05-08-prof-berkin-receives-caee-s-2024-faculty-teaching-award/</guid>
       </item>
     
       <item>
@@ -244,8 +244,8 @@ Minneapolis from March 3 to 8. Congratulations to Ashkan!
 
         </description>
         <pubDate>Fri, 08 Mar 2024 11:59:34 -0600</pubDate>
-        <link>http://localhost:4000/2024-03-08-ashkan-ali-madadi-presents-at-the-american-physical-society-march-meeting-2024/</link>
-        <guid isPermaLink="true">http://localhost:4000/2024-03-08-ashkan-ali-madadi-presents-at-the-american-physical-society-march-meeting-2024/</guid>
+        <link>/2024-03-08-ashkan-ali-madadi-presents-at-the-american-physical-society-march-meeting-2024/</link>
+        <guid isPermaLink="true">/2024-03-08-ashkan-ali-madadi-presents-at-the-american-physical-society-march-meeting-2024/</guid>
       </item>
     
       <item>
@@ -264,8 +264,8 @@ Minneapolis from March 3 to 8. Congratulations to Ashkan!
 
         </description>
         <pubDate>Tue, 12 Dec 2023 06:50:00 -0600</pubDate>
-        <link>http://localhost:4000/2023-12-12-end-of-year-gathering-2023/</link>
-        <guid isPermaLink="true">http://localhost:4000/2023-12-12-end-of-year-gathering-2023/</guid>
+        <link>/2023-12-12-end-of-year-gathering-2023/</link>
+        <guid isPermaLink="true">/2023-12-12-end-of-year-gathering-2023/</guid>
       </item>
     
       <item>
@@ -278,8 +278,8 @@ Minneapolis from March 3 to 8. Congratulations to Ashkan!
           Minneapolis, October 8-11, 2023 PhD students, Ashkan, Derya, Jun, and Ekim, participated in the 2023 Society of Engineering Science Annual Technical Meeting in Minneapolis. Ashkan presented on “a subdivision-stabilized isogeometric material point method for strongly coupled diffusion in hydrogels, a new Eulerian-Lagrangian formulation for highly deformable materials with diffusion. Ashkan...
         </description>
         <pubDate>Thu, 12 Oct 2023 12:34:05 -0500</pubDate>
-        <link>http://localhost:4000/2023-10-12-our-group-attends-the-2023-ses-conference-in-minneapolis/</link>
-        <guid isPermaLink="true">http://localhost:4000/2023-10-12-our-group-attends-the-2023-ses-conference-in-minneapolis/</guid>
+        <link>/2023-10-12-our-group-attends-the-2023-ses-conference-in-minneapolis/</link>
+        <guid isPermaLink="true">/2023-10-12-our-group-attends-the-2023-ses-conference-in-minneapolis/</guid>
       </item>
     
       <item>
@@ -295,8 +295,8 @@ Minneapolis from March 3 to 8. Congratulations to Ashkan!
 
         </description>
         <pubDate>Fri, 29 Sep 2023 09:54:55 -0500</pubDate>
-        <link>http://localhost:4000/2023-09-29-caee-department-naming-event/</link>
-        <guid isPermaLink="true">http://localhost:4000/2023-09-29-caee-department-naming-event/</guid>
+        <link>/2023-09-29-caee-department-naming-event/</link>
+        <guid isPermaLink="true">/2023-09-29-caee-department-naming-event/</guid>
       </item>
     
       <item>
@@ -315,8 +315,8 @@ viscoelasto-capillary deformations in soft materials.
 
         </description>
         <pubDate>Thu, 31 Aug 2023 17:29:27 -0500</pubDate>
-        <link>http://localhost:4000/2023-08-31-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-17th-usnccm-conference/</link>
-        <guid isPermaLink="true">http://localhost:4000/2023-08-31-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-17th-usnccm-conference/</guid>
+        <link>/2023-08-31-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-17th-usnccm-conference/</link>
+        <guid isPermaLink="true">/2023-08-31-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-17th-usnccm-conference/</guid>
       </item>
     
       <item>
@@ -333,8 +333,8 @@ talked about modeling adhesive and capillary forces in soft materials.
 
         </description>
         <pubDate>Wed, 30 Aug 2023 17:30:51 -0500</pubDate>
-        <link>http://localhost:4000/2023-08-30-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-emi2023-conference/</link>
-        <guid isPermaLink="true">http://localhost:4000/2023-08-30-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-emi2023-conference/</guid>
+        <link>/2023-08-30-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-emi2023-conference/</link>
+        <guid isPermaLink="true">/2023-08-30-ashkan-ali-madadi-and-dr-berkin-dortdivanlioglu-attended-the-emi2023-conference/</guid>
       </item>
     
       <item>
@@ -351,8 +351,8 @@ Congrats, Richard on this well-deserved recognition!
 
         </description>
         <pubDate>Sat, 26 Aug 2023 10:29:39 -0500</pubDate>
-        <link>http://localhost:4000/2023-08-26-richard-noh-awarded-prestigious-dr-marco-antonio-zuniga-izaguirre-endowed-scholarship/</link>
-        <guid isPermaLink="true">http://localhost:4000/2023-08-26-richard-noh-awarded-prestigious-dr-marco-antonio-zuniga-izaguirre-endowed-scholarship/</guid>
+        <link>/2023-08-26-richard-noh-awarded-prestigious-dr-marco-antonio-zuniga-izaguirre-endowed-scholarship/</link>
+        <guid isPermaLink="true">/2023-08-26-richard-noh-awarded-prestigious-dr-marco-antonio-zuniga-izaguirre-endowed-scholarship/</guid>
       </item>
     
   </channel>
