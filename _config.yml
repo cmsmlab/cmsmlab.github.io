@@ -313,6 +313,9 @@ exclude:
   - README.md
   - screenshot.png
   - docs/
+  - archive/
+  - CLAUDE.md
+  - STRUCTURE.md
 
 plugins:
   - jekyll-paginate
