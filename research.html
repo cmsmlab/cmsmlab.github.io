@@ -64,12 +64,68 @@ share-description: "Research in the CMSM Lab — theory, simulation, and table-t
       .funding-badge { flex-basis: 90px; }
       .project-row { flex-wrap: wrap; }
     }
+
+    /* Simulation Highlights grid */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    @media (max-width: 992px) {
+      .sim-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 576px) {
+      .sim-grid { grid-template-columns: 1fr; }
+    }
+    .sim-card {
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      padding: 0.75rem;
+      text-align: center;
+      transition: box-shadow 0.15s ease;
+    }
+    .sim-card:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .sim-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 4px;
+      margin-bottom: 0.6rem;
+    }
+    .sim-caption {
+      font-weight: 600;
+      color: #222;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+    .sim-link {
+      font-size: 0.8rem;
+      color: #777;
+    }
+    .sim-link a {
+      color: #BF5700;
+      text-decoration: none;
+    }
+    .sim-link a:hover {
+      text-decoration: underline;
+    }
+    .sim-intro {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
   </style>
 
   <ul class="list-group list-group-flush">
 
     <!-- Project 1 -->
-    <li class="list-group-item">
+    <li class="list-group-item" id="proj-career">
       <div class="project-row">
         <div class="funding-badge"><span class="badge badge-secondary">NSF CAREER</span></div>
         <div class="project-body">
@@ -86,7 +142,7 @@ share-description: "Research in the CMSM Lab — theory, simulation, and table-t
     </li>
 
     <!-- Project 2 -->
-    <li class="list-group-item">
+    <li class="list-group-item" id="proj-mrsec">
       <div class="project-row">
         <div class="funding-badge"><span class="badge badge-secondary">NSF MRSEC</span></div>
         <div class="project-body">
@@ -105,7 +161,7 @@ share-description: "Research in the CMSM Lab — theory, simulation, and table-t
     </li>
 
     <!-- Project 3 -->
-    <li class="list-group-item">
+    <li class="list-group-item" id="proj-dmref">
       <div class="project-row">
         <div class="funding-badge"><span class="badge badge-secondary">NSF DMREF</span></div>
         <div class="project-body">
@@ -122,7 +178,7 @@ share-description: "Research in the CMSM Lab — theory, simulation, and table-t
     </li>
 
     <!-- Project 4 -->
-    <li class="list-group-item">
+    <li class="list-group-item" id="proj-fibrous">
       <div class="project-row">
         <div class="funding-badge"><span class="badge badge-secondary">NSF</span></div>
         <div class="project-body">
@@ -139,7 +195,7 @@ share-description: "Research in the CMSM Lab — theory, simulation, and table-t
     </li>
 
     <!-- Project 5 -->
-    <li class="list-group-item">
+    <li class="list-group-item" id="proj-mwet">
       <div class="project-row">
         <div class="funding-badge"><span class="badge badge-secondary">DOE EFRC</span></div>
         <div class="project-body">
@@ -154,7 +210,7 @@ share-description: "Research in the CMSM Lab — theory, simulation, and table-t
     </li>
 
     <!-- Project 6 -->
-    <li class="list-group-item">
+    <li class="list-group-item" id="proj-txdot">
       <div class="project-row">
         <div class="funding-badge"><span class="badge badge-secondary">TxDOT</span></div>
         <div class="project-body">
@@ -169,4 +225,48 @@ share-description: "Research in the CMSM Lab — theory, simulation, and table-t
     </li>
 
   </ul>
+
+  <!-- Simulation Highlights -->
+  <h2 class="text-center mt-5 mb-2">Simulation Highlights</h2>
+  <p class="sim-intro">A glimpse of what we simulate.</p>
+
+  <div class="sim-grid">
+
+    <div class="sim-card">
+      <img src="/assets/gifs/LiquidBridge.gif" alt="Liquid-bridge extension" loading="lazy">
+      <div class="sim-caption">Liquid-bridge extension</div>
+      <div class="sim-link"><a href="#proj-career">NSF CAREER</a></div>
+    </div>
+
+    <div class="sim-card">
+      <img src="/assets/gifs/sphereDropletSquish_30-1.gif" alt="Soft droplet contact" loading="lazy">
+      <div class="sim-caption">Soft droplet contact</div>
+      <div class="sim-link"><a href="#proj-dmref">NSF DMREF</a></div>
+    </div>
+
+    <div class="sim-card">
+      <img src="/assets/gifs/ResultContourPC_Continous.gif" alt="Porous block indentation" loading="lazy">
+      <div class="sim-caption">Porous block indentation</div>
+      <div class="sim-link"><a href="#proj-mwet">DOE EFRC</a></div>
+    </div>
+
+    <div class="sim-card">
+      <img src="/assets/gifs/Pressure3D_1-1_resized.gif" alt="Torsion instability" loading="lazy">
+      <div class="sim-caption">Torsion instability</div>
+      <div class="sim-link"><a href="#proj-career">NSF CAREER</a></div>
+    </div>
+
+    <div class="sim-card">
+      <img src="/assets/gifs/spherical_shell_bilayer_droplets_l0_1_r10.gif" alt="Bulk-boundary coupling" loading="lazy">
+      <div class="sim-caption">Bulk-boundary coupling</div>
+      <div class="sim-link"><a href="#proj-mrsec">NSF MRSEC</a></div>
+    </div>
+
+    <div class="sim-card">
+      <img src="/assets/gifs/output.gif" alt="Contact of swelling gels" loading="lazy">
+      <div class="sim-caption">Contact of swelling gels</div>
+      <div class="sim-link"><a href="#proj-dmref">NSF DMREF</a></div>
+    </div>
+
+  </div>
 </div>
