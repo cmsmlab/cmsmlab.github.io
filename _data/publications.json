@@ -7,6 +7,8 @@
         "ID": "noh2026modeling",
         "journal": "Computational Mechanics",
         "note": "in press",
+        "code_url": "https://github.com/cmsmlab/membrane-point-method",
+        "code_label": "membrane-point-method",
         "bibtex": "@article{noh2026modeling,\n    author = {Noh, Richard and Ali Madadi, Ashkan and Dortdivanlioglu, Berkin},\n    title = {Modeling Surface Tension in Fluid Membranes and Soft Materials using Surface-Enriched Convected Particle Domain Interpolation (CPDI)},\n    journal = {Computational Mechanics},\n    year = {2026},\n    note = {in press}\n}\n",
         "abstract": "From the deformation of soft gels to the stability of lipid bilayers and emulsions, surface tension governs the mechanics of ultra-soft solids and fluid membranes. Modeling these phenomena with conventional mesh-based methods often fails under large deformations due to severe mesh distortion. The particle-based material point method (MPM) handles large strains effectively, but most MPM formulations approximate surfaces implicitly via level-set methods, introducing auxiliary equations and diffusing geometric accuracy. In this work, we present a physically consistent, sharp-interface formulation of surface tension in MPM that represents surface geometry explicitly. We extend the Convected Particle Domain Interpolation (CPDI) framework to define new 2D and 3D Convected Surface Domain Interpolation (CSDI) shape functions, where each surface point carries a zero-thickness CSDI element that discretizes the physical domain boundary, enabling direct incorporation of surface tension. We further introduce the membrane point method, which uses CSDI to simulate fluid membranes with surface-only momentum balance. We verify this surface-enriched MPM implementation using both compressible viscous fluids and hyperelastic bulk materials. Through numerical examples, including minimal surfaces, elasto-capillary deformation, pendant drops, and soft-body contact under surface tension, we demonstrate the method's accuracy and robustness under large deformations, establishing a foundational tool for modeling elasto-capillarity in ultra-soft materials and membranes."
     },
@@ -28,17 +30,16 @@
     {
         "author": "Fica, Aida and Torbett, McKayla and West, Samuel and Rao, Malika and Dhiman, Raman and Wang, Jun and Gao, Yang and Tu, Yu-Ming and Behera, Harekrushna and Roc, Claude and Grogan, Kyler and Keitz, Benjamin and Hickey, Robert and Rosales, Adrianne and Dortdivanlioglu, Berkin and Sarles, Stephen and Kumar, Manish",
         "title": "3D-printable bilayer-stabilized jammed emulsions as scalable biological tissue mimics",
-        "year": "2025",
+        "year": "2026",
         "ENTRYTYPE": "article",
-        "ID": "fica20253d",
-        "publisher": "ChemRxiv",
-        "doi": "10.26434/chemrxiv-2025-xccxm-v2",
+        "ID": "fica20263d",
+        "journal": "Nature Materials",
+        "note": "in press",
+        "preprint_doi": "10.26434/chemrxiv-2025-xccxm-v2",
+        "code_url": "https://github.com/cmsmlab/JIBEs_Diffusion",
+        "code_label": "JIBEs",
         "abstract": "We present Jammed Interconnected Bilayer Emulsions (JIBEs) as a class of tissue-like materials with macroscopic scalability and rapid fabrication, comprising millions to billions of bilayer-separated aqueous compartments. These materials closely mimic the organizational structure and properties of biological tissues. Our rapid self-assembly method for producing JIBEs generates milliliter- to deciliter-scale volumes within minutes representing over 10,000-fold improvement in the fabrication speed of droplet-based artificial tissues compared to existing droplet-based methods, enabling the creation of a truly macroscopic material. The method is highly adaptable to a wide range of amphiphiles, including lipids and block-copolymers, providing flexibility in tailoring JIBEs for diverse applications. The jammed architecture of JIBEs imparts unique properties, such as direct 3D-printabilty into aqueous solutions or onto air-exposed surfaces. Their membrane-bound structure also allows functionalization with biological and artificial nanochannels, enabling the material to exhibit the specific properties of the incorporated channels. In this work, we demonstrate three key features of JIBEs using distinct ion channels: tunable conductance, selective transport, and memristance. Incorporating an E. coli outer membrane protein increased ionic conductance by approximately 4,400-fold compared to non-functionalized tissues. Introducing a peptide-based transporter produced ion-selective membranes capable of discriminating ammonium over sodium at a ratio greater than 15:1. Finally, incorporating a model voltage-gated pore enabled the construction of a massively networked memristive device. We propose that functionalizing JIBEs with additional membrane proteins or synthetic ion channels could unlock a broad range of applications, including separations, energy generation and storage, neuromorphic computing, tissue engineering, drug delivery, and soft robotics.",
-        "bibtex": "@article{fica20253d,\n    author = {Fica, Aida and Torbett, McKayla and West, Samuel and Rao, Malika and Dhiman, Raman and Wang, Jun and Gao, Yang and Tu, Yu-Ming and Behera, Harekrushna and Roc, Claude and Grogan, Kyler and Keitz, Benjamin and Hickey, Robert and Rosales, Adrianne and Dortdivanlioglu, Berkin and Sarles, Stephen and Kumar, Manish},\n    title = {3D-printable bilayer-stabilized jammed emulsions as scalable biological tissue mimics},\n    journal = {ChemRxiv},\n    volume = {2025},\n    number = {0305},\n    year = {2025},\n    doi = {10.26434/chemrxiv-2025-xccxm-v2},\n    url = {https://chemrxiv.org/doi/abs/10.26434/chemrxiv-2025-xccxm-v2}\n}\n",
-        "url": "https://chemrxiv.org/doi/abs/10.26434/chemrxiv-2025-xccxm-v2",
-        "volume": "2025",
-        "number": "0305",
-        "journal": "ChemRxiv"
+        "bibtex": "@article{fica20263d,\n    author = {Fica, Aida and Torbett, McKayla and West, Samuel and Rao, Malika and Dhiman, Raman and Wang, Jun and Gao, Yang and Tu, Yu-Ming and Behera, Harekrushna and Roc, Claude and Grogan, Kyler and Keitz, Benjamin and Hickey, Robert and Rosales, Adrianne and Dortdivanlioglu, Berkin and Sarles, Stephen and Kumar, Manish},\n    title = {3D-printable bilayer-stabilized jammed emulsions as scalable biological tissue mimics},\n    journal = {Nature Materials},\n    year = {2026},\n    note = {in press}\n}\n"
     },
     {
         "author": "Granhold, Sascha L and Madariaga, Alberto and Lohr, Matthew J and Jones, Sarah and Robinson, Andrew J and Cosgriff-Hernandez, Elizabeth and Lejeune, Emma and Dortdivanlioglu, Berkin and Rausch, Manuel K",
