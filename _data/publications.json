@@ -1,5 +1,16 @@
 [
     {
+        "author": "Noh, Richard and Ali Madadi, Ashkan and Dortdivanlioglu, Berkin",
+        "title": "Modeling Surface Tension in Fluid Membranes and Soft Materials using Surface-Enriched Convected Particle Domain Interpolation (CPDI)",
+        "year": "2026",
+        "ENTRYTYPE": "article",
+        "ID": "noh2026modeling",
+        "journal": "Computational Mechanics",
+        "note": "in press",
+        "bibtex": "@article{noh2026modeling,\n    author = {Noh, Richard and Ali Madadi, Ashkan and Dortdivanlioglu, Berkin},\n    title = {Modeling Surface Tension in Fluid Membranes and Soft Materials using Surface-Enriched Convected Particle Domain Interpolation (CPDI)},\n    journal = {Computational Mechanics},\n    year = {2026},\n    note = {in press}\n}\n",
+        "abstract": "From the deformation of soft gels to the stability of lipid bilayers and emulsions, surface tension governs the mechanics of ultra-soft solids and fluid membranes. Modeling these phenomena with conventional mesh-based methods often fails under large deformations due to severe mesh distortion. The particle-based material point method (MPM) handles large strains effectively, but most MPM formulations approximate surfaces implicitly via level-set methods, introducing auxiliary equations and diffusing geometric accuracy. In this work, we present a physically consistent, sharp-interface formulation of surface tension in MPM that represents surface geometry explicitly. We extend the Convected Particle Domain Interpolation (CPDI) framework to define new 2D and 3D Convected Surface Domain Interpolation (CSDI) shape functions, where each surface point carries a zero-thickness CSDI element that discretizes the physical domain boundary, enabling direct incorporation of surface tension. We further introduce the membrane point method, which uses CSDI to simulate fluid membranes with surface-only momentum balance. We verify this surface-enriched MPM implementation using both compressible viscous fluids and hyperelastic bulk materials. Through numerical examples, including minimal surfaces, elasto-capillary deformation, pendant drops, and soft-body contact under surface tension, we demonstrate the method's accuracy and robustness under large deformations, establishing a foundational tool for modeling elasto-capillarity in ultra-soft materials and membranes."
+    },
+    {
         "author": "Ali Madadi, Ashkan and Dortdivanlioglu, Berkin",
         "title": "Extended Mixed B-Spline Material Point Method With Nitsche's Method for Quasi-Compressible Soft Materials",
         "year": "2025",
