@@ -170,15 +170,17 @@ Two papers developing a stabilized mixed Material Point Method (MPM) framework f
                     <span class="pub-authors" data-pub-id="{{ publi.ID }}">{{ publi.author }}</span>
                     <span class="pub-date"> ({{ publi.year }}).</span>
                     <span class="pub-title"> {{ publi.title }}.</span>
-                    {% if publi.journal and publi.journal != '' %}<span class="pub-container"> <em>{{ publi.journal }}</em>{% if publi.volume %}, <em>{{ publi.volume }}</em>{% if publi.number %}({{ publi.number }}){% endif %}{% endif %}{% if publi.pages %}, {{ publi.pages }}{% endif %}.</span>{% endif %}
+                    {% if publi.journal and publi.journal != '' %}<span class="pub-container"> <em>{{ publi.journal }}</em>{% if publi.volume %}, <em>{{ publi.volume }}</em>{% if publi.number %}({{ publi.number }}){% endif %}{% endif %}{% if publi.pages %}, {{ publi.pages }}{% endif %}{% if publi.note and publi.note != '' %}, <strong>{{ publi.note }}</strong>{% endif %}.</span>{% endif %}
                   </span>
                 </a>
               </h4>
             </div>
             <div class="extra-buttons">
+              {% unless publi.note contains 'in press' or publi.note contains 'forthcoming' %}
               <a class="btn btn-outline-secondary"
                  href="https://scholar.google.com/scholar?q={{ publi.title | url_encode }}"
                  role="button" target="_blank">Google Scholar</a>
+              {% endunless %}
               <button type="button" class="btn btn-outline-secondary"
                       data-toggle="modal" data-target="#bibtexModal{{ uid }}">
                 Export BibTeX
