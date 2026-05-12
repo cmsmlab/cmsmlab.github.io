@@ -194,6 +194,20 @@ Two papers developing a stabilized mixed Material Point Method (MPM) framework f
                    href="{{ publi.url }}"
                    role="button" target="_blank">Link</a>
               {% endif %}
+              {% if publi.preprint_url %}
+                <a class="btn btn-outline-secondary"
+                   href="{{ publi.preprint_url }}"
+                   role="button" target="_blank">Preprint</a>
+              {% elsif publi.preprint_doi %}
+                <a class="btn btn-outline-secondary"
+                   href="https://doi.org/{{ publi.preprint_doi }}"
+                   role="button" target="_blank">Preprint</a>
+              {% endif %}
+              {% if publi.code_url %}
+                <a class="btn btn-dark"
+                   href="{{ publi.code_url }}"
+                   role="button" target="_blank"><i class="fab fa-github"></i> {{ publi.code_label | default: 'Code' }}</a>
+              {% endif %}
             </div>
             <div id="collapse{{ uid }}" class="panel-collapse collapse">
               <div class="panel-body">
