@@ -97,7 +97,7 @@ share-description: "Peer-reviewed publications from the Computational Mechanics 
     <!-- Featured Paper 1 -->
     <div class="col-md-4 mb-4">
       <div class="card h-100">
-        <img src="/assets/gifs/output_20250121_1632.gif" class="card-img-top" alt="Simulation of a jammed bilayer-stabilized emulsion network" style="height:200px; object-fit: cover;">
+        <img src="/assets/gifs/jibe-zoom.gif" class="card-img-top" alt="Zoomed-in views of a jammed bilayer-stabilized emulsion network" style="height:200px; object-fit: cover;">
         <div class="card-body">
           <h5 class="card-title">Modeling droplet interface bilayers (DIBs)</h5>
           <p class="card-text">
