@@ -10,6 +10,9 @@ _site/STRUCTURE.md
 # Local archive of orphan/legacy files — kept on disk, not in git
 archive/
 
+# Local-only test/scratch folder — do not ship
+test/
+
 # Jekyll build output — GitHub Pages rebuilds from source, no need to track
 _site/
 .jekyll-cache/
