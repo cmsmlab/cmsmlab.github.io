@@ -1812,16 +1812,20 @@
      panel grows a button straight to it; leave it empty and copy-paste is the
      whole flow. */
 
-  var FEEDBACK_URL = "";
+  var FEEDBACK_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=peLXMdi9TkGel76pmOvf4S44VhUkyv1FlG4mT9tVN29URVEzQ0lHNE5LNEVSUkZIQTJTQU8zUTdBUi4u";
 
   var fbPanel = document.getElementById("fb-panel");
   var fbText = document.getElementById("fb-text");
   var fbMsg = document.getElementById("fb-msg");
   var fbLink = document.getElementById("fb-link");
+  var FB_TIP_DEFAULT = fbMsg.textContent;
 
   if (FEEDBACK_URL) {
     fbLink.href = FEEDBACK_URL;
     fbLink.hidden = false;
+    FB_TIP_DEFAULT = "Press Copy report, then open the form and paste it into the technical " +
+      "details question. The report carries the exact structure on your screen.";
+    fbMsg.textContent = FB_TIP_DEFAULT;
   }
 
   document.getElementById("fb-open").addEventListener("click", function () {
