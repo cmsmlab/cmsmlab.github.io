@@ -543,14 +543,56 @@
   .swatch { width: 20px; height: 11px; flex: none; }
 
   footer.colophon {
-    margin-top: 40px;
+    margin-top: 34px;
     padding-top: 18px;
     border-top: 1px solid var(--rule-soft);
     font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-size: 11.5px;
+    line-height: 1.65;
     letter-spacing: .05em;
     color: var(--ink-3);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
   }
+  footer.colophon p { margin: 0; max-width: 78ch; }
+
+  .fb { margin-top: 5px; display: flex; flex-direction: column; gap: 11px; align-items: flex-start; }
+  .fb__panel {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    background: var(--panel);
+    border: 1px solid var(--rule);
+  }
+  .fb__panel textarea {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 9px 11px;
+    width: 100%;
+    resize: vertical;
+  }
+  .fb__panel textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .btnlink {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--rule);
+    padding: 9px 18px;
+    text-decoration: none;
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+  }
+  .btnlink:hover { background: var(--panel-2); }
 
   @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
 </style>
@@ -698,7 +740,28 @@
     <li><span class="swatch" style="background:repeating-linear-gradient(90deg,var(--ghost) 0 4px,transparent 4px 8px);height:2px"></span> original shape</li>
   </ul>
 
-  <footer class="colophon">CE 329 Structural Analysis &middot; Fall 2026 &middot; B. Dortdivanlioglu</footer>
+  <footer class="colophon">
+    <p>CE 329 Structural Analysis &middot; Teaching demo</p>
+    <p>Built with AI assistance. The stability verdict is an exact computation on the structure you
+    draw, not generated text. Nothing you do here is graded or recorded.</p>
+    <div class="fb">
+      <button id="fb-open" class="ghost" type="button">Report a problem</button>
+      <div class="fb__panel" id="fb-panel" hidden>
+        <label class="field">What went wrong?
+          <textarea id="fb-text" rows="3" spellcheck="true"
+            placeholder="What did you expect, and what happened instead?"></textarea>
+        </label>
+        <div class="row">
+          <button id="fb-copy" type="button">Copy report</button>
+          <a id="fb-link" class="btnlink" hidden target="_blank" rel="noopener">Open the feedback form</a>
+        </div>
+        <p class="fine" id="fb-msg">
+          The report includes the exact structure on your screen, so it can be reproduced. Paste it
+          wherever your instructor asks for it.
+        </p>
+      </div>
+    </div>
+  </footer>
 </div>
 
 <script>
@@ -1742,6 +1805,79 @@
       loadDef(got.def, got.name || "someone");
     } catch (e) { /* a mangled link just leaves the default preset in place */ }
   })();
+
+  /* ================= problem reports ================= */
+  /* No backend: the page builds a report the student pastes wherever you ask
+     for it. Set FEEDBACK_URL to a Canvas discussion or a Google Form and the
+     panel grows a button straight to it; leave it empty and copy-paste is the
+     whole flow. */
+
+  var FEEDBACK_URL = "";
+
+  var fbPanel = document.getElementById("fb-panel");
+  var fbText = document.getElementById("fb-text");
+  var fbMsg = document.getElementById("fb-msg");
+  var fbLink = document.getElementById("fb-link");
+
+  if (FEEDBACK_URL) {
+    fbLink.href = FEEDBACK_URL;
+    fbLink.hidden = false;
+  }
+
+  document.getElementById("fb-open").addEventListener("click", function () {
+    fbPanel.hidden = !fbPanel.hidden;
+    this.textContent = fbPanel.hidden ? "Report a problem" : "Close";
+    if (!fbPanel.hidden) fbText.focus();
+  });
+
+  function buildReport() {
+    var lines = ["CE 329 Shake Test: problem report", ""];
+    var what = fbText.value.trim();
+    lines.push("What went wrong:", what || "(not described)", "");
+
+    var code = "";
+    try { if (lab.members.length) code = encodeDesign(lab, ""); } catch (e) { code = "(unavailable)"; }
+    lines.push("Structure on screen: " + (code || "(nothing drawn)"));
+
+    var a = analyze(lab);
+    if (a.ok) {
+      lines.push("Reads as: " + a.joints + " joints, " + a.members + " members, " +
+        a.hinges + " hinges, " +
+        (a.pieces > 1 ? a.pieces + " separate pieces"
+                      : (a.mech > 0 ? "internally unstable" : "internally stable")));
+    }
+    lines.push("Mode: " + mode + (labGravity ? ", gravity on" : ""));
+    lines.push("Page: " + location.href.split("#")[0]);
+    lines.push("Browser: " + navigator.userAgent);
+    lines.push("Screen: " + window.innerWidth + "x" + window.innerHeight +
+      " @" + (window.devicePixelRatio || 1) + "x");
+    lines.push("When: " + new Date().toISOString());
+    return lines.join("\n");
+  }
+
+  document.getElementById("fb-copy").addEventListener("click", function () {
+    var report = buildReport();
+    var btn = this;
+    function done(ok) {
+      fbMsg.textContent = ok
+        ? "Copied. Paste it wherever your instructor asks for it."
+        : "Could not copy automatically. The report is selected below, press Cmd+C.";
+      fbMsg.className = ok ? "fine good" : "fine bad";
+      btn.textContent = ok ? "Copied" : "Copy report";
+      if (ok) setTimeout(function () { btn.textContent = "Copy report"; }, 1600);
+    }
+    function fallback() {
+      fbText.value = report;
+      fbText.focus();
+      fbText.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(report).then(function () { done(true); }, fallback);
+    } else fallback();
+  });
 
   refreshVerdict();
 
