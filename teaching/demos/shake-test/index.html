@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive demo for CE 329: shake a frame to see whether a hinge turns it into a mechanism, then build your own and get a live stability verdict.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="The Shake Test">
+<meta property="og:description" content="Interactive demo for CE 329: shake a frame to see whether a hinge turns it into a mechanism, then build your own and get a live stability verdict.">
+<meta property="og:type" content="website">
+<title>The Shake Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  /* minimal reset: the artifact host supplies one, a plain web host does not */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body, h1, h2, h3, p, dl, dd, ul, figure { margin: 0; }
+  ul { padding: 0; }
+  canvas { display: block; max-width: 100%; }
+  img, svg { max-width: 100%; height: auto; }
+  button, input, select { font: inherit; color: inherit; }
+
+  :root {
+    --paper:      #EDEFEA;
+    --panel:      #F7F8F5;
+    --panel-2:    #E4E8E2;
+    --ink:        #1F2724;
+    --ink-2:      #55605B;
+    --ink-3:      #7C8781;
+    --rule:       #CBD2CB;
+    --rule-soft:  #DDE2DC;
+    --accent:     #0F6E68;
+    --stable:     #0F6E68;
+    --stable-bg:  #DCEAE7;
+    --unstable:   #B4432A;
+    --unstable-bg:#F2DFD8;
+    --grip:       #B5811A;
+    --grip-bg:    #F3E7CC;
+    --ghost:      #A9B3AD;
+    --sel:        #0F6E68;
+    --shadow:     0 1px 2px rgba(31,39,36,.06), 0 6px 18px rgba(31,39,36,.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #121614;
+      --panel:      #1A201D;
+      --panel-2:    #232A26;
+      --ink:        #DDE4DF;
+      --ink-2:      #97A39C;
+      --ink-3:      #77837C;
+      --rule:       #303934;
+      --rule-soft:  #262E2A;
+      --accent:     #4FBFB2;
+      --stable:     #4FBFB2;
+      --stable-bg:  #14302D;
+      --unstable:   #E87A5C;
+      --unstable-bg:#38211A;
+      --grip:       #E0AE4A;
+      --grip-bg:    #33280F;
+      --ghost:      #4A544E;
+      --sel:        #4FBFB2;
+      --shadow:     0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:      #121614;
+    --panel:      #1A201D;
+    --panel-2:    #232A26;
+    --ink:        #DDE4DF;
+    --ink-2:      #97A39C;
+    --ink-3:      #77837C;
+    --rule:       #303934;
+    --rule-soft:  #262E2A;
+    --accent:     #4FBFB2;
+    --stable:     #4FBFB2;
+    --stable-bg:  #14302D;
+    --unstable:   #E87A5C;
+    --unstable-bg:#38211A;
+    --grip:       #E0AE4A;
+    --grip-bg:    #33280F;
+    --ghost:      #4A544E;
+    --sel:        #4FBFB2;
+    --shadow:     0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Archivo, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16.5px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 40px) 72px;
+  }
+
+  /* ---------- title block ---------- */
+
+  .titleblock {
+    border: 1px solid var(--rule);
+    background: var(--panel);
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: stretch;
+  }
+  @media (max-width: 620px) { .titleblock { grid-template-columns: 1fr; } }
+
+  .titleblock__main { padding: 22px clamp(18px, 3vw, 30px); }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-size: clamp(30px, 5vw, 46px);
+    line-height: 1.04;
+    font-weight: 700;
+    letter-spacing: -.022em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .titleblock__meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(88px, auto));
+    border-left: 1px solid var(--rule);
+    margin: 0;
+  }
+  @media (max-width: 620px) {
+    .titleblock__meta { border-left: 0; border-top: 1px solid var(--rule); }
+  }
+
+  .metacell { padding: 12px 16px; border-bottom: 1px solid var(--rule); }
+  .metacell:nth-child(odd) { border-right: 1px solid var(--rule); }
+  .metacell:nth-child(n+3) { border-bottom: 0; }
+
+  .metacell dt {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 3px;
+  }
+  .metacell dd { margin: 0; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .lede {
+    max-width: 66ch;
+    margin: 26px 0 0;
+    color: var(--ink-2);
+    font-size: 17px;
+  }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- section headers ---------- */
+
+  .sechead {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin: 46px 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .sechead h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -.015em;
+  }
+  .sechead .num {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: .1em;
+    color: var(--accent);
+    flex: none;
+  }
+  .sechead p {
+    margin: 0 0 0 auto;
+    font-size: 14px;
+    color: var(--ink-3);
+    text-align: right;
+  }
+  @media (max-width: 720px) { .sechead p { display: none; } }
+
+  /* ---------- controls ---------- */
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    color: var(--paper);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 9px 18px;
+    cursor: pointer;
+    transition: filter .15s ease, transform .06s ease;
+  }
+  button:hover { filter: brightness(1.1); }
+  button:active { transform: translateY(1px); }
+  button.ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--rule);
+  }
+  button.ghost:hover { background: var(--panel-2); filter: none; }
+  button:focus-visible, .toggle:focus-within, select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .seg { display: flex; border: 1px solid var(--rule); }
+  .seg button {
+    background: transparent;
+    color: var(--ink-2);
+    border: 0;
+    border-right: 1px solid var(--rule);
+    padding: 9px 15px;
+    font-weight: 500;
+  }
+  .seg button:last-child { border-right: 0; }
+  .seg button[aria-pressed="true"] {
+    background: var(--accent);
+    color: var(--paper);
+    font-weight: 600;
+  }
+  .seg button:hover { filter: none; background: var(--panel-2); }
+  .seg button[aria-pressed="true"]:hover { background: var(--accent); filter: brightness(1.08); }
+
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ink-2);
+    cursor: pointer;
+    padding: 8px 4px;
+    user-select: none;
+  }
+  .toggle input { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
+
+  select {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    padding: 9px 12px;
+    cursor: pointer;
+  }
+
+  .hint {
+    margin-left: auto;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+  @media (max-width: 720px) { .hint { margin-left: 0; width: 100%; } }
+
+  /* ---------- specimen grid ---------- */
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+
+  .specimen {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .specimen__head {
+    padding: 14px 18px 12px;
+    border-bottom: 1px solid var(--rule-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .tag {
+    align-self: flex-start;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+  }
+  .tag--stable   { color: var(--stable);   background: var(--stable-bg); }
+  .tag--unstable { color: var(--unstable); background: var(--unstable-bg); }
+  .tag--neutral  { color: var(--ink-2);    background: var(--panel-2); }
+
+  .specimen__head h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.012em; }
+
+  .stage { position: relative; aspect-ratio: 4 / 3; touch-action: none; cursor: grab; }
+  .stage:active { cursor: grabbing; }
+  .stage canvas { display: block; width: 100%; height: 100%; }
+
+  .specimen__foot {
+    padding: 14px 18px 18px;
+    border-top: 1px solid var(--rule-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .readout {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .readout b {
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  .meter { height: 4px; background: var(--panel-2); overflow: hidden; }
+  .meter span {
+    display: block; height: 100%; width: 0%;
+    background: var(--stable);
+    transition: width .09s linear;
+  }
+  .specimen[data-stable="false"] .meter span { background: var(--unstable); }
+
+  .note { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+  .note b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- sandbox ---------- */
+
+  .lab {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 900px) { .lab { grid-template-columns: 1fr; } }
+
+  .lab__board {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+  }
+  .lab__stage { position: relative; aspect-ratio: 8 / 5; touch-action: none; }
+  .lab__stage canvas { display: block; width: 100%; height: 100%; }
+  .lab__stage[data-tool="draw"]  { cursor: crosshair; }
+  .lab__stage[data-tool="hinge"] { cursor: pointer; }
+  .lab__stage[data-tool="hand"]  { cursor: pointer; }
+  .lab__stage[data-tool="erase"] { cursor: pointer; }
+  .lab__stage[data-mode="test"]  { cursor: grab; }
+  .lab__stage[data-mode="test"]:active { cursor: grabbing; }
+
+  .lab__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .lab__tip {
+    padding: 11px 16px;
+    border-top: 1px solid var(--rule-soft);
+    font-size: 13.5px;
+    color: var(--ink-2);
+    min-height: 44px;
+  }
+  .lab__tip b { color: var(--ink); font-weight: 600; }
+
+  .verdict {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 16px;
+  }
+  .verdict__head {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .verdict__state {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -.015em;
+    margin: 0 0 4px;
+    text-wrap: balance;
+  }
+  .verdict[data-state="stable"]   .verdict__state { color: var(--stable); }
+  .verdict[data-state="unstable"] .verdict__state { color: var(--unstable); }
+  .verdict[data-state="empty"]    .verdict__state { color: var(--ink-3); }
+  .verdict__why { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+
+  .stats { margin: 0; padding: 0; }
+  .stats div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    padding: 9px 18px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .stats div:last-child { border-bottom: 0; }
+  .stats dt {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .stats dd {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- exchange ---------- */
+
+  .exchange {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .xcol {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  .xcol h3 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -.012em; }
+  .xcol p { margin: 0; font-size: 14px; color: var(--ink-2); }
+  .xcol .row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .field input, .xcol textarea {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 9px 11px;
+    width: 100%;
+    resize: vertical;
+  }
+  .field input:focus-visible, .xcol textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .xcol textarea { line-height: 1.45; word-break: break-all; }
+
+  .fine { font-size: 13px !important; color: var(--ink-3) !important; }
+  .fine.bad { color: var(--unstable) !important; }
+  .fine.good { color: var(--accent) !important; }
+
+  .banner {
+    margin-top: 16px;
+    padding: 11px 16px;
+    background: var(--grip-bg);
+    border: 1px solid var(--grip);
+    font-size: 14px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .banner b { font-weight: 600; }
+  .banner button {
+    margin-left: auto;
+    background: transparent;
+    border: 0;
+    color: var(--ink-2);
+    font-size: 13px;
+    padding: 2px 6px;
+    text-decoration: underline;
+  }
+  .banner button:hover { color: var(--ink); filter: none; }
+
+  /* ---------- legend ---------- */
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 26px;
+    margin: 40px 0 0;
+    padding: 16px 0 0;
+    border-top: 1px solid var(--rule);
+    list-style: none;
+  }
+  .legend li { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-2); }
+  .swatch { width: 20px; height: 11px; flex: none; }
+
+  footer.colophon {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule-soft);
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    letter-spacing: .05em;
+    color: var(--ink-3);
+  }
+
+  @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="titleblock">
+    <div class="titleblock__main">
+      <p class="eyebrow">Internal stability &middot; grab it and shake it</p>
+      <h1>The Shake Test</h1>
+    </div>
+    <dl class="titleblock__meta">
+      <div class="metacell"><dt>Course</dt><dd>CE 329</dd></div>
+      <div class="metacell"><dt>Chapter</dt><dd>3</dd></div>
+      <div class="metacell"><dt>Specimens</dt><dd>4 + yours</dd></div>
+      <div class="metacell"><dt>Supports</dt><dd>None</dd></div>
+    </dl>
+  </div>
+
+  <p class="lede">
+    Imagine holding a structure at one point and shaking it. <strong>If it keeps its shape, it is
+    internally stable.</strong> Grab the amber joint and move it around. The dashed outline is the
+    original shape, lined up as closely as it can be, so only a real change of shape opens a gap.
+  </p>
+
+  <div class="sechead">
+    <span class="num">01</span>
+    <h2>Four specimens</h2>
+    <p>Same frames. One joint changed.</p>
+  </div>
+
+  <div class="controls">
+    <button id="shake">Shake all</button>
+    <button id="reset" class="ghost">Reset</button>
+    <label class="toggle"><input type="checkbox" id="gravity"> Hang them under gravity</label>
+    <span class="hint">drag any joint</span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="sechead">
+    <span class="num">02</span>
+    <h2>Build your own</h2>
+    <p>The verdict updates as you draw.</p>
+  </div>
+
+  <div class="lab">
+    <div class="lab__board">
+      <div class="lab__bar">
+        <div class="seg" role="group" aria-label="Mode">
+          <button id="mode-build" aria-pressed="true">Build</button>
+          <button id="mode-test" aria-pressed="false">Test</button>
+        </div>
+        <div class="seg" id="tools" role="group" aria-label="Tool">
+          <button data-tool="draw" aria-pressed="true">Draw</button>
+          <button data-tool="hinge" aria-pressed="false" title="Switch a joint between rigid and hinged">Rigid / hinge</button>
+          <button data-tool="hand" aria-pressed="false">Hand</button>
+          <button data-tool="erase" aria-pressed="false">Erase</button>
+        </div>
+        <select id="preset" aria-label="Load an example">
+          <option value="">Load an example&hellip;</option>
+          <option value="square">Square, all pinned</option>
+          <option value="triangle">Triangle, all pinned</option>
+          <option value="portal">Portal frame, rigid corners</option>
+          <option value="gable">Gable with hinged apex</option>
+          <option value="truss">Warren truss</option>
+          <option value="empty">Empty sheet</option>
+        </select>
+        <button id="lab-shake" class="ghost">Shake</button>
+        <label class="toggle"><input type="checkbox" id="lab-gravity"> Hang it under gravity</label>
+      </div>
+      <div class="lab__stage" id="lab-stage" data-tool="draw" data-mode="build">
+        <canvas id="lab-canvas"></canvas>
+      </div>
+      <p class="lab__tip" id="lab-tip"></p>
+    </div>
+
+    <aside class="verdict" id="verdict" data-state="empty">
+      <div class="verdict__head">
+        <p class="verdict__state" id="v-state">Draw something</p>
+        <p class="verdict__why" id="v-why">Click the sheet to place a joint, then click another joint to run a member between them.</p>
+      </div>
+      <dl class="stats">
+        <div><dt>Joints</dt><dd id="v-joints">0</dd></div>
+        <div><dt>Members</dt><dd id="v-members">0</dd></div>
+        <div><dt>Hinges</dt><dd id="v-hinges">0</dd></div>
+      </dl>
+    </aside>
+  </div>
+
+  <div class="sechead">
+    <span class="num">03</span>
+    <h2>Hand it in</h2>
+    <p>Your design travels as one line of text.</p>
+  </div>
+
+  <div class="exchange">
+    <section class="xcol">
+      <h3>Submit your design</h3>
+      <p>
+        Build something in the sheet above, then turn it into a code. It carries every joint,
+        member and hinge, so whoever opens it sees exactly what you drew.
+      </p>
+      <label class="field">Your name
+        <input id="sub-name" type="text" maxlength="60" placeholder="so you get the credit" autocomplete="name">
+      </label>
+      <div class="row"><button id="sub-make">Create my code</button></div>
+      <div id="sub-out" hidden>
+        <label class="field" style="margin-bottom:9px">Your submission code
+          <textarea id="sub-code" rows="3" readonly spellcheck="false"></textarea>
+        </label>
+        <div class="row">
+          <button id="sub-copy-code" class="ghost">Copy code</button>
+          <button id="sub-copy-link" class="ghost">Copy link</button>
+        </div>
+        <p class="fine" id="sub-msg" style="margin-top:9px">
+          Post the code on the Canvas discussion for this week. The link opens the page with your
+          design already loaded.
+        </p>
+      </div>
+    </section>
+
+    <section class="xcol">
+      <h3>Open a design</h3>
+      <p>Paste a code or a link someone sent you and it loads into the sheet above.</p>
+      <label class="field">Code or link
+        <textarea id="open-code" rows="3" spellcheck="false" placeholder="Paste here"></textarea>
+      </label>
+      <div class="row"><button id="open-go" class="ghost">Load it</button></div>
+      <p class="fine" id="open-msg"></p>
+    </section>
+  </div>
+
+  <div class="banner" id="loaded-banner" hidden>
+    <span id="loaded-text"></span>
+    <button id="loaded-clear" type="button">Clear</button>
+  </div>
+
+  <ul class="legend">
+    <li><span class="swatch" style="background:var(--ink)"></span> member</li>
+    <li><span class="swatch" style="background:var(--grip);border-radius:50%;width:12px"></span> your hand</li>
+    <li><span class="swatch" style="border:2px solid var(--ink);background:var(--panel);border-radius:50%;width:12px"></span> hinge</li>
+    <li><span class="swatch" style="background:var(--ink-3);border-radius:50%;width:8px;height:8px"></span> rigid joint</li>
+    <li><span class="swatch" style="background:repeating-linear-gradient(90deg,var(--ghost) 0 4px,transparent 4px 8px);height:2px"></span> original shape</li>
+  </ul>
+
+  <footer class="colophon">CE 329 Structural Analysis &middot; Fall 2026 &middot; B. Dortdivanlioglu</footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ================= theme ================= */
+
+  var theme = {};
+  function readTheme() {
+    var cs = getComputedStyle(document.documentElement);
+    ["ink","ink-2","ink-3","panel","panel-2","ghost","grip","stable","unstable","rule","rule-soft","sel","accent"]
+      .forEach(function (k) { theme[k] = cs.getPropertyValue("--" + k).trim(); });
+  }
+  readTheme();
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    var onMq = function () { setTimeout(readTheme, 0); };
+    if (mq.addEventListener) mq.addEventListener("change", onMq); else mq.addListener(onMq);
+  }
+  new MutationObserver(function () { setTimeout(readTheme, 0); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  /* ================= model ================= */
+
+  var DAMP = 0.988, GRAV = 0.030, RELAX_ITER = 14;
+
+  // def: { nodes:[[x,y]], members:[[i,j]], hinges:[idx], grip:idx }
+  function makeModel(def) {
+    var m = {
+      nodes: def.nodes.map(function (p) {
+        return { x: p[0], y: p[1], px: p[0], py: p[1] };
+      }),
+      members: def.members.map(function (e) { return [e[0], e[1]]; }),
+      hinges: {},
+      grip: def.grip == null ? 0 : def.grip,
+      drag: -1, target: null, shake: 0, change: 0, gravity: false,
+      rest: def.nodes.map(function (p) { return { x: p[0], y: p[1] }; }),
+      ghost: def.nodes.map(function () { return { x: 0, y: 0 }; })
+    };
+    (def.hinges || []).forEach(function (h) { m.hinges[h] = true; });
+    rebuild(m);
+    return m;
+  }
+
+  // Rigid clusters: members welded together at every joint that is NOT a hinge.
+  function rebuild(m) {
+    var n = m.nodes.length, mem = m.members, i;
+
+    m.incident = [];
+    for (i = 0; i < n; i++) m.incident.push([]);
+    mem.forEach(function (e, k) { m.incident[e[0]].push(k); m.incident[e[1]].push(k); });
+
+    var parent = mem.map(function (_, k) { return k; });
+    function find(a) { while (parent[a] !== a) { parent[a] = parent[parent[a]]; a = parent[a]; } return a; }
+    function union(a, b) { a = find(a); b = find(b); if (a !== b) parent[a] = b; }
+
+    for (i = 0; i < n; i++) {
+      if (m.hinges[i]) continue;
+      var inc = m.incident[i];
+      for (var t = 1; t < inc.length; t++) union(inc[0], inc[t]);
+    }
+
+    var byRoot = {};
+    mem.forEach(function (e, k) {
+      var r = find(k);
+      if (!byRoot[r]) byRoot[r] = {};
+      byRoot[r][e[0]] = true;
+      byRoot[r][e[1]] = true;
+    });
+
+    m.clusters = Object.keys(byRoot).map(function (r) {
+      var idx = Object.keys(byRoot[r]).map(Number);
+      return { idx: idx, rest: idx.map(function (k) { return { x: m.rest[k].x, y: m.rest[k].y }; }) };
+    }).filter(function (c) { return c.idx.length >= 2; });
+
+    m.ghost = m.nodes.map(function () { return { x: 0, y: 0 }; });
+
+    var size = 0;
+    for (i = 0; i < n; i++) {
+      for (var j = i + 1; j < n; j++) {
+        var d = Math.hypot(m.rest[i].x - m.rest[j].x, m.rest[i].y - m.rest[j].y);
+        if (d > size) size = d;
+      }
+    }
+    m.size = size || 1;
+  }
+
+  function snapshotRest(m) {
+    m.rest = m.nodes.map(function (nd) { return { x: nd.x, y: nd.y }; });
+    rebuild(m);
+  }
+
+  function resetModel(m) {
+    m.nodes.forEach(function (nd, i) {
+      nd.x = nd.px = m.rest[i].x;
+      nd.y = nd.py = m.rest[i].y;
+    });
+    m.drag = -1; m.target = null; m.shake = 0; m.change = 0;
+  }
+
+  function isPinned(m, i) { return i === m.grip || i === m.drag; }
+
+  /* --------- best-fit rigid transform (Procrustes, no scale) --------- */
+
+  function fitRigid(srcPts, dstGet, idx, weightOf) {
+    var i, w, sw = 0, scx = 0, scy = 0, dcx = 0, dcy = 0;
+    for (i = 0; i < idx.length; i++) {
+      w = weightOf(idx[i]);
+      sw += w;
+      scx += srcPts[i].x * w; scy += srcPts[i].y * w;
+      var d = dstGet(idx[i]);
+      dcx += d.x * w; dcy += d.y * w;
+    }
+    if (sw === 0) { sw = idx.length; }
+    scx /= sw; scy /= sw; dcx /= sw; dcy /= sw;
+
+    var num = 0, den = 0;
+    for (i = 0; i < idx.length; i++) {
+      w = weightOf(idx[i]);
+      var ax = srcPts[i].x - scx, ay = srcPts[i].y - scy;
+      var b = dstGet(idx[i]);
+      var bx = b.x - dcx, by = b.y - dcy;
+      num += w * (ax * by - ay * bx);
+      den += w * (ax * bx + ay * by);
+    }
+    var th = (num === 0 && den === 0) ? 0 : Math.atan2(num, den);
+    return { cs: Math.cos(th), sn: Math.sin(th), scx: scx, scy: scy, dcx: dcx, dcy: dcy };
+  }
+
+  /* ================= step ================= */
+
+  function step(m, dt) {
+    var nodes = m.nodes, i, nd;
+
+    if (m.shake > 0) {
+      m.shake -= dt;
+      if (m.shake < 0) m.shake = 0;
+      var t = 1.7 - m.shake;
+      var env = Math.exp(-t * 1.5);
+      var g = nodes[m.grip];
+      if (g) {
+        g.x = m.gripHome.x + m.size * 0.16 * Math.sin(t * 15.5) * env;
+        g.y = m.gripHome.y + m.size * 0.04 * Math.sin(t * 9.0) * env;
+      }
+    }
+
+    for (i = 0; i < nodes.length; i++) {
+      nd = nodes[i];
+      if (isPinned(m, i)) { nd.px = nd.x; nd.py = nd.y; continue; }
+      var vx = (nd.x - nd.px) * DAMP;
+      var vy = (nd.y - nd.py) * DAMP;
+      nd.px = nd.x; nd.py = nd.y;
+      nd.x += vx;
+      nd.y += vy + (m.gravity ? GRAV * (m.size / 90) : 0);
+    }
+
+    if (m.drag >= 0 && m.target && nodes[m.drag]) {
+      var d0 = nodes[m.drag];
+      d0.px = d0.x; d0.py = d0.y;
+      d0.x += (m.target.x - d0.x) * 0.55;
+      d0.y += (m.target.y - d0.y) * 0.55;
+    }
+
+    // rigid clusters, enforced by shape matching
+    var accX = new Float64Array(nodes.length);
+    var accY = new Float64Array(nodes.length);
+    var accN = new Float64Array(nodes.length);
+
+    function weightOf(k) { return isPinned(m, k) ? 12 : 1; }
+    function dstGet(k) { return nodes[k]; }
+
+    for (var it = 0; it < RELAX_ITER; it++) {
+      accX.fill(0); accY.fill(0); accN.fill(0);
+      for (var c = 0; c < m.clusters.length; c++) {
+        var cl = m.clusters[c];
+        var f = fitRigid(cl.rest, dstGet, cl.idx, weightOf);
+        for (i = 0; i < cl.idx.length; i++) {
+          var k = cl.idx[i];
+          var rx = cl.rest[i].x - f.scx, ry = cl.rest[i].y - f.scy;
+          accX[k] += f.dcx + rx * f.cs - ry * f.sn;
+          accY[k] += f.dcy + rx * f.sn + ry * f.cs;
+          accN[k] += 1;
+        }
+      }
+      for (i = 0; i < nodes.length; i++) {
+        if (accN[i] === 0 || isPinned(m, i)) continue;
+        nodes[i].x += (accX[i] / accN[i] - nodes[i].x) * 0.85;
+        nodes[i].y += (accY[i] / accN[i] - nodes[i].y) * 0.85;
+      }
+    }
+
+    // keep it on stage without stiffening it
+    if (m.drag < 0 && m.shake === 0 && m.grip == null) {
+      var cx = 0, cy = 0, c0x = 0, c0y = 0, N = nodes.length;
+      for (i = 0; i < N; i++) { cx += nodes[i].x; cy += nodes[i].y; c0x += m.rest[i].x; c0y += m.rest[i].y; }
+      cx /= N; cy /= N; c0x /= N; c0y /= N;
+      var ox = (c0x - cx) * 0.012, oy = (c0y - cy) * 0.012;
+      for (i = 0; i < N; i++) { nodes[i].x += ox; nodes[i].y += oy; nodes[i].px += ox; nodes[i].py += oy; }
+    }
+
+    // ghost = undeformed shape, best-fit onto the current one
+    var all = [];
+    for (i = 0; i < nodes.length; i++) if (m.incident[i] && m.incident[i].length) all.push(i);
+    if (all.length >= 2) {
+      var rest2 = all.map(function (k) { return m.rest[k]; });
+      var ff = fitRigid(rest2, dstGet, all, function () { return 1; });
+      var acc = 0;
+      for (i = 0; i < all.length; i++) {
+        var kk = all[i];
+        var qx = m.rest[kk].x - ff.scx, qy = m.rest[kk].y - ff.scy;
+        var gx = ff.dcx + qx * ff.cs - qy * ff.sn;
+        var gy = ff.dcy + qx * ff.sn + qy * ff.cs;
+        m.ghost[kk].x = gx; m.ghost[kk].y = gy;
+        acc += (nodes[kk].x - gx) * (nodes[kk].x - gx) + (nodes[kk].y - gy) * (nodes[kk].y - gy);
+      }
+      m.change = (Math.sqrt(acc / all.length) / m.size) * 100;
+    } else {
+      m.change = 0;
+      for (i = 0; i < nodes.length; i++) { m.ghost[i].x = nodes[i].x; m.ghost[i].y = nodes[i].y; }
+    }
+  }
+
+  /* ================= rigidity analysis ================= */
+
+  function analyze(m) {
+    var nodes = m.rest, mem = m.members;
+    var used = [], map = {};
+    for (var i = 0; i < nodes.length; i++) {
+      if (m.incident[i] && m.incident[i].length) { map[i] = used.length; used.push(i); }
+    }
+    var n = used.length;
+    var out = {
+      joints: nodes.length, members: mem.length, loose: nodes.length - n,
+      hinges: Object.keys(m.hinges).filter(function (k) { return m.incident[k] && m.incident[k].length; }).length,
+      mech: 0, red: 0, pieces: 0, ok: n >= 2
+    };
+    if (n < 2) return out;
+
+    var cols = 2 * n, rows = [];
+
+    function row() { return new Float64Array(cols); }
+
+    mem.forEach(function (e) {
+      var a = map[e[0]], b = map[e[1]];
+      var dx = nodes[e[0]].x - nodes[e[1]].x;
+      var dy = nodes[e[0]].y - nodes[e[1]].y;
+      var r = row();
+      r[2 * a] = dx; r[2 * a + 1] = dy;
+      r[2 * b] = -dx; r[2 * b + 1] = -dy;
+      rows.push(r);
+    });
+
+    // rigid joint => fix the angle between consecutive incident members
+    for (var j = 0; j < nodes.length; j++) {
+      if (m.hinges[j]) continue;
+      var inc = m.incident[j];
+      if (!inc || inc.length < 2) continue;
+      for (var t = 0; t + 1 < inc.length; t++) {
+        var e1 = mem[inc[t]], e2 = mem[inc[t + 1]];
+        var A = (e1[0] === j) ? e1[1] : e1[0];
+        var B = (e2[0] === j) ? e2[1] : e2[0];
+        var ux = nodes[A].x - nodes[j].x, uy = nodes[A].y - nodes[j].y;
+        var vx = nodes[B].x - nodes[j].x, vy = nodes[B].y - nodes[j].y;
+        var lu = ux * ux + uy * uy, lv = vx * vx + vy * vy;
+        if (lu < 1e-12 || lv < 1e-12) continue;
+        // d(theta)/dA = -perp(u)/|u|^2 ; d(theta)/dB = +perp(v)/|v|^2
+        var gAx = uy / lu,  gAy = -ux / lu;
+        var gBx = -vy / lv, gBy = vx / lv;
+        var r2 = row();
+        var ja = map[A], jb = map[B], jj = map[j];
+        r2[2 * ja] += gAx; r2[2 * ja + 1] += gAy;
+        r2[2 * jb] += gBx; r2[2 * jb + 1] += gBy;
+        r2[2 * jj] += -(gAx + gBx); r2[2 * jj + 1] += -(gAy + gBy);
+        rows.push(r2);
+      }
+    }
+
+    // normalise rows so one tolerance suits both constraint types
+    rows.forEach(function (r) {
+      var s = 0, q;
+      for (q = 0; q < cols; q++) s += r[q] * r[q];
+      s = Math.sqrt(s);
+      if (s > 1e-12) for (q = 0; q < cols; q++) r[q] /= s;
+    });
+
+    var rank = 0, tol = 1e-7, lead = 0;
+    for (var col = 0; col < cols && lead < rows.length; col++) {
+      var piv = -1, best = tol;
+      for (var r3 = lead; r3 < rows.length; r3++) {
+        var v = Math.abs(rows[r3][col]);
+        if (v > best) { best = v; piv = r3; }
+      }
+      if (piv < 0) continue;
+      var tmp = rows[lead]; rows[lead] = rows[piv]; rows[piv] = tmp;
+      var pr = rows[lead], pv = pr[col];
+      for (var r4 = lead + 1; r4 < rows.length; r4++) {
+        var f2 = rows[r4][col] / pv;
+        if (f2 === 0) continue;
+        for (var q2 = col; q2 < cols; q2++) rows[r4][q2] -= f2 * pr[q2];
+      }
+      lead++; rank++;
+    }
+
+    // connected pieces
+    var par = used.map(function (_, k) { return k; });
+    function find2(a) { while (par[a] !== a) { par[a] = par[par[a]]; a = par[a]; } return a; }
+    mem.forEach(function (e) {
+      var a = find2(map[e[0]]), b = find2(map[e[1]]);
+      if (a !== b) par[a] = b;
+    });
+    var seen = {}, pieces = 0;
+    for (var s2 = 0; s2 < used.length; s2++) { var rt = find2(s2); if (!seen[rt]) { seen[rt] = 1; pieces++; } }
+
+    out.pieces = pieces;
+    out.mech = Math.max(0, 2 * n - rank - 3 * pieces);
+    out.red = Math.max(0, rows.length - rank);
+    return out;
+  }
+
+  /* ================= drawing ================= */
+
+  function makeView(W, H, pad) { return { W: W, H: H, pad: pad }; }
+
+  function xform(view, cw, ch) {
+    var pad = Math.min(cw, ch) * view.pad;
+    var s = Math.min((cw - pad * 2) / view.W, (ch - pad * 2) / view.H);
+    return { s: s, ox: (cw - view.W * s) / 2, oy: (ch - view.H * s) / 2 };
+  }
+
+  function draw(m, ctx, cw, ch, view, opts) {
+    opts = opts || {};
+    ctx.clearRect(0, 0, cw, ch);
+    var T = xform(view, cw, ch), s = T.s;
+    function X(v) { return T.ox + v * s; }
+    function Y(v) { return T.oy + v * s; }
+    var nodes = m.nodes, i;
+
+    if (opts.gridDots) {
+      ctx.fillStyle = theme["rule-soft"];
+      for (var gx = 10; gx < view.W; gx += 10) {
+        for (var gy = 10; gy < view.H; gy += 10) {
+          ctx.beginPath();
+          ctx.arc(X(gx), Y(gy), 1.1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    if (m.members.length && opts.ghost !== false) {
+      ctx.save();
+      ctx.setLineDash([5, 5]);
+      ctx.strokeStyle = theme.ghost;
+      ctx.lineWidth = Math.max(1.4, s * 0.020);
+      ctx.lineCap = "round";
+      m.members.forEach(function (e) {
+        ctx.beginPath();
+        ctx.moveTo(X(m.ghost[e[0]].x), Y(m.ghost[e[0]].y));
+        ctx.lineTo(X(m.ghost[e[1]].x), Y(m.ghost[e[1]].y));
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
+
+    ctx.strokeStyle = theme.ink;
+    ctx.lineWidth = Math.max(2.2, s * 0.036);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    m.members.forEach(function (e, k) {
+      ctx.strokeStyle = (opts.hotMember === k) ? theme.unstable : theme.ink;
+      ctx.beginPath();
+      ctx.moveTo(X(nodes[e[0]].x), Y(nodes[e[0]].y));
+      ctx.lineTo(X(nodes[e[1]].x), Y(nodes[e[1]].y));
+      ctx.stroke();
+    });
+
+    if (opts.pending && opts.pendingTo) {
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = theme.sel;
+      ctx.lineWidth = Math.max(1.6, s * 0.024);
+      ctx.beginPath();
+      ctx.moveTo(X(nodes[opts.pending].x), Y(nodes[opts.pending].y));
+      ctx.lineTo(X(opts.pendingTo.x), Y(opts.pendingTo.y));
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    for (i = 0; i < nodes.length; i++) {
+      if (i === m.grip || m.hinges[i]) continue;
+      ctx.beginPath();
+      ctx.arc(X(nodes[i].x), Y(nodes[i].y), Math.max(2, s * 0.028), 0, Math.PI * 2);
+      ctx.fillStyle = (opts.hotNode === i) ? theme.unstable : theme["ink-3"];
+      ctx.fill();
+    }
+
+    Object.keys(m.hinges).forEach(function (h) {
+      h = +h;
+      if (!nodes[h] || h === m.grip) return;
+      var r = Math.max(3.6, s * 0.055);
+      ctx.beginPath();
+      ctx.arc(X(nodes[h].x), Y(nodes[h].y), r, 0, Math.PI * 2);
+      ctx.fillStyle = theme.panel;
+      ctx.fill();
+      ctx.lineWidth = Math.max(1.7, s * 0.024);
+      ctx.strokeStyle = (opts.hotNode === h) ? theme.unstable : theme.ink;
+      ctx.stroke();
+    });
+
+    if (opts.pending != null && nodes[opts.pending]) {
+      ctx.beginPath();
+      ctx.arc(X(nodes[opts.pending].x), Y(nodes[opts.pending].y), Math.max(6, s * 0.085), 0, Math.PI * 2);
+      ctx.strokeStyle = theme.sel;
+      ctx.lineWidth = Math.max(1.6, s * 0.022);
+      ctx.stroke();
+    }
+
+    var g = nodes[m.grip];
+    if (g) {
+      var gx2 = X(g.x), gy2 = Y(g.y), gr = Math.max(4.5, s * 0.062);
+      ctx.beginPath();
+      ctx.arc(gx2, gy2, gr * 1.85, 0, Math.PI * 2);
+      ctx.strokeStyle = theme.grip;
+      ctx.globalAlpha = 0.35;
+      ctx.lineWidth = Math.max(1.3, s * 0.018);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.arc(gx2, gy2, gr, 0, Math.PI * 2);
+      ctx.fillStyle = theme.grip;
+      ctx.fill();
+      if (m.hinges[m.grip]) {
+        ctx.beginPath();
+        ctx.arc(gx2, gy2, gr * 0.42, 0, Math.PI * 2);
+        ctx.fillStyle = theme.panel;
+        ctx.fill();
+      }
+    }
+  }
+
+  function hookCanvas(stage, canvas, onSize) {
+    var ctx = canvas.getContext("2d");
+    function resize() {
+      var r = stage.getBoundingClientRect();
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(r.width * dpr));
+      canvas.height = Math.max(1, Math.round(r.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      onSize(r.width, r.height);
+    }
+    resize();
+    if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
+    else window.addEventListener("resize", resize);
+    return ctx;
+  }
+
+  function toModel(stage, view, ev) {
+    var r = stage.getBoundingClientRect();
+    var T = xform(view, r.width, r.height);
+    return { x: (ev.clientX - r.left - T.ox) / T.s, y: (ev.clientY - r.top - T.oy) / T.s };
+  }
+
+  /* ================= section 01: the four specimens ================= */
+
+  var SPECIMENS = [
+    {
+      key: "gable-rigid", title: "Gable frame, rigid apex", stable: true,
+      note: "The rigid apex locks the two rafters into a <b>triangle</b>. Shake it however you like, the shape survives.",
+      nodes: [[18,62],[50,26],[82,62]], members: [[0,1],[1,2]], hinges: [], grip: 0
+    },
+    {
+      key: "portal-rigid", title: "Portal frame, rigid corners", stable: true,
+      note: "Both corners resist rotation, so the columns cannot lean and the beam cannot swing. One rigid body.",
+      nodes: [[24,66],[24,26],[76,26],[76,66]], members: [[0,1],[1,2],[2,3]], hinges: [], grip: 0
+    },
+    {
+      key: "gable-hinged", title: "Gable frame, hinged apex", stable: false,
+      note: "The hinge lets the rafters rotate against each other. <b>One degree of freedom</b>, and the roof pitch changes.",
+      nodes: [[18,62],[50,26],[82,62]], members: [[0,1],[1,2]], hinges: [1], grip: 0
+    },
+    {
+      key: "portal-hinged", title: "Portal frame, hinge at midspan", stable: false,
+      note: "Corners are still rigid, but the beam is cut by a hinge. The frame folds at the knee like a drawbridge.",
+      nodes: [[24,66],[24,26],[50,26],[76,26],[76,66]], members: [[0,1],[1,2],[2,3],[3,4]], hinges: [2], grip: 0
+    }
+  ];
+
+  var view4 = makeView(100, 88, 0.10);
+  var cards = [];
+  var grid = document.getElementById("grid");
+
+  SPECIMENS.forEach(function (spec) {
+    var m = makeModel(spec);
+    m.gripHome = { x: m.nodes[m.grip].x, y: m.nodes[m.grip].y };
+
+    var card = document.createElement("article");
+    card.className = "specimen";
+    card.setAttribute("data-stable", spec.stable ? "true" : "false");
+    card.innerHTML =
+      '<div class="specimen__head">' +
+        '<span class="tag tag--' + (spec.stable ? "stable" : "unstable") + '">Internally ' +
+        (spec.stable ? "stable" : "unstable") + "</span><h3>" + spec.title + "</h3></div>" +
+      '<div class="stage"><canvas></canvas></div>' +
+      '<div class="specimen__foot">' +
+        '<div class="readout"><span>Shape change</span><b class="val">0.0%</b></div>' +
+        '<div class="meter"><span class="bar"></span></div>' +
+        '<p class="note">' + spec.note + "</p></div>";
+    grid.appendChild(card);
+
+    var stage = card.querySelector(".stage");
+    var canvas = card.querySelector("canvas");
+    var box = { w: 1, h: 1 };
+    var ctx = hookCanvas(stage, canvas, function (w, h) { box.w = w; box.h = h; });
+
+    stage.addEventListener("pointerdown", function (ev) {
+      var p = toModel(stage, view4, ev), best = -1, bd = 9;
+      for (var i = 0; i < m.nodes.length; i++) {
+        var d = Math.hypot(m.nodes[i].x - p.x, m.nodes[i].y - p.y);
+        if (d < bd) { bd = d; best = i; }
+      }
+      if (best < 0) return;
+      m.drag = best; m.target = p; m.shake = 0;
+      try { stage.setPointerCapture(ev.pointerId); } catch (e) {}
+      ev.preventDefault();
+    });
+    stage.addEventListener("pointermove", function (ev) {
+      if (m.drag < 0) return;
+      m.target = toModel(stage, view4, ev);
+    });
+    function release(ev) {
+      if (m.drag < 0) return;
+      m.drag = -1; m.target = null;
+      try { stage.releasePointerCapture(ev.pointerId); } catch (e) {}
+    }
+    stage.addEventListener("pointerup", release);
+    stage.addEventListener("pointercancel", release);
+
+    cards.push({ m: m, ctx: ctx, box: box, val: card.querySelector(".val"), bar: card.querySelector(".bar") });
+  });
+
+  document.getElementById("shake").addEventListener("click", function () {
+    cards.forEach(function (c) {
+      c.m.gripHome = { x: c.m.nodes[c.m.grip].x, y: c.m.nodes[c.m.grip].y };
+      c.m.shake = 1.7; c.m.drag = -1; c.m.target = null;
+    });
+  });
+  document.getElementById("reset").addEventListener("click", function () {
+    cards.forEach(function (c) { resetModel(c.m); });
+  });
+  document.getElementById("gravity").addEventListener("change", function (ev) {
+    cards.forEach(function (c) { c.m.gravity = ev.target.checked; });
+  });
+
+  /* ================= section 02: the sandbox ================= */
+
+  var PRESETS = {
+    empty:    { nodes: [], members: [], hinges: [], grip: 0 },
+    square:   { nodes: [[55,30],[105,30],[105,70],[55,70]], members: [[0,1],[1,2],[2,3],[3,0]], hinges: [0,1,2,3], grip: 3 },
+    triangle: { nodes: [[55,70],[105,70],[80,28]], members: [[0,1],[1,2],[2,0]], hinges: [0,1,2], grip: 0 },
+    portal:   { nodes: [[52,74],[52,32],[108,32],[108,74]], members: [[0,1],[1,2],[2,3]], hinges: [], grip: 0 },
+    gable:    { nodes: [[48,70],[80,30],[112,70]], members: [[0,1],[1,2]], hinges: [1], grip: 0 },
+    truss:    { nodes: [[40,68],[64,68],[88,68],[112,68],[52,34],[76,34],[100,34]],
+                members: [[0,1],[1,2],[2,3],[4,5],[5,6],[0,4],[4,1],[1,5],[5,2],[2,6],[6,3]],
+                hinges: [0,1,2,3,4,5,6], grip: 0 }
+  };
+
+  var viewLab = makeView(160, 100, 0.06);
+  var lab = makeModel(PRESETS.square);
+  var labStage = document.getElementById("lab-stage");
+  var labCanvas = document.getElementById("lab-canvas");
+  var labBox = { w: 1, h: 1 };
+  var labCtx = hookCanvas(labStage, labCanvas, function (w, h) { labBox.w = w; labBox.h = h; });
+
+  var mode = "build", tool = "draw", pending = null, hover = null, hoverMember = -1;
+  var pointer = null, movedFar = false, downAt = null, dragNode = -1;
+  var labGravity = false;   // survives model reloads, unlike lab.gravity
+
+  var TIPS = {
+    draw:  "<b>Draw.</b> Click empty space for a joint. Click one joint then another to run a member. Drag a joint to move it.",
+    hinge: "<b>Rigid / hinge.</b> Click a joint to flip it either way. A <b>hinge</b> (open circle) lets its members rotate freely; a <b>rigid</b> joint (solid dot) locks the angle between them. New joints start as hinges.",
+    hand:  "<b>Hand.</b> Click a joint to decide where you hold the structure when you shake it.",
+    erase: "<b>Erase.</b> Click a member to cut it, or a joint to remove it along with everything attached.",
+    test:  "<b>Test.</b> Drag any joint to hold it there, or press Shake. Watch the dashed outline for shape change."
+  };
+  var tip = document.getElementById("lab-tip");
+  function setTip() { tip.innerHTML = mode === "test" ? TIPS.test : TIPS[tool]; }
+  setTip();
+
+  var vEl = {
+    root: document.getElementById("verdict"),
+    state: document.getElementById("v-state"),
+    why: document.getElementById("v-why"),
+    joints: document.getElementById("v-joints"),
+    members: document.getElementById("v-members"),
+    hinges: document.getElementById("v-hinges")
+  };
+
+  function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+
+  function refreshVerdict() {
+    var a = analyze(lab);
+    vEl.joints.textContent = a.joints;
+    vEl.members.textContent = a.members;
+    vEl.hinges.textContent = a.hinges;
+
+    if (!a.ok) {
+      vEl.root.setAttribute("data-state", "empty");
+      vEl.state.textContent = "Draw something";
+      vEl.why.textContent = "Click the sheet to place a joint, then click another joint to run a member between them.";
+      return;
+    }
+    if (a.pieces > 1) {
+      vEl.root.setAttribute("data-state", "unstable");
+      vEl.state.textContent = "Not one structure";
+      vEl.why.textContent = "This is " + plural(a.pieces, "separate piece") + ". Connect them first.";
+      return;
+    }
+    if (a.mech > 0) {
+      vEl.root.setAttribute("data-state", "unstable");
+      vEl.state.textContent = "Internally unstable";
+      vEl.why.textContent = "Shake it and it changes shape. Add a member, or make a joint rigid.";
+      return;
+    }
+    vEl.root.setAttribute("data-state", "stable");
+    vEl.state.textContent = "Internally stable";
+    vEl.why.textContent = "Shake it as hard as you like. It holds its shape.";
+  }
+
+  function findNode(p, tol) {
+    var best = -1, bd = tol == null ? 5.5 : tol;
+    for (var i = 0; i < lab.nodes.length; i++) {
+      var d = Math.hypot(lab.nodes[i].x - p.x, lab.nodes[i].y - p.y);
+      if (d < bd) { bd = d; best = i; }
+    }
+    return best;
+  }
+
+  function findMember(p, tol) {
+    var best = -1, bd = tol == null ? 3.2 : tol;
+    for (var k = 0; k < lab.members.length; k++) {
+      var e = lab.members[k], A = lab.nodes[e[0]], B = lab.nodes[e[1]];
+      var vx = B.x - A.x, vy = B.y - A.y;
+      var L2 = vx * vx + vy * vy;
+      if (L2 < 1e-9) continue;
+      var t = ((p.x - A.x) * vx + (p.y - A.y) * vy) / L2;
+      t = Math.max(0, Math.min(1, t));
+      var d = Math.hypot(p.x - (A.x + t * vx), p.y - (A.y + t * vy));
+      if (d < bd) { bd = d; best = k; }
+    }
+    return best;
+  }
+
+  function hasMember(a, b) {
+    return lab.members.some(function (e) {
+      return (e[0] === a && e[1] === b) || (e[0] === b && e[1] === a);
+    });
+  }
+
+  function addNode(p) {
+    lab.nodes.push({ x: p.x, y: p.y, px: p.x, py: p.y });
+    lab.rest.push({ x: p.x, y: p.y });
+    lab.hinges[lab.nodes.length - 1] = true;
+    return lab.nodes.length - 1;
+  }
+
+  function removeNode(i) {
+    lab.members = lab.members.filter(function (e) { return e[0] !== i && e[1] !== i; })
+      .map(function (e) { return [e[0] > i ? e[0] - 1 : e[0], e[1] > i ? e[1] - 1 : e[1]]; });
+    lab.nodes.splice(i, 1);
+    lab.rest.splice(i, 1);
+    var nh = {};
+    Object.keys(lab.hinges).forEach(function (k) {
+      k = +k;
+      if (k === i) return;
+      nh[k > i ? k - 1 : k] = true;
+    });
+    lab.hinges = nh;
+    if (lab.grip === i) lab.grip = 0;
+    else if (lab.grip > i) lab.grip--;
+    if (pending === i) pending = null;
+    else if (pending != null && pending > i) pending--;
+  }
+
+  function commit() {
+    snapshotRest(lab);
+    refreshVerdict();
+  }
+
+  function loadPreset(key) {
+    var p = PRESETS[key];
+    if (!p) return;
+    lab = makeModel(JSON.parse(JSON.stringify(p)));
+    lab.gravity = labGravity;
+    lab.gripHome = lab.nodes[lab.grip] ? { x: lab.nodes[lab.grip].x, y: lab.nodes[lab.grip].y } : { x: 0, y: 0 };
+    pending = null;
+    showBanner(null);
+    refreshVerdict();
+  }
+
+  labStage.addEventListener("pointerdown", function (ev) {
+    var p = toModel(labStage, viewLab, ev);
+    pointer = p; downAt = p; movedFar = false;
+    try { labStage.setPointerCapture(ev.pointerId); } catch (e) {}
+
+    if (mode === "test") {
+      var hitT = findNode(p, 6);
+      if (hitT >= 0) { lab.drag = hitT; lab.target = p; lab.shake = 0; }
+      ev.preventDefault();
+      return;
+    }
+
+    var hit = findNode(p);
+
+    if (tool === "draw") {
+      if (hit >= 0) { dragNode = hit; }
+      ev.preventDefault();
+      return;
+    }
+    if (tool === "hinge") {
+      if (hit >= 0) {
+        if (lab.hinges[hit]) delete lab.hinges[hit]; else lab.hinges[hit] = true;
+        commit();
+      }
+      ev.preventDefault();
+      return;
+    }
+    if (tool === "hand") {
+      if (hit >= 0) { lab.grip = hit; lab.gripHome = { x: lab.nodes[hit].x, y: lab.nodes[hit].y }; }
+      ev.preventDefault();
+      return;
+    }
+    if (tool === "erase") {
+      if (hit >= 0) { removeNode(hit); commit(); }
+      else {
+        var mk = findMember(p);
+        if (mk >= 0) { lab.members.splice(mk, 1); commit(); }
+      }
+      ev.preventDefault();
+      return;
+    }
+  });
+
+  labStage.addEventListener("pointermove", function (ev) {
+    var p = toModel(labStage, viewLab, ev);
+    pointer = p;
+
+    if (downAt && Math.hypot(p.x - downAt.x, p.y - downAt.y) > 1.6) movedFar = true;
+
+    if (mode === "test") {
+      if (lab.drag >= 0) lab.target = p;
+      return;
+    }
+
+    hover = findNode(p);
+    hoverMember = hover >= 0 ? -1 : findMember(p);
+
+    if (tool === "draw" && dragNode >= 0 && movedFar) {
+      lab.nodes[dragNode].x = p.x; lab.nodes[dragNode].y = p.y;
+      lab.nodes[dragNode].px = p.x; lab.nodes[dragNode].py = p.y;
+      lab.rest[dragNode].x = p.x; lab.rest[dragNode].y = p.y;
+      if (lab.grip === dragNode) lab.gripHome = { x: p.x, y: p.y };
+    }
+  });
+
+  function labRelease(ev) {
+    try { labStage.releasePointerCapture(ev.pointerId); } catch (e) {}
+
+    if (mode === "test") {
+      lab.drag = -1; lab.target = null;
+      downAt = null; dragNode = -1;
+      return;
+    }
+
+    if (tool === "draw") {
+      if (dragNode >= 0 && movedFar) {
+        commit();
+      } else {
+        var p = pointer || downAt;
+        var hit = dragNode >= 0 ? dragNode : findNode(p);
+        if (hit >= 0) {
+          if (pending == null) pending = hit;
+          else if (pending === hit) pending = null;
+          else {
+            if (!hasMember(pending, hit)) lab.members.push([pending, hit]);
+            pending = hit;
+            commit();
+          }
+        } else if (p) {
+          var ni = addNode(p);
+          if (pending != null) { lab.members.push([pending, ni]); }
+          pending = ni;
+          commit();
+        }
+      }
+    }
+    downAt = null; dragNode = -1; movedFar = false;
+  }
+  labStage.addEventListener("pointerup", labRelease);
+  labStage.addEventListener("pointercancel", labRelease);
+  labStage.addEventListener("pointerleave", function () { hover = null; hoverMember = -1; });
+
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") { pending = null; }
+  });
+
+  function setMode(next) {
+    mode = next;
+    document.getElementById("mode-build").setAttribute("aria-pressed", String(next === "build"));
+    document.getElementById("mode-test").setAttribute("aria-pressed", String(next === "test"));
+    labStage.setAttribute("data-mode", next);
+    pending = null;
+    if (next === "test") { snapshotRest(lab); }
+    else { resetModel(lab); }
+    refreshVerdict();
+    setTip();
+  }
+  document.getElementById("mode-build").addEventListener("click", function () { setMode("build"); });
+  document.getElementById("mode-test").addEventListener("click", function () { setMode("test"); });
+
+  document.getElementById("tools").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button[data-tool]");
+    if (!b) return;
+    tool = b.getAttribute("data-tool");
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function (x) {
+      x.setAttribute("aria-pressed", String(x === b));
+    });
+    labStage.setAttribute("data-tool", tool);
+    pending = null;
+    if (mode === "test") setMode("build");
+    setTip();
+  });
+
+  document.getElementById("preset").addEventListener("change", function (ev) {
+    if (!ev.target.value) return;
+    loadPreset(ev.target.value);
+    if (mode === "test") setMode("build");
+    ev.target.value = "";
+  });
+
+  document.getElementById("lab-gravity").addEventListener("change", function (ev) {
+    labGravity = ev.target.checked;
+    lab.gravity = labGravity;
+    // physics is frozen while building, so gravity would look broken there
+    if (labGravity && mode !== "test") setMode("test");
+  });
+
+  document.getElementById("lab-shake").addEventListener("click", function () {
+    if (mode !== "test") setMode("test");
+    if (!lab.nodes[lab.grip]) return;
+    lab.gripHome = { x: lab.nodes[lab.grip].x, y: lab.nodes[lab.grip].y };
+    lab.shake = 1.7; lab.drag = -1; lab.target = null;
+  });
+
+  /* ================= share codes ================= */
+  /* A design travels as base64url JSON: no account, no server, and it works
+     the same on the artifact host and on a plain static host. */
+
+  function b64encode(str) {
+    var bytes = new TextEncoder().encode(str), bin = "";
+    for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function b64decode(s) {
+    s = s.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    var bin = atob(s);
+    var bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  function encodeDesign(m, name) {
+    var flat = [], i;
+    for (i = 0; i < m.rest.length; i++) {
+      flat.push(Math.round(m.rest[i].x * 10), Math.round(m.rest[i].y * 10));
+    }
+    var mem = [];
+    m.members.forEach(function (e) { mem.push(e[0], e[1]); });
+    var hin = Object.keys(m.hinges).map(Number)
+      .filter(function (k) { return k >= 0 && k < m.rest.length; })
+      .sort(function (a, b) { return a - b; });
+    return b64encode(JSON.stringify([1, flat, mem, hin, m.grip | 0, (name || "").slice(0, 60)]));
+  }
+
+  function decodeDesign(code) {
+    code = String(code || "").trim();
+    var hash = code.indexOf("#s=");
+    if (hash !== -1) code = code.slice(hash + 3);
+    code = code.replace(/^#/, "").replace(/\s+/g, "");
+    if (!code) throw new Error("Nothing to load. Paste a code or a link.");
+
+    var raw;
+    try { raw = JSON.parse(b64decode(code)); }
+    catch (e) { throw new Error("That does not look like a design code."); }
+
+    if (!Array.isArray(raw) || raw[0] !== 1) throw new Error("Unrecognised code version.");
+    var flat = raw[1] || [], mem = raw[2] || [], hin = raw[3] || [];
+    var grip = raw[4] | 0, name = typeof raw[5] === "string" ? raw[5] : "";
+    if (!Array.isArray(flat) || !Array.isArray(mem) || !Array.isArray(hin)) {
+      throw new Error("That code is malformed.");
+    }
+
+    var nodes = [], i;
+    for (i = 0; i + 1 < flat.length; i += 2) {
+      var x = Number(flat[i]) / 10, y = Number(flat[i + 1]) / 10;
+      if (!isFinite(x) || !isFinite(y)) throw new Error("That code has a bad joint in it.");
+      nodes.push([x, y]);
+    }
+    if (nodes.length < 2) throw new Error("That design has fewer than two joints.");
+    if (nodes.length > 300) throw new Error("That design is too large to load.");
+
+    var members = [];
+    for (i = 0; i + 1 < mem.length; i += 2) {
+      var a = mem[i] | 0, b = mem[i + 1] | 0;
+      if (a < 0 || b < 0 || a >= nodes.length || b >= nodes.length || a === b) {
+        throw new Error("That code has a bad member in it.");
+      }
+      members.push([a, b]);
+    }
+
+    return {
+      def: {
+        nodes: nodes,
+        members: members,
+        hinges: hin.map(Number).filter(function (h) { return h >= 0 && h < nodes.length; }),
+        grip: (grip >= 0 && grip < nodes.length) ? grip : 0
+      },
+      name: name
+    };
+  }
+
+  function loadDef(def, who) {
+    lab = makeModel(JSON.parse(JSON.stringify(def)));
+    lab.gravity = labGravity;
+    lab.gripHome = lab.nodes[lab.grip]
+      ? { x: lab.nodes[lab.grip].x, y: lab.nodes[lab.grip].y }
+      : { x: 0, y: 0 };
+    pending = null;
+    if (mode === "test") setMode("build");
+    refreshVerdict();
+    showBanner(who);
+  }
+
+  var banner = document.getElementById("loaded-banner");
+  var bannerText = document.getElementById("loaded-text");
+  function showBanner(who) {
+    if (!who) { banner.hidden = true; return; }
+    bannerText.innerHTML = "Loaded <b>" + escapeHtml(who) + "</b>'s design into the sheet above.";
+    banner.hidden = false;
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  document.getElementById("loaded-clear").addEventListener("click", function () {
+    banner.hidden = true;
+    if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+  });
+
+  function copyText(text, btn, okLabel) {
+    var original = btn.textContent;
+    function done(ok) {
+      btn.textContent = ok ? (okLabel || "Copied") : "Press Cmd+C";
+      setTimeout(function () { btn.textContent = original; }, 1600);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { fallback(); });
+    } else fallback();
+
+    function fallback() {
+      var ta = document.getElementById("sub-code");
+      ta.hidden = false;
+      ta.focus();
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      done(ok);
+    }
+  }
+
+  var subOut = document.getElementById("sub-out");
+  var subCode = document.getElementById("sub-code");
+  var subMsg = document.getElementById("sub-msg");
+
+  function shareLink(code) {
+    return location.origin + location.pathname + location.search + "#s=" + code;
+  }
+
+  document.getElementById("sub-make").addEventListener("click", function () {
+    if (mode === "test") setMode("build");
+    var a = analyze(lab);
+    if (!a.ok || lab.members.length === 0) {
+      subOut.hidden = false;
+      subCode.value = "";
+      subMsg.textContent = "Draw a structure first: at least two joints with a member between them.";
+      subMsg.className = "fine bad";
+      return;
+    }
+    var name = document.getElementById("sub-name").value.trim();
+    var code = encodeDesign(lab, name);
+    subCode.value = code;
+    subOut.hidden = false;
+    var verdict = a.pieces > 1
+      ? "separate pieces"
+      : (a.mech > 0 ? "internally unstable" : "internally stable");
+    subMsg.innerHTML = "Ready: " + a.joints + " joints, " + a.members + " members, " +
+      escapeHtml(verdict) + ". Post the code on Canvas, or send the link.";
+    subMsg.className = "fine good";
+  });
+
+  document.getElementById("sub-copy-code").addEventListener("click", function () {
+    if (!subCode.value) return;
+    copyText(subCode.value, this, "Code copied");
+  });
+  document.getElementById("sub-copy-link").addEventListener("click", function () {
+    if (!subCode.value) return;
+    copyText(shareLink(subCode.value), this, "Link copied");
+  });
+
+  var openMsg = document.getElementById("open-msg");
+  document.getElementById("open-go").addEventListener("click", function () {
+    var raw = document.getElementById("open-code").value;
+    try {
+      var got = decodeDesign(raw);
+      loadDef(got.def, got.name || "someone");
+      openMsg.textContent = "Loaded. Scroll up to shake it.";
+      openMsg.className = "fine good";
+    } catch (err) {
+      openMsg.textContent = err.message || "Could not read that code.";
+      openMsg.className = "fine bad";
+    }
+  });
+
+  // a shared link opens straight into the design
+  (function fromHash() {
+    var h = location.hash || "";
+    if (h.indexOf("#s=") !== 0) return;
+    try {
+      var got = decodeDesign(h);
+      loadDef(got.def, got.name || "someone");
+    } catch (e) { /* a mangled link just leaves the default preset in place */ }
+  })();
+
+  refreshVerdict();
+
+  /* ================= loop ================= */
+
+  var last = performance.now();
+  (function loop(now) {
+    var dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+
+    cards.forEach(function (c) {
+      step(c.m, dt);
+      draw(c.m, c.ctx, c.box.w, c.box.h, view4, {});
+      var v = c.m.change;
+      c.val.textContent = (v < 0.05 ? "0.0" : v.toFixed(1)) + "%";
+      c.bar.style.width = Math.min(100, v * 4) + "%";
+    });
+
+    if (mode === "test") step(lab, dt);
+    else {
+      lab.nodes.forEach(function (nd, i) { nd.px = nd.x; nd.py = nd.y; lab.ghost[i] = { x: nd.x, y: nd.y }; });
+      lab.change = 0;
+    }
+    draw(lab, labCtx, labBox.w, labBox.h, viewLab, {
+      gridDots: mode === "build",
+      ghost: mode === "test",
+      pending: mode === "build" && tool === "draw" ? pending : null,
+      pendingTo: mode === "build" && tool === "draw" && pending != null ? pointer : null,
+      hotNode: mode === "build" && tool === "erase" ? hover : null,
+      hotMember: mode === "build" && tool === "erase" && hover < 0 ? hoverMember : -1
+    });
+
+    requestAnimationFrame(loop);
+  })(last);
+})();
+</script>
+</body>
+</html>
