@@ -16,6 +16,9 @@
 <style>
   /* minimal reset: the artifact host supplies one, a plain web host does not */
   *, *::before, *::after { box-sizing: border-box; }
+  /* the artifact host supplies this; a plain host does not, and without it any
+     author `display:` rule silently overrides the hidden attribute */
+  [hidden] { display: none !important; }
   html { -webkit-text-size-adjust: 100%; }
   body, h1, h2, h3, p, dl, dd, ul, figure { margin: 0; }
   ul { padding: 0; }
@@ -745,8 +748,7 @@
     <p>Built with AI assistance. The stability verdict is an exact computation on the structure you
     draw, not generated text. Nothing you do here is graded or recorded.</p>
     <div class="fb">
-      <button id="fb-open" class="ghost" type="button">Report a problem</button>
-      <div class="fb__panel" id="fb-panel" hidden>
+      <div class="fb__panel" id="fb-panel">
         <label class="field">What went wrong?
           <textarea id="fb-text" rows="3" spellcheck="true"
             placeholder="What did you expect, and what happened instead?"></textarea>
@@ -756,8 +758,8 @@
           <a id="fb-link" class="btnlink" hidden target="_blank" rel="noopener">Open the feedback form</a>
         </div>
         <p class="fine" id="fb-msg">
-          The report includes the exact structure on your screen, so it can be reproduced. Paste it
-          wherever your instructor asks for it.
+          Press <b>Copy report</b> first, then open the form and paste it into the first question.
+          The report includes the exact structure on your screen, so the problem can be reproduced.
         </p>
       </div>
     </div>
@@ -1814,7 +1816,6 @@
 
   var FEEDBACK_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=peLXMdi9TkGel76pmOvf4S44VhUkyv1FlG4mT9tVN29URVEzQ0lHNE5LNEVSUkZIQTJTQU8zUTdBUi4u";
 
-  var fbPanel = document.getElementById("fb-panel");
   var fbText = document.getElementById("fb-text");
   var fbMsg = document.getElementById("fb-msg");
   var fbLink = document.getElementById("fb-link");
@@ -1827,12 +1828,6 @@
       "details question. The report carries the exact structure on your screen.";
     fbMsg.textContent = FB_TIP_DEFAULT;
   }
-
-  document.getElementById("fb-open").addEventListener("click", function () {
-    fbPanel.hidden = !fbPanel.hidden;
-    this.textContent = fbPanel.hidden ? "Report a problem" : "Close";
-    if (!fbPanel.hidden) fbText.focus();
-  });
 
   function buildReport() {
     var lines = ["CE 329 Shake Test: problem report", ""];
@@ -1864,7 +1859,7 @@
     var btn = this;
     function done(ok) {
       fbMsg.textContent = ok
-        ? "Copied. Paste it wherever your instructor asks for it."
+        ? "Copied. Now open the form and paste it into the first question."
         : "Could not copy automatically. The report is selected below, press Cmd+C.";
       fbMsg.className = ok ? "fine good" : "fine bad";
       btn.textContent = ok ? "Copied" : "Copy report";
