@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Interactive demo for CE 329: shake a frame to see whether a hinge turns it into a mechanism, then build your own and get a live stability verdict.">
 <meta name="color-scheme" content="light dark">
-<meta property="og:title" content="The Shake Test">
+<meta property="og:title" content="Stand or Fold">
 <meta property="og:description" content="Interactive demo for CE 329: shake a frame to see whether a hinge turns it into a mechanism, then build your own and get a live stability verdict.">
 <meta property="og:type" content="website">
-<title>The Shake Test</title>
+<title>Stand or Fold</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -385,7 +385,6 @@
   .lab__stage canvas { display: block; width: 100%; height: 100%; }
   .lab__stage[data-tool="draw"]  { cursor: crosshair; }
   .lab__stage[data-tool="hinge"] { cursor: pointer; }
-  .lab__stage[data-tool="hand"]  { cursor: pointer; }
   .lab__stage[data-tool="erase"] { cursor: pointer; }
   .lab__stage[data-mode="test"]  { cursor: grab; }
   .lab__stage[data-mode="test"]:active { cursor: grabbing; }
@@ -605,8 +604,8 @@
 
   <div class="titleblock">
     <div class="titleblock__main">
-      <p class="eyebrow">Internal stability &middot; grab it and shake it</p>
-      <h1>The Shake Test</h1>
+      <p class="eyebrow">Internal stability &middot; set it down and let go</p>
+      <h1>Stand or Fold</h1>
     </div>
     <dl class="titleblock__meta">
       <div class="metacell"><dt>Course</dt><dd>CE 329</dd></div>
@@ -617,9 +616,10 @@
   </div>
 
   <p class="lede">
-    Imagine holding a structure at one point and shaking it. <strong>If it keeps its shape, it is
-    internally stable.</strong> Grab the amber joint and move it around. The dashed outline is the
-    original shape, lined up as closely as it can be, so only a real change of shape opens a gap.
+    Imagine a structure resting on the ground with nothing holding it up &mdash; no pins, no
+    rollers, no supports at all. Let go, and gravity does the rest. <strong>If it keeps its shape,
+    it is internally stable.</strong> The dashed outline is the original shape, lined up as closely
+    as it can be, so only a real change of shape opens a gap.
   </p>
 
   <div class="sechead">
@@ -629,9 +629,8 @@
   </div>
 
   <div class="controls">
-    <button id="shake">Shake all</button>
+    <button id="release">Let go</button>
     <button id="reset" class="ghost">Reset</button>
-    <label class="toggle"><input type="checkbox" id="gravity"> Hang them under gravity</label>
     <span class="hint">drag any joint</span>
   </div>
 
@@ -653,7 +652,6 @@
         <div class="seg" id="tools" role="group" aria-label="Tool">
           <button data-tool="draw" aria-pressed="true">Draw</button>
           <button data-tool="hinge" aria-pressed="false" title="Switch a joint between rigid and hinged">Rigid / hinge</button>
-          <button data-tool="hand" aria-pressed="false">Hand</button>
           <button data-tool="erase" aria-pressed="false">Erase</button>
         </div>
         <select id="preset" aria-label="Load an example">
@@ -665,8 +663,7 @@
           <option value="truss">Warren truss</option>
           <option value="empty">Empty sheet</option>
         </select>
-        <button id="lab-shake" class="ghost">Shake</button>
-        <label class="toggle"><input type="checkbox" id="lab-gravity"> Hang it under gravity</label>
+        <button id="lab-release" class="ghost">Let go</button>
       </div>
       <div class="lab__stage" id="lab-stage" data-tool="draw" data-mode="build">
         <canvas id="lab-canvas"></canvas>
@@ -737,7 +734,7 @@
 
   <ul class="legend">
     <li><span class="swatch" style="background:var(--ink)"></span> member</li>
-    <li><span class="swatch" style="background:var(--grip);border-radius:50%;width:12px"></span> your hand</li>
+    <li><span class="swatch" style="background:var(--ink-3);height:2px"></span> ground</li>
     <li><span class="swatch" style="border:2px solid var(--ink);background:var(--panel);border-radius:50%;width:12px"></span> hinge</li>
     <li><span class="swatch" style="background:var(--ink-3);border-radius:50%;width:8px;height:8px"></span> rigid joint</li>
     <li><span class="swatch" style="background:repeating-linear-gradient(90deg,var(--ghost) 0 4px,transparent 4px 8px);height:2px"></span> original shape</li>
@@ -789,7 +786,14 @@
 
   /* ================= model ================= */
 
-  var DAMP = 0.988, GRAV = 0.030, RELAX_ITER = 14;
+  var DAMP = 0.988, GRAV = 0.030, RELAX_ITER = 14, FRICTION = 0.72;
+  // Gravity leans a hair off vertical (about 2 degrees). A mechanism sitting
+  // dead upright -- the pinned square is the classic one -- is in unstable
+  // equilibrium: perfectly vertical load gives it nothing to fall towards, so
+  // it would stand there looking stable while the verdict called it a
+  // mechanism. Nothing real is ever that symmetric. Deterministic, so a
+  // shared design always behaves the same way.
+  var GRAV_LEAN = 0.035;
 
   // def: { nodes:[[x,y]], members:[[i,j]], hinges:[idx], grip:idx }
   function makeModel(def) {
@@ -800,7 +804,7 @@
       members: def.members.map(function (e) { return [e[0], e[1]]; }),
       hinges: {},
       grip: def.grip == null ? 0 : def.grip,
-      drag: -1, target: null, shake: 0, change: 0, gravity: false,
+      drag: -1, target: null, change: 0, gravity: false,
       rest: def.nodes.map(function (p) { return { x: p[0], y: p[1] }; }),
       ghost: def.nodes.map(function () { return { x: 0, y: 0 }; })
     };
@@ -850,6 +854,12 @@
       }
     }
     m.size = size || 1;
+
+    // The ground sits at the lowest joint of the undeformed shape, so a
+    // structure always starts resting on it rather than dropping onto it.
+    var fl = -Infinity;
+    for (i = 0; i < n; i++) if (m.rest[i].y > fl) fl = m.rest[i].y;
+    m.floor = isFinite(fl) ? fl : null;
   }
 
   function snapshotRest(m) {
@@ -862,10 +872,11 @@
       nd.x = nd.px = m.rest[i].x;
       nd.y = nd.py = m.rest[i].y;
     });
-    m.drag = -1; m.target = null; m.shake = 0; m.change = 0;
+    m.drag = -1; m.target = null; m.change = 0; m.gravity = false;
   }
 
-  function isPinned(m, i) { return i === m.grip || i === m.drag; }
+  // Nothing is pinned any more: no supports, only contact with the ground.
+  function isPinned(m, i) { return i === m.drag; }
 
   /* --------- best-fit rigid transform (Procrustes, no scale) --------- */
 
@@ -899,26 +910,15 @@
   function step(m, dt) {
     var nodes = m.nodes, i, nd;
 
-    if (m.shake > 0) {
-      m.shake -= dt;
-      if (m.shake < 0) m.shake = 0;
-      var t = 1.7 - m.shake;
-      var env = Math.exp(-t * 1.5);
-      var g = nodes[m.grip];
-      if (g) {
-        g.x = m.gripHome.x + m.size * 0.16 * Math.sin(t * 15.5) * env;
-        g.y = m.gripHome.y + m.size * 0.04 * Math.sin(t * 9.0) * env;
-      }
-    }
-
     for (i = 0; i < nodes.length; i++) {
       nd = nodes[i];
       if (isPinned(m, i)) { nd.px = nd.x; nd.py = nd.y; continue; }
       var vx = (nd.x - nd.px) * DAMP;
       var vy = (nd.y - nd.py) * DAMP;
       nd.px = nd.x; nd.py = nd.y;
-      nd.x += vx;
-      nd.y += vy + (m.gravity ? GRAV * (m.size / 90) : 0);
+      var gAcc = m.gravity ? GRAV * (m.size / 90) : 0;
+      nd.x += vx + gAcc * GRAV_LEAN;
+      nd.y += vy + gAcc;
     }
 
     if (m.drag >= 0 && m.target && nodes[m.drag]) {
@@ -954,15 +954,32 @@
         nodes[i].x += (accX[i] / accN[i] - nodes[i].x) * 0.85;
         nodes[i].y += (accY[i] / accN[i] - nodes[i].y) * 0.85;
       }
+      if (m.floor != null) {
+        for (i = 0; i < nodes.length; i++) if (nodes[i].y > m.floor) nodes[i].y = m.floor;
+      }
     }
 
-    // keep it on stage without stiffening it
-    if (m.drag < 0 && m.shake === 0 && m.grip == null) {
-      var cx = 0, cy = 0, c0x = 0, c0y = 0, N = nodes.length;
-      for (i = 0; i < N; i++) { cx += nodes[i].x; cy += nodes[i].y; c0x += m.rest[i].x; c0y += m.rest[i].y; }
-      cx /= N; cy /= N; c0x /= N; c0y /= N;
-      var ox = (c0x - cx) * 0.012, oy = (c0y - cy) * 0.012;
-      for (i = 0; i < N; i++) { nodes[i].x += ox; nodes[i].y += oy; nodes[i].px += ox; nodes[i].py += oy; }
+    // Ground contact: kill the bounce, scuff off sideways motion. This is the
+    // only thing holding the structure up, so it runs after the clusters settle.
+    if (m.floor != null) {
+      for (i = 0; i < nodes.length; i++) {
+        nd = nodes[i];
+        if (nd.y >= m.floor) {
+          nd.y = m.floor;
+          nd.px = nd.x - (nd.x - nd.px) * FRICTION;
+          nd.py = nd.y;
+        }
+      }
+    }
+
+    // Keep it on stage horizontally only. Recentring vertically would cancel
+    // the very collapse this demo exists to show.
+    if (m.drag < 0) {
+      var cx = 0, c0x = 0, N = nodes.length;
+      for (i = 0; i < N; i++) { cx += nodes[i].x; c0x += m.rest[i].x; }
+      cx /= N; c0x /= N;
+      var ox = (c0x - cx) * 0.012;
+      for (i = 0; i < N; i++) { nodes[i].x += ox; nodes[i].px += ox; }
     }
 
     // ghost = undeformed shape, best-fit onto the current one
@@ -1102,6 +1119,15 @@
     function Y(v) { return T.oy + v * s; }
     var nodes = m.nodes, i;
 
+    if (m.floor != null) {
+      var fy = Y(m.floor);
+      ctx.beginPath();
+      ctx.moveTo(0, fy); ctx.lineTo(cw, fy);
+      ctx.strokeStyle = theme["ink-3"];
+      ctx.lineWidth = Math.max(1, s * 0.014);
+      ctx.stroke();
+    }
+
     if (opts.gridDots) {
       ctx.fillStyle = theme["rule-soft"];
       for (var gx = 10; gx < view.W; gx += 10) {
@@ -1153,7 +1179,7 @@
     }
 
     for (i = 0; i < nodes.length; i++) {
-      if (i === m.grip || m.hinges[i]) continue;
+      if (m.hinges[i]) continue;
       ctx.beginPath();
       ctx.arc(X(nodes[i].x), Y(nodes[i].y), Math.max(2, s * 0.028), 0, Math.PI * 2);
       ctx.fillStyle = (opts.hotNode === i) ? theme.unstable : theme["ink-3"];
@@ -1162,7 +1188,7 @@
 
     Object.keys(m.hinges).forEach(function (h) {
       h = +h;
-      if (!nodes[h] || h === m.grip) return;
+      if (!nodes[h]) return;
       var r = Math.max(3.6, s * 0.055);
       ctx.beginPath();
       ctx.arc(X(nodes[h].x), Y(nodes[h].y), r, 0, Math.PI * 2);
@@ -1181,27 +1207,6 @@
       ctx.stroke();
     }
 
-    var g = nodes[m.grip];
-    if (g) {
-      var gx2 = X(g.x), gy2 = Y(g.y), gr = Math.max(4.5, s * 0.062);
-      ctx.beginPath();
-      ctx.arc(gx2, gy2, gr * 1.85, 0, Math.PI * 2);
-      ctx.strokeStyle = theme.grip;
-      ctx.globalAlpha = 0.35;
-      ctx.lineWidth = Math.max(1.3, s * 0.018);
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-      ctx.beginPath();
-      ctx.arc(gx2, gy2, gr, 0, Math.PI * 2);
-      ctx.fillStyle = theme.grip;
-      ctx.fill();
-      if (m.hinges[m.grip]) {
-        ctx.beginPath();
-        ctx.arc(gx2, gy2, gr * 0.42, 0, Math.PI * 2);
-        ctx.fillStyle = theme.panel;
-        ctx.fill();
-      }
-    }
   }
 
   function hookCanvas(stage, canvas, onSize) {
@@ -1231,8 +1236,8 @@
   var SPECIMENS = [
     {
       key: "gable-rigid", title: "Gable frame, rigid apex", stable: true,
-      note: "The rigid apex locks the two rafters into a <b>triangle</b>. Shake it however you like, the shape survives.",
-      nodes: [[18,62],[50,26],[82,62]], members: [[0,1],[1,2]], hinges: [], grip: 0
+      note: "The rigid apex locks the two rafters into a <b>triangle</b>. Let it go and it just stands there.",
+      nodes: [[18,66],[50,30],[82,66]], members: [[0,1],[1,2]], hinges: [], grip: 0
     },
     {
       key: "portal-rigid", title: "Portal frame, rigid corners", stable: true,
@@ -1241,8 +1246,8 @@
     },
     {
       key: "gable-hinged", title: "Gable frame, hinged apex", stable: false,
-      note: "The hinge lets the rafters rotate against each other. <b>One degree of freedom</b>, and the roof pitch changes.",
-      nodes: [[18,62],[50,26],[82,62]], members: [[0,1],[1,2]], hinges: [1], grip: 0
+      note: "The hinge lets the rafters rotate against each other. <b>One degree of freedom</b>, and its own weight flattens the roof.",
+      nodes: [[18,66],[50,30],[82,66]], members: [[0,1],[1,2]], hinges: [1], grip: 0
     },
     {
       key: "portal-hinged", title: "Portal frame, hinge at midspan", stable: false,
@@ -1285,7 +1290,7 @@
         if (d < bd) { bd = d; best = i; }
       }
       if (best < 0) return;
-      m.drag = best; m.target = p; m.shake = 0;
+      m.drag = best; m.target = p;
       try { stage.setPointerCapture(ev.pointerId); } catch (e) {}
       ev.preventDefault();
     });
@@ -1304,17 +1309,13 @@
     cards.push({ m: m, ctx: ctx, box: box, val: card.querySelector(".val"), bar: card.querySelector(".bar") });
   });
 
-  document.getElementById("shake").addEventListener("click", function () {
+  document.getElementById("release").addEventListener("click", function () {
     cards.forEach(function (c) {
-      c.m.gripHome = { x: c.m.nodes[c.m.grip].x, y: c.m.nodes[c.m.grip].y };
-      c.m.shake = 1.7; c.m.drag = -1; c.m.target = null;
+      c.m.gravity = true; c.m.drag = -1; c.m.target = null;
     });
   });
   document.getElementById("reset").addEventListener("click", function () {
     cards.forEach(function (c) { resetModel(c.m); });
-  });
-  document.getElementById("gravity").addEventListener("change", function (ev) {
-    cards.forEach(function (c) { c.m.gravity = ev.target.checked; });
   });
 
   /* ================= section 02: the sandbox ================= */
@@ -1339,14 +1340,12 @@
 
   var mode = "build", tool = "draw", pending = null, hover = null, hoverMember = -1;
   var pointer = null, movedFar = false, downAt = null, dragNode = -1;
-  var labGravity = false;   // survives model reloads, unlike lab.gravity
 
   var TIPS = {
     draw:  "<b>Draw.</b> Click empty space for a joint. Click one joint then another to run a member. Drag a joint to move it.",
     hinge: "<b>Rigid / hinge.</b> Click a joint to flip it either way. A <b>hinge</b> (open circle) lets its members rotate freely; a <b>rigid</b> joint (solid dot) locks the angle between them. New joints start as hinges.",
-    hand:  "<b>Hand.</b> Click a joint to decide where you hold the structure when you shake it.",
     erase: "<b>Erase.</b> Click a member to cut it, or a joint to remove it along with everything attached.",
-    test:  "<b>Test.</b> Drag any joint to hold it there, or press Shake. Watch the dashed outline for shape change."
+    test:  "<b>Test.</b> Press Let go and gravity takes over, or drag any joint to hold it there. Watch the dashed outline for shape change."
   };
   var tip = document.getElementById("lab-tip");
   function setTip() { tip.innerHTML = mode === "test" ? TIPS.test : TIPS[tool]; }
@@ -1384,12 +1383,12 @@
     if (a.mech > 0) {
       vEl.root.setAttribute("data-state", "unstable");
       vEl.state.textContent = "Internally unstable";
-      vEl.why.textContent = "Shake it and it changes shape. Add a member, or make a joint rigid.";
+      vEl.why.textContent = "Let go and it folds under its own weight. Add a member, or make a joint rigid.";
       return;
     }
     vEl.root.setAttribute("data-state", "stable");
     vEl.state.textContent = "Internally stable";
-    vEl.why.textContent = "Shake it as hard as you like. It holds its shape.";
+    vEl.why.textContent = "Let go and it stands. It holds its shape.";
   }
 
   function findNode(p, tol) {
@@ -1456,7 +1455,7 @@
     var p = PRESETS[key];
     if (!p) return;
     lab = makeModel(JSON.parse(JSON.stringify(p)));
-    lab.gravity = labGravity;
+    lab.gravity = false;
     lab.gripHome = lab.nodes[lab.grip] ? { x: lab.nodes[lab.grip].x, y: lab.nodes[lab.grip].y } : { x: 0, y: 0 };
     pending = null;
     showBanner(null);
@@ -1470,7 +1469,7 @@
 
     if (mode === "test") {
       var hitT = findNode(p, 6);
-      if (hitT >= 0) { lab.drag = hitT; lab.target = p; lab.shake = 0; }
+      if (hitT >= 0) { lab.drag = hitT; lab.target = p; }
       ev.preventDefault();
       return;
     }
@@ -1487,11 +1486,6 @@
         if (lab.hinges[hit]) delete lab.hinges[hit]; else lab.hinges[hit] = true;
         commit();
       }
-      ev.preventDefault();
-      return;
-    }
-    if (tool === "hand") {
-      if (hit >= 0) { lab.grip = hit; lab.gripHome = { x: lab.nodes[hit].x, y: lab.nodes[hit].y }; }
       ev.preventDefault();
       return;
     }
@@ -1603,18 +1597,10 @@
     ev.target.value = "";
   });
 
-  document.getElementById("lab-gravity").addEventListener("change", function (ev) {
-    labGravity = ev.target.checked;
-    lab.gravity = labGravity;
-    // physics is frozen while building, so gravity would look broken there
-    if (labGravity && mode !== "test") setMode("test");
-  });
-
-  document.getElementById("lab-shake").addEventListener("click", function () {
+  document.getElementById("lab-release").addEventListener("click", function () {
+    // physics is frozen while building, so releasing has to switch to test
     if (mode !== "test") setMode("test");
-    if (!lab.nodes[lab.grip]) return;
-    lab.gripHome = { x: lab.nodes[lab.grip].x, y: lab.nodes[lab.grip].y };
-    lab.shake = 1.7; lab.drag = -1; lab.target = null;
+    lab.gravity = true; lab.drag = -1; lab.target = null;
   });
 
   /* ================= share codes ================= */
@@ -1697,7 +1683,7 @@
 
   function loadDef(def, who) {
     lab = makeModel(JSON.parse(JSON.stringify(def)));
-    lab.gravity = labGravity;
+    lab.gravity = false;
     lab.gripHome = lab.nodes[lab.grip]
       ? { x: lab.nodes[lab.grip].x, y: lab.nodes[lab.grip].y }
       : { x: 0, y: 0 };
@@ -1790,7 +1776,7 @@
     try {
       var got = decodeDesign(raw);
       loadDef(got.def, got.name || "someone");
-      openMsg.textContent = "Loaded. Scroll up to shake it.";
+      openMsg.textContent = "Loaded. Scroll up and let it go.";
       openMsg.className = "fine good";
     } catch (err) {
       openMsg.textContent = err.message || "Could not read that code.";
@@ -1830,7 +1816,7 @@
   }
 
   function buildReport() {
-    var lines = ["CE 329 Shake Test: problem report", ""];
+    var lines = ["CE 329 Stand or Fold: problem report", ""];
     var what = fbText.value.trim();
     lines.push("What went wrong:", what || "(not described)", "");
 
@@ -1845,7 +1831,7 @@
         (a.pieces > 1 ? a.pieces + " separate pieces"
                       : (a.mech > 0 ? "internally unstable" : "internally stable")));
     }
-    lines.push("Mode: " + mode + (labGravity ? ", gravity on" : ""));
+    lines.push("Mode: " + mode + (lab.gravity ? ", released" : ""));
     lines.push("Page: " + location.href.split("#")[0]);
     lines.push("Browser: " + navigator.userAgent);
     lines.push("Screen: " + window.innerWidth + "x" + window.innerHeight +
