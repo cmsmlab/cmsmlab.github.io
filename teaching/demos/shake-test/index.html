@@ -363,6 +363,31 @@
   }
   .specimen[data-stable="false"] .meter span { background: var(--unstable); }
 
+  /* The card states the answer, so it stays hidden until a call is made.
+     visibility, not display: the space stays reserved and nothing jumps. */
+  .specimen[data-revealed="false"] .tag,
+  .specimen[data-revealed="false"] .note { visibility: hidden; }
+
+  .predict {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    padding: 11px 16px; border-top: 1px solid var(--rule-soft);
+  }
+  .predict__q { font-size: 13px; color: var(--ink-2); }
+  .predict__btn {
+    font-size: 13px; font-weight: 600; padding: 4px 12px;
+    color: var(--ink); background: transparent;
+    border: 1px solid var(--rule); cursor: pointer;
+  }
+  .predict__btn:hover:not(:disabled) { background: var(--panel-2); filter: none; }
+  .predict__btn[aria-pressed="true"] {
+    background: var(--accent); color: var(--paper); border-color: var(--accent);
+  }
+  .predict__mark { font-size: 13px; font-weight: 600; margin-left: auto; }
+  .predict__mark[data-ok="true"]  { color: var(--stable); }
+  .predict__mark[data-ok="false"] { color: var(--unstable); }
+  .score { font-size: 14px; font-weight: 600; }
+  button:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+
   .note { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
   .note b { color: var(--ink); font-weight: 600; }
 
@@ -610,7 +635,7 @@
     <dl class="titleblock__meta">
       <div class="metacell"><dt>Course</dt><dd>CE 329</dd></div>
       <div class="metacell"><dt>Chapter</dt><dd>3</dd></div>
-      <div class="metacell"><dt>Specimens</dt><dd>4 + yours</dd></div>
+      <div class="metacell"><dt>Specimens</dt><dd>6 + yours</dd></div>
       <div class="metacell"><dt>Supports</dt><dd>None</dd></div>
     </dl>
   </div>
@@ -624,14 +649,15 @@
 
   <div class="sechead">
     <span class="num">01</span>
-    <h2>Four specimens</h2>
-    <p>Same frames. One joint changed.</p>
+    <h2>Six specimens</h2>
+    <p>Call each one, then let them all go at once.</p>
   </div>
 
   <div class="controls">
     <button id="release">Let go</button>
     <button id="reset" class="ghost">Reset</button>
-    <span class="hint">drag any joint</span>
+    <span class="hint" id="gate-hint">make a call on all six first</span>
+    <span class="score" id="score" hidden></span>
   </div>
 
   <div class="grid" id="grid"></div>
@@ -1253,6 +1279,16 @@
       key: "portal-hinged", title: "Portal frame, hinge at midspan", stable: false,
       note: "Corners are still rigid, but the beam is cut by a hinge. The frame folds at the knee like a drawbridge.",
       nodes: [[24,66],[24,26],[50,26],[76,26],[76,66]], members: [[0,1],[1,2],[2,3],[3,4]], hinges: [2], grip: 0
+    },
+    {
+      key: "triangle-pinned", title: "Triangle, every joint hinged", stable: true,
+      note: "Three hinges and not one rigid joint, and it still holds. Nothing can rotate without changing a member length, so the shape is locked by <b>geometry</b>, not by the joints.",
+      nodes: [[20,66],[80,66],[50,24]], members: [[0,1],[1,2],[2,0]], hinges: [0,1,2], grip: 0
+    },
+    {
+      key: "square-pinned", title: "Square, every joint hinged", stable: false,
+      note: "The same all-hinged treatment on four members instead of three. It racks over into a parallelogram: no triangle, nothing holding the angles.",
+      nodes: [[26,24],[74,24],[74,66],[26,66]], members: [[0,1],[1,2],[2,3],[3,0]], hinges: [0,1,2,3], grip: 0
     }
   ];
 
@@ -1267,11 +1303,18 @@
     var card = document.createElement("article");
     card.className = "specimen";
     card.setAttribute("data-stable", spec.stable ? "true" : "false");
+    card.setAttribute("data-revealed", "false");
     card.innerHTML =
       '<div class="specimen__head">' +
         '<span class="tag tag--' + (spec.stable ? "stable" : "unstable") + '">Internally ' +
         (spec.stable ? "stable" : "unstable") + "</span><h3>" + spec.title + "</h3></div>" +
       '<div class="stage"><canvas></canvas></div>' +
+      '<div class="predict">' +
+        '<span class="predict__q">Will it hold its shape?</span>' +
+        '<button class="predict__btn" type="button" data-guess="holds" aria-pressed="false">Holds</button>' +
+        '<button class="predict__btn" type="button" data-guess="folds" aria-pressed="false">Folds</button>' +
+        '<span class="predict__mark" hidden></span>' +
+      '</div>' +
       '<div class="specimen__foot">' +
         '<div class="readout"><span>Shape change</span><b class="val">0.0%</b></div>' +
         '<div class="meter"><span class="bar"></span></div>' +
@@ -1306,16 +1349,76 @@
     stage.addEventListener("pointerup", release);
     stage.addEventListener("pointercancel", release);
 
-    cards.push({ m: m, ctx: ctx, box: box, val: card.querySelector(".val"), bar: card.querySelector(".bar") });
-  });
+    var pred = { guess: null };
+    var predBtns = card.querySelectorAll(".predict__btn");
+    Array.prototype.forEach.call(predBtns, function (b) {
+      b.addEventListener("click", function () {
+        pred.guess = b.getAttribute("data-guess");
+        Array.prototype.forEach.call(predBtns, function (x) {
+          x.setAttribute("aria-pressed", String(x === b));
+        });
+        updateGate();
+      });
+    });
 
-  document.getElementById("release").addEventListener("click", function () {
-    cards.forEach(function (c) {
-      c.m.gravity = true; c.m.drag = -1; c.m.target = null;
+    cards.push({
+      m: m, ctx: ctx, box: box, spec: spec, card: card, pred: pred, btns: predBtns,
+      val: card.querySelector(".val"), bar: card.querySelector(".bar"),
+      mark: card.querySelector(".predict__mark")
     });
   });
+
+  /* Predict, commit, then observe. The release is gated so a call has to be
+     made on every card first: watching without committing teaches very little. */
+
+  var releaseBtn = document.getElementById("release");
+  var gateHint = document.getElementById("gate-hint");
+  var scoreEl = document.getElementById("score");
+
+  function allCalled() {
+    return cards.every(function (c) { return c.pred.guess !== null; });
+  }
+  function updateGate() {
+    var ready = allCalled();
+    releaseBtn.disabled = !ready;
+    gateHint.hidden = ready;
+  }
+  updateGate();
+
+  releaseBtn.addEventListener("click", function () {
+    if (!allCalled()) return;
+    var right = 0;
+    cards.forEach(function (c) {
+      c.m.gravity = true; c.m.drag = -1; c.m.target = null;
+      var want = c.spec.stable ? "holds" : "folds";
+      var ok = c.pred.guess === want;
+      if (ok) right++;
+      c.card.setAttribute("data-revealed", "true");
+      c.mark.textContent = ok ? "Called it" : "Not this one";
+      c.mark.setAttribute("data-ok", String(ok));
+      c.mark.hidden = false;
+      // lock the call in: no changing your mind once you have seen it move
+      Array.prototype.forEach.call(c.btns, function (b) { b.disabled = true; });
+    });
+    scoreEl.textContent = right + " of " + cards.length + " right";
+    scoreEl.hidden = false;
+    releaseBtn.disabled = true;
+  });
+
   document.getElementById("reset").addEventListener("click", function () {
-    cards.forEach(function (c) { resetModel(c.m); });
+    cards.forEach(function (c) {
+      resetModel(c.m);
+      c.pred.guess = null;
+      c.card.setAttribute("data-revealed", "false");
+      c.mark.hidden = true;
+      c.mark.removeAttribute("data-ok");
+      Array.prototype.forEach.call(c.btns, function (b) {
+        b.disabled = false;
+        b.setAttribute("aria-pressed", "false");
+      });
+    });
+    scoreEl.hidden = true;
+    updateGate();
   });
 
   /* ================= section 02: the sandbox ================= */
