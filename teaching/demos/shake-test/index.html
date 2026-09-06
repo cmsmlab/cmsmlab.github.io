@@ -109,110 +109,52 @@
     padding: clamp(16px, 3vw, 30px) clamp(16px, 3vw, 34px) 64px;
   }
 
-  /* ---------- title block ---------- */
+  /* ---------- masthead ---------- */
 
-  .titleblock {
-    border: 1px solid var(--rule);
-    background: var(--panel);
-    box-shadow: var(--shadow);
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: stretch;
+  .masthead {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    padding-bottom: 11px;
+    border-bottom: 1px solid var(--rule);
   }
-  @media (max-width: 620px) { .titleblock { grid-template-columns: 1fr; } }
-
-  .titleblock__main { padding: 15px clamp(16px, 3vw, 26px); }
-
-  .eyebrow {
-    font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 11.5px;
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    margin: 0 0 10px;
+  .masthead h1 { flex: none; }
+  .masthead p {
+    margin: 0;
+    flex: 1 1 380px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
   }
+  .masthead p strong { color: var(--ink); font-weight: 600; }
 
   h1 {
-    font-size: clamp(26px, 4vw, 34px);
-    line-height: 1.04;
+    font-size: clamp(22px, 3vw, 29px);
+    line-height: 1.05;
     font-weight: 700;
     letter-spacing: -.022em;
     margin: 0;
     text-wrap: balance;
   }
 
-  .titleblock__meta {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(88px, auto));
-    border-left: 1px solid var(--rule);
-    margin: 0;
-  }
-  @media (max-width: 620px) {
-    .titleblock__meta { border-left: 0; border-top: 1px solid var(--rule); }
-  }
-
-  .metacell { padding: 12px 16px; border-bottom: 1px solid var(--rule); }
-  .metacell:nth-child(odd) { border-right: 1px solid var(--rule); }
-  .metacell:nth-child(n+3) { border-bottom: 0; }
-
-  .metacell dt {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
-    font-size: 10px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--ink-3);
-    margin: 0 0 3px;
-  }
-  .metacell dd { margin: 0; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
-
-  .lede {
-    max-width: 66ch;
-    margin: 16px 0 0;
-    color: var(--ink-2);
-    font-size: 15px;
-  }
-  .lede strong { color: var(--ink); font-weight: 600; }
-
-  /* ---------- section headers ---------- */
-
-  .sechead {
+  /* Section title and its controls share one row: three of these on the page,
+     and a full header block each was more preamble than content. */
+  .barhead {
     display: flex;
-    align-items: baseline;
-    gap: 14px;
-    margin: 26px 0 14px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--rule);
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin: 14px 0 12px;
   }
-  .sechead h2 {
-    margin: 0;
-    font-size: 22px;
+  .barhead h2 {
+    margin: 0 5px 0 0;
+    font-size: 17px;
     font-weight: 600;
-    letter-spacing: -.015em;
+    letter-spacing: -.014em;
   }
-  .sechead .num {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
-    font-size: 12px;
-    letter-spacing: .1em;
-    color: var(--accent);
-    flex: none;
-  }
-  .sechead p {
-    margin: 0 0 0 auto;
-    font-size: 14px;
-    color: var(--ink-3);
-    text-align: right;
-  }
-  @media (max-width: 720px) { .sechead p { display: none; } }
 
   /* ---------- controls ---------- */
-
-  .controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
 
   button {
     font-family: inherit;
@@ -298,12 +240,9 @@
      in short supply. Flatten the drawings and tighten the lead-in so all six
      cards land above the fold instead of the last row hiding below it. */
   @media (min-width: 1041px) and (max-height: 1100px) {
-    .stage { aspect-ratio: 7 / 3; }
-    .specimen__foot { min-height: 52px; }
-    .lede { font-size: 14px; margin-top: 12px; }
-    .sechead { margin: 18px 0 10px; }
-    .titleblock__main { padding: 11px clamp(16px, 3vw, 26px); }
-    h1 { font-size: clamp(24px, 3vw, 30px); }
+    .stage { aspect-ratio: 2 / 1; }
+    .masthead p { font-size: 13.5px; }
+    .barhead { margin: 10px 0 9px; }
   }
 
   .specimen {
@@ -315,15 +254,18 @@
   }
 
   .specimen__head {
-    padding: 10px 14px 9px;
+    padding: 9px 14px;
     border-bottom: 1px solid var(--rule-soft);
     display: flex;
-    flex-direction: column;
-    gap: 5px;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    min-height: 38px;
   }
 
   .tag {
-    align-self: flex-start;
+    margin-left: auto;
+    flex: none;
     font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-size: 10.5px;
     font-weight: 500;
@@ -349,31 +291,80 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    min-height: 58px;
   }
 
   /* The card states the answer, so it stays hidden until a call is made.
-     visibility, not display: the space stays reserved and nothing jumps. */
-  .specimen[data-revealed="false"] .tag,
-  .specimen[data-revealed="false"] .note { visibility: hidden; }
+     The tag keeps its space (visibility) so the title does not shift. The
+     note does not (display): reserving room for text nobody can see yet left
+     a dead white band under every card, and the cards need to be short while
+     all six are on screen. They grow when the answer lands, which is fine. */
+  .specimen[data-revealed="false"] .tag { display: none; }
+  /* Title yields to the tag rather than pushing it onto a second line, which
+     would put the dead band straight back above every card. */
+  .specimen__head h3 { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .specimen[data-revealed="false"] .specimen__foot { display: none; }
 
   .predict {
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    padding: 8px 14px; border-top: 1px solid var(--rule-soft);
+    display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+    padding: 10px 14px; border-top: 1px solid var(--rule-soft);
   }
-  .predict__q { font-size: 13px; color: var(--ink-2); }
+  .predict__q { font-size: 15px; color: var(--ink); font-weight: 500; }
+
+  /* Pale in the answer's own colour, so the choice reads at a glance from the
+     back of the room; full strength only once it has actually been chosen. */
   .predict__btn {
-    font-size: 13px; font-weight: 600; padding: 4px 12px;
-    color: var(--ink); background: transparent;
-    border: 1px solid var(--rule); cursor: pointer;
+    font-size: 15px; font-weight: 600; padding: 7px 18px;
+    border: 1px solid transparent; cursor: pointer;
+    transition: background .12s ease, color .12s ease;
   }
-  .predict__btn:hover:not(:disabled) { background: var(--panel-2); filter: none; }
-  .predict__btn[aria-pressed="true"] {
-    background: var(--accent); color: var(--paper); border-color: var(--accent);
+  .predict__btn[data-guess="holds"] { color: var(--stable);   background: var(--stable-bg); }
+  .predict__btn[data-guess="folds"] { color: var(--unstable); background: var(--unstable-bg); }
+  .predict__btn:hover:not(:disabled) { filter: brightness(0.96); }
+  .predict__btn[aria-pressed="true"][data-guess="holds"] {
+    background: var(--stable); color: var(--paper); border-color: var(--stable);
   }
-  .predict__mark { font-size: 13px; font-weight: 600; margin-left: auto; }
-  .predict__mark[data-ok="true"]  { color: var(--stable); }
-  .predict__mark[data-ok="false"] { color: var(--unstable); }
+  .predict__btn[aria-pressed="true"][data-guess="folds"] {
+    background: var(--unstable); color: var(--paper); border-color: var(--unstable);
+  }
+  .predict__btn:disabled { cursor: default; }
+
+  /* After the reveal the row has to answer two questions at once: what the
+     answer WAS, and what you said. Colour alone cannot carry both, because
+     teal and rust already mean stable and unstable here. So the true answer
+     gets a neutral ink ring (no new colour), a wrong pick is struck through,
+     and the verdict chip carries a tick or a cross that reads without colour
+     at all. */
+  .specimen[data-revealed="true"] .predict__btn[data-correct="true"] {
+    box-shadow: 0 0 0 2px var(--ink);
+  }
+  /* The right answer they did NOT pick would otherwise be a pale button on a
+     pale row of the same hue. Lift it onto the card colour so it still reads.
+     Scoped to data-picked="false" so it never fights the chosen-button fill. */
+  .specimen[data-revealed="true"] .predict__btn[data-correct="true"][data-picked="false"] {
+    background: var(--panel);
+  }
+  .specimen[data-revealed="true"] .predict__btn[data-picked="true"][data-correct="false"] {
+    opacity: .5;
+    text-decoration: line-through;
+  }
+  .specimen[data-revealed="true"] .predict__btn[data-picked="false"][data-correct="false"] {
+    opacity: .35;
+  }
+
+  .predict__mark {
+    font-size: 13.5px; font-weight: 700; margin-left: auto;
+    padding: 3px 9px; white-space: nowrap;
+  }
+  .predict__mark[data-ok="true"]  { color: var(--stable);   background: var(--stable-bg); }
+  .predict__mark[data-ok="false"] { color: var(--unstable); background: var(--unstable-bg); }
+
+  /* Deliberately NOT a coloured rail down the card: teal and rust already mean
+     stable and unstable on this card, and reusing them for right and wrong
+     would put two different meanings on one colour. Correctness gets the whole
+     predict row instead, tinted and ticked, which is labelled and unambiguous. */
+  .specimen[data-called="true"]  .predict { background: var(--stable-bg); }
+  .specimen[data-called="false"] .predict { background: var(--unstable-bg); }
+  .specimen[data-called] .predict__q { color: var(--ink-2); }
   .score { font-size: 14px; font-weight: 600; }
   button:disabled { opacity: .45; cursor: not-allowed; filter: none; }
 
@@ -616,33 +607,14 @@
 <body>
 <div class="sheet">
 
-  <div class="titleblock">
-    <div class="titleblock__main">
-      <p class="eyebrow">Internal stability &middot; set it down and let go</p>
-      <h1>Stand or Fold</h1>
-    </div>
-    <dl class="titleblock__meta">
-      <div class="metacell"><dt>Course</dt><dd>CE 329</dd></div>
-      <div class="metacell"><dt>Chapter</dt><dd>3</dd></div>
-      <div class="metacell"><dt>Specimens</dt><dd>6 + yours</dd></div>
-      <div class="metacell"><dt>Supports</dt><dd>None</dd></div>
-    </dl>
-  </div>
+  <header class="masthead">
+    <h1>Stand or Fold</h1>
+    <p>Nothing holds these up: no pins, no rollers, no supports at all. Let go, and if it keeps its
+    shape it is <strong>internally stable</strong>. The dashed outline is where it started.</p>
+  </header>
 
-  <p class="lede">
-    Imagine a structure resting on the ground with nothing holding it up &mdash; no pins, no
-    rollers, no supports at all. Let go, and gravity does the rest. <strong>If it keeps its shape,
-    it is internally stable.</strong> The dashed outline is the original shape, lined up as closely
-    as it can be, so only a real change of shape opens a gap.
-  </p>
-
-  <div class="sechead">
-    <span class="num">01</span>
+  <div class="barhead">
     <h2>Six specimens</h2>
-    <p>Call each one, then let them all go at once.</p>
-  </div>
-
-  <div class="controls">
     <button id="release">Let go</button>
     <button id="reset" class="ghost">Reset</button>
     <span class="hint" id="gate-hint">make a call on all six first</span>
@@ -651,10 +623,9 @@
 
   <div class="grid" id="grid"></div>
 
-  <div class="sechead">
-    <span class="num">02</span>
+  <div class="barhead">
     <h2>Build your own</h2>
-    <p>The verdict updates as you draw.</p>
+    <span class="hint">the verdict updates as you draw</span>
   </div>
 
   <div class="lab">
@@ -699,10 +670,9 @@
     </aside>
   </div>
 
-  <div class="sechead">
-    <span class="num">03</span>
+  <div class="barhead">
     <h2>Hand it in</h2>
-    <p>Your design travels as one line of text.</p>
+    <span class="hint">your design travels as one line of text</span>
   </div>
 
   <div class="exchange">
@@ -1168,11 +1138,11 @@
     // The lattice joints already snap to. Drawn before everything else so the
     // ground line and the structure sit on top of it, and only while building:
     // in test mode the dashed ghost outline needs the dashes to itself.
-    if (opts.gridDots) {
+    if (opts.grid) {
       ctx.save();
       ctx.setLineDash([2, 4]);
-      ctx.strokeStyle = theme["rule-soft"];
-      ctx.globalAlpha = 0.65;
+      ctx.strokeStyle = theme["ink-3"];
+      ctx.globalAlpha = 0.26;
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (var gx = 0; gx <= view.W; gx += GRID) { ctx.moveTo(X(gx), Y(0)); ctx.lineTo(X(gx), Y(view.H)); }
@@ -1294,32 +1264,32 @@
 
   var SPECIMENS = [
     {
-      key: "gable-rigid", title: "Gable frame, rigid apex", stable: true,
+      key: "gable-rigid", title: "Gable, rigid apex", stable: true,
       note: "The rigid apex locks the rafters into a <b>triangle</b>. Nothing can move without stretching a member.",
       nodes: [[18,66],[50,30],[82,66]], members: [[0,1],[1,2]], hinges: [], grip: 0
     },
     {
-      key: "portal-rigid", title: "Portal frame, rigid corners", stable: true,
+      key: "portal-rigid", title: "Portal, rigid corners", stable: true,
       note: "Rigid corners stop the columns leaning and the beam swinging. One rigid body.",
       nodes: [[24,66],[24,26],[76,26],[76,66]], members: [[0,1],[1,2],[2,3]], hinges: [], grip: 0
     },
     {
-      key: "gable-hinged", title: "Gable frame, hinged apex", stable: false,
+      key: "gable-hinged", title: "Gable, hinged apex", stable: false,
       note: "The hinge lets the rafters rotate against each other. <b>One degree of freedom</b>, and the pitch changes.",
       nodes: [[18,66],[50,30],[82,66]], members: [[0,1],[1,2]], hinges: [1], grip: 0
     },
     {
-      key: "portal-hinged", title: "Portal frame, hinge at midspan", stable: false,
+      key: "portal-hinged", title: "Portal, hinge at midspan", stable: false,
       note: "Corners still rigid, but a hinge cuts the beam. It folds at the knee like a drawbridge.",
       nodes: [[24,66],[24,26],[50,26],[76,26],[76,66]], members: [[0,1],[1,2],[2,3],[3,4]], hinges: [2], grip: 0
     },
     {
-      key: "triangle-pinned", title: "Triangle, every joint hinged", stable: true,
+      key: "triangle-pinned", title: "Triangle, all hinges", stable: true,
       note: "Three hinges, no rigid joint, and it still holds. The shape is locked by <b>geometry</b>.",
       nodes: [[20,66],[80,66],[50,24]], members: [[0,1],[1,2],[2,0]], hinges: [0,1,2], grip: 0
     },
     {
-      key: "square-pinned", title: "Square, every joint hinged", stable: false,
+      key: "square-pinned", title: "Square, all hinges", stable: false,
       note: "The same all-hinged treatment on four members. It racks into a parallelogram: no triangle.",
       nodes: [[26,24],[74,24],[74,66],[26,66]], members: [[0,1],[1,2],[2,3],[3,0]], hinges: [0,1,2,3], grip: 0
     }
@@ -1339,8 +1309,9 @@
     card.setAttribute("data-revealed", "false");
     card.innerHTML =
       '<div class="specimen__head">' +
-        '<span class="tag tag--' + (spec.stable ? "stable" : "unstable") + '">Internally ' +
-        (spec.stable ? "stable" : "unstable") + "</span><h3>" + spec.title + "</h3></div>" +
+        "<h3>" + spec.title + "</h3>" +
+        '<span class="tag tag--' + (spec.stable ? "stable" : "unstable") + '">' +
+        (spec.stable ? "Stable" : "Unstable") + "</span></div>" +
       '<div class="stage"><canvas></canvas></div>' +
       '<div class="predict">' +
         '<span class="predict__q">Internally stable?</span>' +
@@ -1425,11 +1396,18 @@
       var ok = c.pred.guess === want;
       if (ok) right++;
       c.card.setAttribute("data-revealed", "true");
-      c.mark.textContent = ok ? "Called it" : "Not this one";
+      c.card.setAttribute("data-called", String(ok));
+      c.mark.textContent = ok ? "✓ Called it" : "✗ Missed it";
       c.mark.setAttribute("data-ok", String(ok));
       c.mark.hidden = false;
-      // lock the call in: no changing your mind once you have seen it move
-      Array.prototype.forEach.call(c.btns, function (b) { b.disabled = true; });
+      // Ring the true answer and fade a wrong pick, so the card shows BOTH
+      // what the answer was and what they said, not just whether they matched.
+      Array.prototype.forEach.call(c.btns, function (b) {
+        var g = b.getAttribute("data-guess");
+        b.setAttribute("data-correct", String(g === want));
+        b.setAttribute("data-picked", String(g === c.pred.guess));
+        b.disabled = true;   // no changing your mind once you have seen it move
+      });
     });
     scoreEl.textContent = right + " of " + cards.length + " right";
     scoreEl.hidden = false;
@@ -1441,11 +1419,14 @@
       resetModel(c.m);
       c.pred.guess = null;
       c.card.setAttribute("data-revealed", "false");
+      c.card.removeAttribute("data-called");
       c.mark.hidden = true;
       c.mark.removeAttribute("data-ok");
       Array.prototype.forEach.call(c.btns, function (b) {
         b.disabled = false;
         b.setAttribute("aria-pressed", "false");
+        b.removeAttribute("data-correct");
+        b.removeAttribute("data-picked");
       });
     });
     scoreEl.hidden = true;
@@ -2038,7 +2019,7 @@
       lab.change = 0;
     }
     draw(lab, labCtx, labBox.w, labBox.h, viewLab, {
-      gridDots: mode === "build",
+      grid: mode === "build",
       ghost: mode === "test",
       pending: mode === "build" && tool === "draw" ? pending : null,
       pendingTo: mode === "build" && tool === "draw" && pending != null
