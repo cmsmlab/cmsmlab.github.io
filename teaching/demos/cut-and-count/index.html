@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive demo for CE 329: draw a cut through a structure, pick a piece, move the moment point, and find the equations of condition.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Cut and Count">
+<meta property="og:description" content="Interactive demo for CE 329: draw a cut through a structure, pick a piece, move the moment point, and find the equations of condition.">
+<meta property="og:type" content="website">
+<title>Cut and Count</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  /* minimal reset: the artifact host supplies one, a plain web host does not */
+  *, *::before, *::after { box-sizing: border-box; }
+  /* the artifact host supplies this; a plain host does not, and without it any
+     author `display:` rule silently overrides the hidden attribute */
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body, h1, h2, h3, p, dl, dd, ul, figure { margin: 0; }
+  ul { padding: 0; }
+  canvas { display: block; max-width: 100%; }
+  img, svg { max-width: 100%; height: auto; }
+  button, input, select { font: inherit; color: inherit; }
+
+  :root {
+    --paper:#EDEFEA; --panel:#F7F8F5; --panel-2:#E4E8E2; --ink:#1F2724; --ink-2:#55605B; --ink-3:#7C8781;
+    --rule:#CBD2CB; --accent:#0F6E68;
+    --good:#0F6E68; --good-bg:#DCEAE7; --bad:#B4432A; --bad-bg:#F2DFD8; --dep:#7C8781; --dep-bg:#E4E8E2; --ask:#B5811A; --ask-bg:#F3E7CC;
+    --fN:#2B5FB3; --fV:#B5811A; --fM:#7A4FA3; --react:#3A4541; --grid:#D6DCD6; --ghost:#B9C2BC; --cut:#B4432A;
+    --shadow:0 1px 2px rgba(31,39,36,.06), 0 6px 18px rgba(31,39,36,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#121614; --panel:#1A201D; --panel-2:#232A26; --ink:#DDE4DF; --ink-2:#97A39C; --ink-3:#77837C;
+      --rule:#303934; --accent:#4FBFB2;
+      --good:#4FBFB2; --good-bg:#14302D; --bad:#E87A5C; --bad-bg:#38211A; --dep:#8B968F; --dep-bg:#262E2A; --ask:#E0AE4A; --ask-bg:#33280F;
+      --fN:#7FA6E8; --fV:#E0AE4A; --fM:#B695DE; --react:#C3CCC6; --grid:#262E2A; --ghost:#4A544E; --cut:#E87A5C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#121614; --panel:#1A201D; --panel-2:#232A26; --ink:#DDE4DF; --ink-2:#97A39C; --ink-3:#77837C;
+    --rule:#303934; --accent:#4FBFB2;
+    --good:#4FBFB2; --good-bg:#14302D; --bad:#E87A5C; --bad-bg:#38211A; --dep:#8B968F; --dep-bg:#262E2A; --ask:#E0AE4A; --ask-bg:#33280F;
+    --fN:#7FA6E8; --fV:#E0AE4A; --fM:#B695DE; --react:#C3CCC6; --grid:#262E2A; --ghost:#4A544E; --cut:#E87A5C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+  }
+
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:Archivo,"Helvetica Neue",Arial,sans-serif; font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .sheet { max-width:1400px; margin:0 auto; padding:clamp(12px,2vw,22px) clamp(12px,2.5vw,28px) 40px; }
+  .top { display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px; }
+  h1 { margin:0; font-size:clamp(20px,2.6vw,26px); line-height:1.05; font-weight:700; letter-spacing:-.01em; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; flex:1 1 auto; }
+  .chips button { border:1px solid var(--rule); background:var(--panel); color:var(--ink-2); font:inherit; font-size:13.5px; padding:5px 12px; border-radius:999px; cursor:pointer; }
+  .chips button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--paper); font-weight:600; }
+  .chips button:focus-visible, .tile:focus-visible, button.plain:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .mono { font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; }
+
+  .stage { position:relative; margin-top:12px; background:var(--panel); border:1px solid var(--rule); border-radius:8px; box-shadow:var(--shadow); padding:8px; }
+  canvas { display:block; width:100%; height:auto; touch-action:none; cursor:crosshair; border-radius:6px; }
+  canvas.grab { cursor:grab; } canvas.pick { cursor:pointer; }
+  .count { position:absolute; top:16px; right:16px; user-select:none; display:flex; gap:6px; align-items:center; font-size:14px; background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:5px 12px; box-shadow:var(--shadow); }
+  .count .pill { display:inline-block; padding:1px 9px; border-radius:999px; font-size:12.5px; font-weight:600; }
+  .pill.good { background:var(--good-bg); color:var(--good); } .pill.bad { background:var(--bad-bg); color:var(--bad); } .pill.dep { background:var(--dep-bg); color:var(--dep); }
+  .found { position:absolute; right:16px; top:60px; display:flex; flex-direction:column; gap:8px; max-height:calc(100% - 76px); overflow:auto; }
+  .found figure { margin:0; background:var(--panel); border:1.5px solid var(--good); border-radius:8px; padding:6px 8px 7px; box-shadow:var(--shadow); width:230px; cursor:pointer; }
+  .found img { display:block; width:100%; height:auto; border-radius:4px; background:var(--paper); }
+  .found figcaption { font-size:12.5px; margin-top:4px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .found figcaption .mono { font-size:12.5px; }
+  .status { position:absolute; left:16px; top:16px; font-size:14px; color:var(--ink-2); background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:5px 12px; box-shadow:var(--shadow); max-width:60%; }
+  .status b { color:var(--ink); font-weight:600; }
+  .status.bad { color:var(--bad); }
+
+  .tiles { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px; }
+  @media (max-width:640px) { .tiles { grid-template-columns:1fr; } }
+  .tile { border:1.5px solid var(--rule); background:var(--panel); border-radius:8px; padding:12px 14px; text-align:left; font:inherit; color:var(--ink); cursor:pointer; display:flex; flex-direction:column; gap:4px; min-height:78px; }
+  .tile[disabled] { cursor:default; opacity:.55; }
+  .tile .h { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .tile .nm { font-size:20px; font-weight:600; }
+  .tile .st { font-size:12.5px; font-weight:600; padding:2px 9px; border-radius:999px; white-space:nowrap; }
+  .tile .why { font-size:13.5px; color:var(--ink-2); overflow-x:auto; }
+  .tile .why .mono { color:var(--ink); font-size:15px; }
+  .tile.good { border-color:var(--good); background:var(--good-bg); } .tile.good .st { background:var(--good); color:var(--paper); }
+  .tile.bad  { border-color:var(--bad);  background:var(--bad-bg);  } .tile.bad  .st { background:var(--bad);  color:var(--paper); }
+  .tile.dep  { border-color:var(--dep);  background:var(--dep-bg);  } .tile.dep  .st { background:var(--dep);  color:var(--paper); }
+  .tile.ask  { border-color:var(--ask);  background:var(--ask-bg);  } .tile.ask  .st { background:var(--ask);  color:var(--paper); }
+  .tile.kept { box-shadow:inset 0 0 0 2px var(--good); }
+  .uN { color:var(--fN); font-weight:600; } .uV { color:var(--fV); font-weight:600; } .uM { color:var(--fM); font-weight:600; }
+
+  .bar { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; margin-top:10px; font-size:13px; color:var(--ink-3); }
+  button.plain { border:1px solid var(--rule); background:var(--panel); color:var(--ink); font:inherit; font-size:13.5px; padding:5px 11px; border-radius:6px; cursor:pointer; }
+  .legend { display:flex; flex-wrap:wrap; gap:6px 14px; }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+  .colophon { margin-top:22px; padding-top:10px; border-top:1px solid var(--rule); font-size:12px; color:var(--ink-3); }
+  .colophon p { margin:3px 0; max-width:78ch; }
+  .fb { margin-top:8px; display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
+  .fb__panel { width:100%; max-width:560px; display:flex; flex-direction:column; gap:10px; padding:14px; background:var(--panel); border:1px solid var(--rule); border-radius:6px; }
+  .fb__panel label { display:flex; flex-direction:column; gap:6px; font-size:13px; color:var(--ink-2); }
+  .fb__panel textarea { font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:13px; color:var(--ink); background:var(--paper); border:1px solid var(--rule); padding:9px 11px; width:100%; resize:vertical; border-radius:4px; }
+  .fb__panel textarea:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+  .fb__panel .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .btnlink { display:inline-block; font-size:13.5px; font-weight:600; color:var(--accent); text-decoration:none; border:1px solid var(--accent); padding:5px 11px; border-radius:6px; }
+  .fine { font-size:12.5px; color:var(--ink-3); margin:0; } .fine.good { color:var(--good); } .fine.bad { color:var(--bad); }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="top">
+    <h1>Cut and Count</h1>
+    <div class="chips" id="chips" role="group" aria-label="Structure"></div>
+  </div>
+
+  <section class="stage" aria-label="Structure and cut">
+    <canvas id="cv" width="1400" height="640"></canvas>
+    <div class="status" id="status"><b>Draw a stroke</b> across the structure to cut it.</div>
+    <div class="count" id="count"></div>
+    <div class="found" id="found" aria-label="Equations of condition found"></div>
+  </section>
+
+  <div class="tiles" id="tiles" aria-live="polite">
+    <button class="tile" id="t-Fx" disabled><div class="h"><span class="nm mono">ΣF<sub>x</sub> = 0</span><span class="st"></span></div><div class="why">Cut first.</div></button>
+    <button class="tile" id="t-Fy" disabled><div class="h"><span class="nm mono">ΣF<sub>y</sub> = 0</span><span class="st"></span></div><div class="why">Cut first.</div></button>
+    <button class="tile" id="t-MP" disabled><div class="h"><span class="nm mono">ΣM = 0</span><span class="st"></span></div><div class="why">Cut first.</div></button>
+  </div>
+
+  <div class="bar">
+    <button class="plain" id="clear-cut">Clear cut</button>
+    <div class="legend">
+      <span><i style="background:var(--fN)"></i>N</span>
+      <span><i style="background:var(--fV)"></i>V</span>
+      <span><i style="background:var(--fM)"></i>M</span>
+      <span><i style="background:var(--react)"></i>reactions</span>
+      <span><i style="background:var(--accent)"></i>target: where moments are taken</span>
+      <span><i style="background:var(--good)"></i>equation of condition</span>
+      <span><i style="background:var(--bad)"></i>contains internal unknowns</span>
+    </div>
+  </div>
+
+  <footer class="colophon">
+    <p>Grid spacing is L/2. A cut through a rigid member exposes N, V, and M. A cut through a hinge exposes two forces and no moment. A cut through a two-force bar exposes one force along the bar. Tap a green tile to keep that condition; the count in the corner updates.</p>
+    <p>CE 329 Structural Analysis &middot; Teaching demo. Built with AI assistance. Every verdict is computed from the cut you drew, not generated text. Nothing you do here is graded or recorded.</p>
+    <div class="fb">
+      <div class="fb__panel" id="fb-panel">
+        <label>What went wrong?
+          <textarea id="fb-text" rows="3" spellcheck="true" placeholder="What did you expect, and what happened instead?"></textarea>
+        </label>
+        <div class="row">
+          <button class="plain" id="fb-copy" type="button">Copy report</button>
+          <a id="fb-link" class="btnlink" hidden target="_blank" rel="noopener">Open the feedback form</a>
+        </div>
+        <p class="fine" id="fb-msg">Press <b>Copy report</b> first, then open the form and paste it into the first question. The report includes the structure, the cut, and the target on your screen, so the problem can be reproduced.</p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const LIB = [
+    { name:'Beam, one hinge', ec:1, nodes:[ {x:0,y:0,sup:'fixed',joint:'rigid',l:'A'},{x:2,y:0,joint:'pin',l:'B'},{x:4,y:0,sup:'roller',joint:'rigid',l:'C'} ], members:[ {a:0,b:1},{a:1,b:2} ] },
+    { name:'Beam, two hinges', ec:2, nodes:[ {x:0,y:0,sup:'pin',joint:'rigid',l:'A'},{x:1,y:0,joint:'pin',l:'B'},{x:2,y:0,sup:'roller',joint:'rigid',l:'C'},{x:3,y:0,joint:'pin',l:'D'},{x:4,y:0,sup:'fixed',joint:'rigid',l:'E'} ], members:[ {a:0,b:1},{a:1,b:2},{a:2,b:3},{a:3,b:4} ] },
+    { name:'Portal, one hinge', ec:1, nodes:[ {x:0,y:0,sup:'pin',joint:'rigid',l:'A'},{x:0,y:2,joint:'rigid',l:'B'},{x:2,y:2,joint:'pin',l:'D'},{x:4,y:2,joint:'rigid',l:'C'},{x:4,y:0,sup:'pin',joint:'rigid',l:'E'} ], members:[ {a:0,b:1},{a:1,b:2},{a:2,b:3},{a:3,b:4} ] },
+    { name:'Portal, two hinges', ec:2, nodes:[ {x:0,y:0,sup:'fixed',joint:'rigid',l:'A'},{x:0,y:2,joint:'rigid',l:'B'},{x:2,y:2,joint:'pin',l:'D'},{x:4,y:2,joint:'pin',l:'C'},{x:4,y:0,sup:'fixed',joint:'rigid',l:'E'} ], members:[ {a:0,b:1},{a:1,b:2},{a:2,b:3},{a:3,b:4} ] },
+    { name:'Two trusses, hinge', ec:1, nodes:[ {x:0,y:0,sup:'pin',joint:'pin',l:'A'},{x:0,y:1,joint:'pin'},{x:0,y:2,joint:'pin'},{x:1,y:1,joint:'pin'},{x:1,y:2,joint:'pin'},{x:2,y:2,joint:'pin',l:'H'},{x:3,y:2,joint:'pin'},{x:3,y:1,joint:'pin'},{x:4,y:2,joint:'pin'},{x:4,y:1,joint:'pin'},{x:4,y:0,sup:'pin',joint:'pin',l:'B'} ],
+      members:[ {a:0,b:1,truss:1},{a:1,b:2,truss:1},{a:2,b:4,truss:1},{a:4,b:5,truss:1},{a:1,b:3,truss:1},{a:3,b:4,truss:1},{a:0,b:3,truss:1},{a:3,b:5,truss:1},{a:5,b:6,truss:1},{a:6,b:8,truss:1},{a:6,b:7,truss:1},{a:7,b:9,truss:1},{a:8,b:9,truss:1},{a:9,b:10,truss:1},{a:5,b:7,truss:1},{a:7,b:10,truss:1} ] },
+    { name:'Two parallel bars', ec:1, nodes:[ {x:0,y:0,sup:'pin',joint:'pin'},{x:1,y:0,joint:'pin'},{x:1,y:1,joint:'pin'},{x:2,y:0,joint:'pin'},{x:2,y:1,joint:'pin'},{x:4,y:1,joint:'pin',l:'A'},{x:4,y:0,joint:'pin',l:'B'},{x:5,y:0,sup:'roller',joint:'pin',l:'C'} ],
+      members:[ {a:0,b:1,truss:1},{a:1,b:3,truss:1},{a:0,b:2,truss:1},{a:1,b:2,truss:1},{a:2,b:4,truss:1},{a:2,b:3,truss:1},{a:3,b:4,truss:1},{a:4,b:5,truss:1},{a:3,b:6,truss:1},{a:5,b:6,truss:1},{a:5,b:7,truss:1},{a:6,b:7,truss:1} ] },
+    { name:'Single link', ec:2, nodes:[ {x:0,y:0,sup:'pin',joint:'pin',l:'A'},{x:1,y:0,joint:'pin'},{x:2,y:0,sup:'roller',joint:'pin'},{x:1,y:1,joint:'pin'},{x:2,y:1,joint:'pin'},{x:3,y:1,joint:'pin',l:'B'},{x:3,y:0,joint:'pin',l:'C'},{x:4,y:0,joint:'pin'},{x:4,y:1,joint:'pin'},{x:5,y:0,sup:'pin',joint:'pin',l:'D'} ],
+      members:[ {a:0,b:1,truss:1},{a:1,b:2,truss:1},{a:0,b:3,truss:1},{a:1,b:3,truss:1},{a:3,b:4,truss:1},{a:1,b:4,truss:1},{a:2,b:4,truss:1},{a:4,b:5,truss:1},{a:2,b:5,truss:1},{a:5,b:6,truss:1},{a:6,b:7,truss:1},{a:6,b:8,truss:1},{a:7,b:8,truss:1},{a:8,b:9,truss:1},{a:7,b:9,truss:1} ] },
+  ];
+
+  const state = { S:null, cut:null, side:0, P:null, kept:[], drawing:null, picking:false, pMoved:false };
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let pulseT = 0, pulsing = false;
+
+  function reactions(S) {
+    const out = [];
+    S.nodes.forEach((n, i) => {
+      const L = n.l || ('' + i);
+      if (n.sup === 'fixed') out.push({node:i,type:'f',dir:[1,0],name:`${L}x`},{node:i,type:'f',dir:[0,1],name:`${L}y`},{node:i,type:'c',name:`M${L}`});
+      if (n.sup === 'pin') out.push({node:i,type:'f',dir:[1,0],name:`${L}x`},{node:i,type:'f',dir:[0,1],name:`${L}y`});
+      if (n.sup === 'roller') out.push({node:i,type:'f',dir:[0,1],name:`${L}y`});
+    });
+    return out;
+  }
+  function segInt(p, q, a, b) {
+    const r = [q[0]-p[0], q[1]-p[1]], s = [b[0]-a[0], b[1]-a[1]], den = r[0]*s[1] - r[1]*s[0];
+    if (Math.abs(den) < 1e-9) return null;
+    const qp = [a[0]-p[0], a[1]-p[1]], t = (qp[0]*s[1] - qp[1]*s[0])/den, u = (qp[0]*r[1] - qp[1]*r[0])/den;
+    return (t < 0 || t > 1 || u < 0 || u > 1) ? null : u;
+  }
+  function sideOfLine(p, q, pt) { return (q[0]-p[0])*(pt[1]-p[1]) - (q[1]-p[1])*(pt[0]-p[0]); }
+  function distToSeg(p, q, pt) {
+    const vx = q[0]-p[0], vy = q[1]-p[1], L2 = vx*vx+vy*vy || 1e-12;
+    const t = Math.max(0, Math.min(1, ((pt[0]-p[0])*vx + (pt[1]-p[1])*vy)/L2));
+    return Math.hypot(pt[0]-(p[0]+t*vx), pt[1]-(p[1]+t*vy));
+  }
+  function nearestSeg(poly, pt) { // index of the polyline segment closest to pt
+    let bi = 0, bd = Infinity; for (let i = 0; i + 1 < poly.length; i++) { const d = distToSeg(poly[i], poly[i+1], pt); if (d < bd) { bd = d; bi = i; } } return { i: bi, d: bd };
+  }
+  function applyCut(poly) {
+    const S = state.S, cuts = [], handled = new Set();
+    // 1) cuts through hinge nodes: release the members whose far end lies on the positive side of the line
+    S.nodes.forEach((n, ni) => {
+      if (n.joint !== 'pin') return;
+      const ns = nearestSeg(poly, [n.x, n.y]); if (ns.d > 0.22) return;
+      const p = poly[ns.i], q = poly[ns.i+1];
+      const inc = S.members.map((m, mi) => ({m, mi})).filter(x => x.m.a === ni || x.m.b === ni);
+      const pos = [], neg = [];
+      inc.forEach(x => { const o = S.nodes[x.m.a === ni ? x.m.b : x.m.a]; (sideOfLine(p, q, [o.x, o.y]) > 0 ? pos : neg).push(x); });
+      if (!pos.length || !neg.length) return; // line grazes the node without separating anything there
+      const rel = pos.length <= neg.length ? pos : neg; // release the smaller bundle
+      const first = rel[0], o = S.nodes[first.m.a === ni ? first.m.b : first.m.a];
+      const len = Math.hypot(o.x-n.x, o.y-n.y), t = [(o.x-n.x)/len, (o.y-n.y)/len];
+      cuts.push({ kind:'hinge', node:ni, mis:rel.map(x => x.mi), at:[n.x, n.y], t, n:[-t[1], t[0]] });
+      inc.forEach(x => handled.add(x.mi));
+    });
+    // 2) ordinary crossings of the remaining members
+    S.members.forEach((m, mi) => {
+      if (handled.has(mi)) return;
+      const A = S.nodes[m.a], B = S.nodes[m.b];
+      let u = null; for (let i = 0; i + 1 < poly.length && u === null; i++) u = segInt(poly[i], poly[i+1], [A.x,A.y], [B.x,B.y]);
+      if (u === null) return;
+      const len = Math.hypot(B.x-A.x, B.y-A.y), t = [(B.x-A.x)/len, (B.y-A.y)/len];
+      // snap the crossing to the tenth grid along the member, staying clear of the ends
+      const steps = 10*Math.max(Math.abs(B.x-A.x), Math.abs(B.y-A.y));
+      const us = Math.min(1 - 1/steps, Math.max(1/steps, Math.round(u*steps)/steps));
+      cuts.push({ kind: m.truss ? 'axial' : 'rigid', mis:[mi], at:[+(A.x + us*(B.x-A.x)).toFixed(6), +(A.y + us*(B.y-A.y)).toFixed(6)], t, n:[-t[1], t[0]] });
+    });
+    if (!cuts.length) return { ok:false, msg:'The stroke crossed nothing. Draw it through the structure.' };
+    const cutSet = new Set(cuts.flatMap(c => c.mis)), comp = S.nodes.map(() => -1); let nc = 0;
+    for (let s0 = 0; s0 < S.nodes.length; s0++) if (comp[s0] < 0) {
+      const st = [s0]; comp[s0] = nc;
+      while (st.length) { const v = st.pop(); S.members.forEach((m, mi) => { if (cutSet.has(mi)) return; const o = m.a === v ? m.b : m.b === v ? m.a : -1; if (o >= 0 && comp[o] < 0) { comp[o] = nc; st.push(o); } }); }
+      nc++;
+    }
+    if (nc === 1) return { ok:false, msg:'That does not separate the structure into two pieces. Cut all the way across.' };
+    for (const c of cuts) for (const mi of c.mis) { const m = S.members[mi]; if (comp[m.a] === comp[m.b]) return { ok:false, msg:'That cut passes through a closed loop. Its forces stay inside one piece. Try another line.' }; }
+    const memberCut = {};
+    cuts.forEach((c, k) => {
+      c.idx = k+1;
+      if (c.kind === 'hinge') { c.aSide = comp[c.node]; c.mis.forEach(mi => { const m = S.members[mi]; memberCut[mi] = { kind:'hinge', nodeEnd: m.a === c.node ? 'a' : 'b' }; }); }
+      else { const m = S.members[c.mis[0]]; c.aSide = comp[m.a]; memberCut[c.mis[0]] = { kind:c.kind, at:c.at, t:c.t }; }
+    });
+    cuts.forEach(c => { c.sides = new Set(); c.mis.forEach(mi => { const m = S.members[mi]; c.sides.add(comp[m.a]); c.sides.add(comp[m.b]); }); if (c.kind === 'hinge') c.sides.add(comp[c.node]); });
+    return { ok:true, cuts, comp, memberCut, nc };
+  }
+  function unknowns(side) {
+    const R = reactions(state.S).map(r => ({...r, internal:false})), I = [];
+    (state.cut ? state.cut.cuts : []).forEach(c => {
+      if (side !== undefined && !c.sides.has(side)) return;
+      const k = c.idx;
+      if (c.kind === 'axial') I.push({cut:c, kind:'N', dir:c.t, at:c.at, name:`N${k}`, cls:'uN', internal:true});
+      else if (c.kind === 'hinge') { const nd = state.S.nodes[c.node], L = nd.sup ? 'H' + nd.l : nd.l; I.push({cut:c, kind:'N', dir:[1,0], at:c.at, name:`${L}x`, cls:'uN', internal:true},{cut:c, kind:'V', dir:[0,1], at:c.at, name:`${L}y`, cls:'uV', internal:true}); }
+      else I.push({cut:c, kind:'N', dir:c.t, at:c.at, name:`N${k}`, cls:'uN', internal:true},{cut:c, kind:'V', dir:c.n, at:c.at, name:`V${k}`, cls:'uV', internal:true},{cut:c, kind:'M', couple:true, at:c.at, name:`M${k}`, cls:'uM', internal:true});
+    });
+    return R.concat(I);
+  }
+  function rowsFor(side, P) {
+    const U = unknowns(side), S = state.S, comp = state.cut.comp, px = P ? P[0] : 0, py = P ? P[1] : 0;
+    const fx = U.map(() => 0), fy = U.map(() => 0), mp = U.map(() => 0);
+    U.forEach((u, i) => {
+      let sgn, at, dir;
+      if (!u.internal) { if (comp[u.node] !== side) return; sgn = 1; at = [S.nodes[u.node].x, S.nodes[u.node].y]; dir = u.dir; if (u.type === 'c') { mp[i] = 1; return; } }
+      else { sgn = (u.cut.aSide === side) ? 1 : -1; at = u.at; dir = u.dir; if (u.couple) { mp[i] = sgn; return; } }
+      fx[i] = sgn*dir[0]; fy[i] = sgn*dir[1]; mp[i] = sgn*((at[0]-px)*dir[1] - (at[1]-py)*dir[0]);
+    });
+    return { U, Fx:fx, Fy:fy, MP:mp };
+  }
+  function globalRows() {
+    const R = reactions(state.S), S = state.S;
+    return [ R.map(r => r.type === 'f' ? r.dir[0] : 0), R.map(r => r.type === 'f' ? r.dir[1] : 0), R.map(r => r.type === 'c' ? 1 : (S.nodes[r.node].x*r.dir[1] - S.nodes[r.node].y*r.dir[0])) ];
+  }
+  function rank(mat) {
+    const m = mat.map(r => r.slice()); let rk = 0; const cols = m[0] ? m[0].length : 0;
+    for (let col = 0; col < cols && rk < m.length; col++) {
+      let piv = -1; for (let i = rk; i < m.length; i++) if (Math.abs(m[i][col]) > 1e-7) { piv = i; break; }
+      if (piv < 0) continue; [m[rk], m[piv]] = [m[piv], m[rk]];
+      for (let i = 0; i < m.length; i++) if (i !== rk && Math.abs(m[i][col]) > 1e-7) { const f = m[i][col]/m[rk][col]; for (let j = col; j < cols; j++) m[i][j] -= f*m[rk][j]; }
+      rk++;
+    }
+    return rk;
+  }
+  const nR = () => reactions(state.S).length;
+  // release identity of the current cut: which hinges / which members were released
+  const releaseKey = () => state.cut.cuts.filter(c => c.sides.has(state.side)).map(c => c.kind === 'hinge' ? 'h' + c.node : 'm' + c.mis.slice().sort().join('.')).sort().join('|');
+  // how many independent conditions this release can give: 3 minus the rank of the exposed force system
+  function releaseCap() {
+    const R = rowsFor(state.side, [0, 0]), U = R.U, idx = U.map((u, i) => u.internal ? i : -1).filter(i => i >= 0);
+    if (!idx.length) return 0;
+    const M = [R.Fx, R.Fy, R.MP].map(row => idx.map(i => row[i]));
+    return Math.max(0, 3 - rank(M));
+  }
+  // canonical reaction row: express every equation as piece 0's version (piece 1's = global minus piece 0's)
+  function canonical(type, row) {
+    const rr = row.slice(0, nR());
+    if (state.side === 0) return rr;
+    const R = reactions(state.S), S = state.S, P = state.P || [0, 0];
+    const g = type === 'Fx' ? R.map(r => r.type === 'f' ? r.dir[0] : 0)
+          : type === 'Fy' ? R.map(r => r.type === 'f' ? r.dir[1] : 0)
+          : R.map(r => r.type === 'c' ? 1 : ((S.nodes[r.node].x - P[0])*r.dir[1] - (S.nodes[r.node].y - P[1])*r.dir[0]));
+    return g.map((v, i) => v - rr[i]);
+  }
+  const keptRows = key => state.kept.filter(k => k.key === key).map(k => k.row);
+  const allRows = () => state.kept.map(k => k.row);
+  const ecTotal = () => allRows().length ? rank(allRows()) : 0;
+  function classify(U, row, type) {
+    if (row.every(v => Math.abs(v) < 1e-7)) return { cls:'dep', st:'Empty', why:'Nothing on this piece acts here.' };
+    const badU = U.filter((u, i) => u.internal && Math.abs(row[i]) > 1e-7);
+    if (badU.length) return { cls:'bad', st:'Not a condition', why:'', badU };
+    const key = releaseKey(), cap = releaseCap(), rr = canonical(type, row), have = keptRows(key), all = allRows();
+    const newInfo = rank(all.concat([rr])) > (all.length ? rank(all) : 0);
+    if (newInfo && rank(have) < cap) return { cls:'good', st:'Condition', why:'Only reactions appear.', rr, key, cap };
+    return { cls:'dep', st:'Already counted', why:'Same information as a condition you already kept: the other side of the same release, another point on the same line, or another cut that isolates the same thing.', rr, key, cap };
+  }
+  const fmtL = v => { const a = Math.abs(v)/2; if (a < 1e-9) return '0'; const t = Math.abs(a - Math.round(a)) < 1e-6 ? String(Math.round(a)) : (Math.abs(a*2 - Math.round(a*2)) < 1e-6 ? String(a) : a.toFixed(2)); return (v < 0 ? '−' : '') + (t === '1' ? '' : t) + 'L'; };
+  const fmtC = v => { const a = Math.abs(v); const t = Math.abs(a - Math.round(a)) < 1e-6 ? String(Math.round(a)) : a.toFixed(2); return (v < 0 ? '−' : '') + t; };
+  function eqText(U, row, type) {
+    const parts = []; let n = 0;
+    U.forEach((u, i) => {
+      const v = row[i]; if (Math.abs(v) < 1e-7) return; n++;
+      const name = `<span class="${u.cls || ''}">${u.name}</span>`, isCouple = u.couple || u.type === 'c';
+      let term;
+      if (type === 'MP' && !isCouple) term = `${name}·(${fmtL(v)})`;
+      else if (Math.abs(Math.abs(v) - 1) < 1e-7) term = (v < 0 ? '−' : '') + name;
+      else term = `${fmtC(v)}·${name}`;
+      parts.push(term);
+    });
+    const eq = parts.length ? parts.map((t, i) => i === 0 ? t : (t.startsWith('−') ? ' ' + t : ' + ' + t)).join('') + ' = 0' : '0 = 0';
+    return { eq, n };
+  }
+  const names = us => us.map(u => `<span class="${u.cls}">${u.name}</span>`).join(', ');
+
+  // ---------- tiles ----------
+  const tiles = { Fx:document.getElementById('t-Fx'), Fy:document.getElementById('t-Fy'), MP:document.getElementById('t-MP') };
+  let live = {};
+  function setTile(key, cls, st, why, kept) {
+    const t = tiles[key]; t.className = 'tile ' + cls + (kept ? ' kept' : ''); t.disabled = false;
+    t.querySelector('.st').textContent = kept ? 'Kept ✓' : st; t.querySelector('.why').innerHTML = why;
+  }
+  function renderTiles() {
+    if (!state.cut) { ['Fx','Fy','MP'].forEach(k => { tiles[k].className = 'tile'; tiles[k].disabled = true; tiles[k].querySelector('.st').textContent = ''; tiles[k].querySelector('.why').textContent = 'Cut first.'; }); tiles.MP.querySelector('.nm').innerHTML = 'ΣM = 0'; return; }
+    const R = rowsFor(state.side, state.P); live = {};
+    ['Fx','Fy'].forEach(k => {
+      const c = classify(R.U, R[k], k); live[k] = c;
+      const et = eqText(R.U, R[k], k);
+      const why = `<span class="mono">${et.eq}</span> &nbsp;(${et.n} unknown${et.n === 1 ? '' : 's'}${c.cls === 'bad' ? `, ${names(c.badU)} internal` : c.cls === 'good' ? ', reactions only' : ''})`;
+      setTile(k, c.cls, c.st, why, isKept(k));
+    });
+    if (!state.P) { tiles.MP.querySelector('.nm').innerHTML = 'ΣM = 0'; setTile('MP', 'ask', 'About which point?', state.picking ? 'Tap the point on the drawing.' : 'Tap here, then tap a point on the drawing.', false); }
+    else {
+      tiles.MP.querySelector('.nm').innerHTML = 'ΣM<sub>P</sub> = 0';
+      const c = classify(R.U, R.MP, 'MP'); live.MP = c;
+      const forces = c.cls === 'bad' ? c.badU.filter(u => !u.couple) : [], couples = c.cls === 'bad' ? c.badU.filter(u => u.couple) : [];
+      let why = c.why;
+      if (c.cls === 'bad') {
+        const parts = [];
+        if (forces.length) parts.push(`${names(forces)} still ha${forces.length === 1 ? 's' : 've'} a lever arm about the target. Drag the target to a point every exposed force passes through.`);
+        if (couples.length) parts.push(`${names(couples)} is a couple: no lever arm, so no P removes it. A cut through a rigid member cannot give a condition.`);
+        why = parts.join(' ');
+      }
+      const etm = eqText(R.U, R.MP, 'MP');
+      why = `<span class="mono">${etm.eq}</span> &nbsp;(${etm.n} unknown${etm.n === 1 ? '' : 's'}${c.cls === 'good' ? ', reactions only' : ''})` + (c.cls === 'bad' ? `<br>${why}` : '');
+      setTile('MP', c.cls, c.st, why, isKept('MP'));
+    }
+  }
+  const keptKey = k => `${k}|${state.side}|${state.P ? state.P.join(',') : ''}|${releaseKey()}`;
+  const isKept = k => state.kept.some(x => x.id === keptKey(k));
+  Object.entries(tiles).forEach(([k, t]) => t.addEventListener('click', () => {
+    if (!state.cut) return;
+    if (k === 'MP' && !state.P) { state.picking = true; cv.classList.add('pick'); setStatus('<b>Tap a point</b> on the drawing to take moments about.'); renderTiles(); return; }
+    const c = live[k]; if (!c) return;
+    const kk = keptKey(k), i = state.kept.findIndex(x => x.id === kk);
+    if (i >= 0) state.kept.splice(i, 1);
+    else if (c.cls === 'good') { const R = rowsFor(state.side, state.P); state.kept.push({ id:kk, key:c.key, cap:c.cap, row:c.rr, img:snapshot(), eq:eqText(R.U, R[k], k).eq }); }
+    renderAll();
+  }));
+
+  function snapshot() {
+    const S = state.S, comp = state.cut.comp;
+    const pts = [];
+    S.nodes.forEach((n, i) => { if (comp[i] === state.side) pts.push([n.x, n.y]); });
+    state.cut.cuts.forEach(c => { if (c.sides.has(state.side)) pts.push(c.at); });
+    if (state.P) pts.push(state.P);
+    const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]);
+    const minx = Math.min(...xs) - 0.9, maxx = Math.max(...xs) + 0.9, miny = Math.min(...ys) - 0.9, maxy = Math.max(...ys) + 0.7;
+    const off = document.createElement('canvas'); off.width = 640; off.height = Math.max(240, Math.round(640*(maxy-miny)/(maxx-minx)));
+    const saved = { ctx, W, H, ox, oy, u };
+    ctx = off.getContext('2d'); W = off.width; H = off.height; snap = true;
+    u = Math.min((W-20)/(maxx-minx), (H-20)/(maxy-miny)); ox = (W - (maxx+minx)*u)/2; oy = (H + (maxy+miny)*u)/2;
+    draw();
+    snap = false; ({ ctx, W, H, ox, oy, u } = saved);
+    return off.toDataURL('image/png');
+  }
+  function renderFound() {
+    const el = document.getElementById('found'); el.innerHTML = '';
+    state.kept.forEach((k, i) => {
+      const f = document.createElement('figure'); f.title = 'Tap to drop this condition';
+      f.innerHTML = `<img alt="Free body for condition ${i+1}" src="${k.img}"><figcaption><span class="mono">${k.eq}</span></figcaption>`;
+      f.addEventListener('click', () => { state.kept.splice(i, 1); renderAll(); });
+      el.appendChild(f);
+    });
+  }
+  function renderCount() {
+    const ec = ecTotal(), total = state.S.ec, el = document.getElementById('count');
+    const done = ec >= total;
+    el.innerHTML = `<span>equations of condition found</span><span class="pill ${done ? 'good' : 'dep'} mono">${ec} of ${total}</span>` + (done ? '<span class="pill good">all found</span>' : '');
+  }
+  // ---------- canvas ----------
+  const cv = document.getElementById('cv'); let ctx = cv.getContext('2d'); let W = cv.width, H = cv.height; let snap = false;
+  let ox = 0, oy = 0, u = 180;
+  const X = x => ox + x*u, Y = y => oy - y*u;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  function fit() {
+    const xs = state.S.nodes.map(n => n.x), ys = state.S.nodes.map(n => n.y);
+    const minx = Math.min(...xs) - 1.1, maxx = Math.max(...xs) + 1.1, miny = Math.min(...ys) - 1.0, maxy = Math.max(...ys) + 0.9;
+    u = Math.min((W - 40)/(maxx - minx), (H - 40)/(maxy - miny), 240);
+    ox = (W - (maxx + minx)*u)/2; oy = (H + (maxy + miny)*u)/2;
+  }
+  function arrow(x1, y1, x2, y2, color, w = 3) {
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = w;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    const a = Math.atan2(y2-y1, x2-x1), s = 11;
+    ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - s*Math.cos(a-.45), y2 - s*Math.sin(a-.45)); ctx.lineTo(x2 - s*Math.cos(a+.45), y2 - s*Math.sin(a+.45)); ctx.closePath(); ctx.fill();
+  }
+  function couple(x, y, r, color, ccw) {
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 3;
+    const a0 = ccw ? 0.3 : Math.PI - 0.3, a1 = ccw ? Math.PI + 1.0 : -1.0;
+    ctx.beginPath(); ctx.arc(x, y, r, a0, a1, !ccw); ctx.stroke();
+    const ex = x + r*Math.cos(a1), ey = y + r*Math.sin(a1), t = a1 + (ccw ? Math.PI/2 : -Math.PI/2);
+    ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(ex - 10*Math.cos(t-.5), ey - 10*Math.sin(t-.5)); ctx.lineTo(ex - 10*Math.cos(t+.5), ey - 10*Math.sin(t+.5)); ctx.closePath(); ctx.fill();
+  }
+  function label(t, x, y, color, font = '600 17px Archivo') { ctx.fillStyle = color; ctx.font = font; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(t, x, y); }
+  function drawSupport(n, i, color) {
+    const x = X(n.x), y = Y(n.y); ctx.strokeStyle = color; ctx.lineWidth = 2.4;
+    if (n.sup === 'fixed') {
+      const isBase = state.S.nodes.some(m => m !== n && Math.abs(m.x - n.x) < 1e-9 && m.y > n.y);
+      if (isBase) { ctx.beginPath(); ctx.moveTo(x-28, y); ctx.lineTo(x+28, y); ctx.stroke(); ctx.lineWidth = 1.5; for (let k = -24; k <= 24; k += 8) { ctx.beginPath(); ctx.moveTo(x+k, y); ctx.lineTo(x+k-8, y+9); ctx.stroke(); } }
+      else { const side = n.x <= Math.min(...state.S.nodes.map(m => m.x)) + 1e-9 ? -1 : 1; ctx.beginPath(); ctx.moveTo(x, y-32); ctx.lineTo(x, y+32); ctx.stroke(); ctx.lineWidth = 1.5; for (let k = -28; k <= 28; k += 8) { ctx.beginPath(); ctx.moveTo(x, y+k); ctx.lineTo(x + side*9, y+k+8); ctx.stroke(); } }
+    } else {
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x-17, y+28); ctx.lineTo(x+17, y+28); ctx.closePath(); ctx.stroke();
+      if (n.sup === 'roller') { ctx.beginPath(); ctx.arc(x-9, y+34, 5.5, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.arc(x+9, y+34, 5.5, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x-24, y+41); ctx.lineTo(x+24, y+41); ctx.stroke(); }
+      else { ctx.beginPath(); ctx.moveTo(x-24, y+28); ctx.lineTo(x+24, y+28); ctx.stroke(); ctx.lineWidth = 1.3; for (let k = -18; k <= 18; k += 8) { ctx.beginPath(); ctx.moveTo(x+k, y+28); ctx.lineTo(x+k-7, y+36); ctx.stroke(); } }
+    }
+  }
+  function draw() {
+    const S = state.S, ink = css('--ink'), ghost = css('--ghost'), grid = css('--grid'), acc = css('--accent'), cutC = css('--cut');
+    const cN = css('--fN'), cV = css('--fV'), cM = css('--fM'), cR = css('--react'), panel = css('--panel');
+    ctx.clearRect(0, 0, W, H);
+    if (snap) { ctx.fillStyle = css('--paper'); ctx.fillRect(0, 0, W, H); }
+    if (!snap) {
+    ctx.strokeStyle = grid; ctx.lineWidth = 0.5; ctx.globalAlpha = 0.45;
+    for (let gx = Math.floor(-ox/u)*10; gx <= (W-ox)/u*10; gx++) { if (gx % 10 === 0) continue; ctx.beginPath(); ctx.moveTo(X(gx/10), 0); ctx.lineTo(X(gx/10), H); ctx.stroke(); }
+    for (let gy = Math.floor((oy-H)/u)*10; gy <= oy/u*10; gy++) { if (gy % 10 === 0) continue; ctx.beginPath(); ctx.moveTo(0, Y(gy/10)); ctx.lineTo(W, Y(gy/10)); ctx.stroke(); }
+    ctx.globalAlpha = 1; ctx.strokeStyle = grid; ctx.lineWidth = 1.2;
+    for (let gx = Math.floor(-ox/u); gx <= (W-ox)/u; gx++) { ctx.beginPath(); ctx.moveTo(X(gx), 0); ctx.lineTo(X(gx), H); ctx.stroke(); }
+    for (let gy = Math.floor((oy-H)/u); gy <= oy/u; gy++) { ctx.beginPath(); ctx.moveTo(0, Y(gy)); ctx.lineTo(W, Y(gy)); ctx.stroke(); }
+    }
+    const comp = state.cut ? state.cut.comp : null, onSide = i => !comp || comp[i] === state.side;
+    S.members.forEach((m, mi) => {
+      const A = S.nodes[m.a], B = S.nodes[m.b], mc = state.cut && state.cut.memberCut[mi];
+      const seg = (x0, y0, x1, y1, on) => { if (snap && !on) return; ctx.strokeStyle = on ? ink : ghost; ctx.lineWidth = m.truss ? (on ? 4.5 : 3) : (on ? 8 : 5); ctx.beginPath(); ctx.moveTo(X(x0), Y(y0)); ctx.lineTo(X(x1), Y(y1)); ctx.stroke(); };
+      const g = 0.1, len = Math.hypot(B.x-A.x, B.y-A.y), tx = (B.x-A.x)/len, ty = (B.y-A.y)/len;
+      if (!mc) seg(A.x, A.y, B.x, B.y, onSide(m.a));
+      else if (mc.kind === 'hinge') {
+        const farOn = mc.nodeEnd === 'a' ? onSide(m.b) : onSide(m.a), gg = farOn ? 0 : g*1.6;
+        if (mc.nodeEnd === 'a') seg(A.x + tx*gg, A.y + ty*gg, B.x, B.y, farOn); else seg(A.x, A.y, B.x - tx*gg, B.y - ty*gg, farOn);
+      }
+      else { const q = mc.at; seg(A.x, A.y, q[0]-tx*g*0.8, q[1]-ty*g*0.8, onSide(m.a)); seg(q[0]+tx*g*0.8, q[1]+ty*g*0.8, B.x, B.y, onSide(m.b)); }
+    });
+    S.nodes.forEach((n, i) => {
+      const relOnN = state.cut && state.cut.cuts.some(c => c.kind === 'hinge' && c.node === i && c.mis.some(mi => { const m = S.members[mi]; return onSide(m.a === i ? m.b : m.a); }));
+      if (snap && !onSide(i) && !relOnN) return;
+      if (n.sup) drawSupport(n, i, onSide(i) ? ink : ghost);
+      if (n.joint === 'pin') { const relOn = state.cut && state.cut.cuts.some(c => c.kind === 'hinge' && c.node === i && c.mis.some(mi => { const m = S.members[mi]; return onSide(m.a === i ? m.b : m.a); })); ctx.fillStyle = panel; ctx.strokeStyle = (onSide(i) || relOn) ? ink : ghost; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(X(n.x), Y(n.y), 8, 0, 7); ctx.fill(); ctx.stroke(); }
+      if (n.l) {
+        let ax = 0, ay = 0;
+        S.members.forEach(m => { if (m.a !== i && m.b !== i) return; const o = S.nodes[m.a === i ? m.b : m.a]; const L = Math.hypot(o.x-n.x, o.y-n.y) || 1; ax += (o.x-n.x)/L; ay += (o.y-n.y)/L; });
+        if (n.sup) ay -= 1; // supports occupy the space below
+        let L = Math.hypot(ax, ay), dx, dy;
+        if (L < 0.25) { dx = 0; dy = 1; } else { dx = -ax/L; dy = -ay/L; }
+        label(n.l, X(n.x) + dx*24, Y(n.y) - dy*24, onSide(i) ? ink : ghost);
+      }
+    });
+    const dline = state.drawing || (state.cut && state.cut.line);
+    if (dline && dline.length > 1 && !snap) { ctx.setLineDash([9, 7]); ctx.strokeStyle = cutC; ctx.lineWidth = 2.5; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(X(dline[0][0]), Y(dline[0][1])); for (let i = 1; i < dline.length; i++) ctx.lineTo(X(dline[i][0]), Y(dline[i][1])); ctx.stroke(); ctx.setLineDash([]); }
+    if (state.cut && state.P) {
+      const px = X(state.P[0]), py = Y(state.P[1]);
+      const hint = !snap && !state.pMoved && live.MP && live.MP.cls === 'bad' && live.MP.badU && live.MP.badU.some(u => !u.couple);
+      const rr = 19 + (hint && !reduceMotion ? 4*Math.sin(pulseT/220) : 0);
+      ctx.strokeStyle = acc; ctx.lineWidth = hint ? 3.5 : 3; ctx.globalAlpha = 0.9;
+      ctx.beginPath(); ctx.arc(px, py, rr, 0, 7); ctx.stroke();
+      if (hint && !reduceMotion) startPulse();
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(px-27, py); ctx.lineTo(px-11, py); ctx.moveTo(px+11, py); ctx.lineTo(px+27, py);
+      ctx.moveTo(px, py-27); ctx.lineTo(px, py-11); ctx.moveTo(px, py+11); ctx.lineTo(px, py+27); ctx.stroke();
+      ctx.globalAlpha = 1;
+      label('P', px + 30, py + 26, acc);
+    }
+    if (state.cut) {
+      const offsetFor = c => { // where to draw this cut's forces for the active piece (grid units)
+        const g = 0.1;
+        if (c.kind === 'hinge') return [0, 0];
+        return [0, 0];
+      };
+      unknowns(state.side).forEach(un => {
+        if (!un.internal) return;
+        const sgn = (un.cut.aSide === state.side) ? 1 : -1, off = offsetFor(un.cut);
+        const ax = X(un.at[0] + off[0]), ay = Y(un.at[1] + off[1]);
+        if (un.couple) { couple(ax, ay, 24, cM, sgn > 0); label(un.name, ax + (sgn > 0 ? -1 : 1)*40, ay - 30, cM, '600 15px "IBM Plex Mono"'); return; }
+        const dx = sgn*un.dir[0], dy = -sgn*un.dir[1], color = un.kind === 'V' ? cV : cN, len = 50, sx = ax + dx*12, sy = ay + dy*12;
+        arrow(sx, sy, sx + dx*len, sy + dy*len, color); label(un.name, sx + dx*(len+18), sy + dy*(len+18), color, '600 15px "IBM Plex Mono"');
+      });
+      reactions(S).forEach(r => {
+        if (comp[r.node] !== state.side) return;
+        const n = S.nodes[r.node], ax = X(n.x), ay = Y(n.y);
+        if (r.type === 'c') { couple(ax + 28, ay - 46, 17, cR, true); label(r.name, ax + 28, ay - 78, cR, '600 15px "IBM Plex Mono"'); }
+        else if (r.dir[1] === 1) { arrow(ax, ay + 104, ax, ay + 50, cR); label(r.name, ax, ay + 121, cR, '600 15px "IBM Plex Mono"'); }
+        else { arrow(ax - 74, ay + 6, ax - 16, ay + 6, cR); label(r.name, ax - 94, ay + 6, cR, '600 15px "IBM Plex Mono"'); }
+      });
+
+    }
+  }
+
+  function startPulse() { if (pulsing) return; pulsing = true; const tick = t => { pulseT = t; if (!state.pMoved && state.cut && live.MP && live.MP.cls === 'bad') { draw(); requestAnimationFrame(tick); } else pulsing = false; }; requestAnimationFrame(tick); }
+  // ---------- pointer ----------
+  let mode = null;
+  function toUnits(ev) { const r = cv.getBoundingClientRect(); const sx = (ev.clientX - r.left)*(W/r.width), sy = (ev.clientY - r.top)*(H/r.height); return { x:(sx-ox)/u, y:(oy-sy)/u, sx, sy }; }
+  const nearP = p => state.P && Math.hypot(p.sx - X(state.P[0]), p.sy - Y(state.P[1])) < 32;
+  function snapPoint(p) { // nearest node within reach, else half grid
+    let best = null, bd = 0.12;
+    state.S.nodes.forEach(n => { const d = Math.hypot(p.x - n.x, p.y - n.y); if (d < bd) { bd = d; best = [n.x, n.y]; } });
+    return best || [Math.round(p.x*10)/10, Math.round(p.y*10)/10];
+  }
+  function pieceAt(p) {
+    let best = null, bd = 0.4;
+    state.S.members.forEach(m => {
+      const A = state.S.nodes[m.a], B = state.S.nodes[m.b], vx = B.x-A.x, vy = B.y-A.y, L2 = vx*vx+vy*vy;
+      const t = Math.max(0, Math.min(1, ((p.x-A.x)*vx + (p.y-A.y)*vy)/L2)), d = Math.hypot(p.x - (A.x+t*vx), p.y - (A.y+t*vy));
+      if (d < bd) { bd = d; best = state.cut.comp[t < 0.5 ? m.a : m.b]; }
+    });
+    return best;
+  }
+  cv.addEventListener('pointerdown', ev => {
+    const p = toUnits(ev); cv.setPointerCapture(ev.pointerId);
+    if (state.picking) { state.P = snapPoint(p); state.picking = false; cv.classList.remove('pick'); setStatus('<b>Drag P</b> to move the moment point. <b>Tap a piece</b> to switch free body.'); mode = 'dragP'; renderAll(); return; }
+    if (nearP(p)) { mode = 'dragP'; cv.classList.add('grab'); return; }
+    mode = 'draw'; state.drawing = [[Math.round(p.x*10)/10, Math.round(p.y*10)/10]]; draw();
+  });
+  cv.addEventListener('pointermove', ev => {
+    const p = toUnits(ev);
+    if (mode === 'dragP') { const np = snapPoint(p); if (!state.P || np[0] !== state.P[0] || np[1] !== state.P[1]) { state.P = np; state.pMoved = true; renderAll(); } return; }
+    if (mode === 'draw') { const g0 = [Math.round(p.x*10)/10, Math.round(p.y*10)/10], last = state.drawing[state.drawing.length-1]; if (g0[0] !== last[0] || g0[1] !== last[1]) { state.drawing.push(g0); draw(); } return; }
+    if (!state.picking) cv.classList.toggle('grab', !!nearP(p));
+  });
+  function endPointer(ev) {
+    if (mode === 'draw') {
+      const poly = state.drawing; state.drawing = null;
+      const a = poly[0], b = poly[poly.length-1];
+      const span = poly.reduce((mx, pt) => Math.max(mx, Math.hypot(pt[0]-a[0], pt[1]-a[1])), 0);
+      if (span < 0.15) { if (state.cut) { const s = pieceAt(toUnits(ev)); if (s !== null && s !== state.side) { state.side = s; } } }
+      else {
+        const res = applyCut(poly);
+        if (!res.ok) { state.cut = null; state.P = null; setStatus(res.msg, true); }
+        else {
+          state.cut = { ...res, line:poly }; state.picking = false; state.pMoved = false;
+          const h = res.cuts.find(c => c.kind === 'hinge'), c0 = res.cuts[0];
+          state.P = h ? [h.at[0], h.at[1]] : [Math.round(c0.at[0]*10)/10, Math.round(c0.at[1]*10)/10];
+          const cnt = Array(res.nc).fill(0); state.S.members.forEach(m => { if (res.comp[m.a] === res.comp[m.b]) cnt[res.comp[m.a]]++; });
+          state.side = cnt.indexOf(Math.max(...cnt));
+          setStatus(res.nc > 2 ? `Cut into ${res.nc} pieces. The dark one is your free body. <b>Tap another piece</b> to switch.` : h ? 'Cut at the hinge. The target sits on it. <b>Tap the other piece</b> to switch free body.' : 'Cut. <b>Drag the target</b> to choose where you take moments. <b>Tap the other piece</b> to switch.');
+        }
+      }
+    }
+    mode = null; cv.classList.remove('grab'); renderAll();
+  }
+  cv.addEventListener('pointerup', endPointer); cv.addEventListener('pointercancel', endPointer);
+  function setStatus(html, bad) { const s = document.getElementById('status'); s.innerHTML = html; s.classList.toggle('bad', !!bad); }
+
+  document.getElementById('clear-cut').addEventListener('click', () => { state.cut = null; state.P = null; state.picking = false; cv.classList.remove('pick'); setStatus('<b>Draw a stroke</b> across the structure to cut it.'); renderAll(); });
+  const chips = document.getElementById('chips');
+  LIB.forEach((s, i) => { const b = document.createElement('button'); b.textContent = s.name; b.setAttribute('aria-pressed', i === 0); b.addEventListener('click', () => load(i)); chips.appendChild(b); });
+  function load(i) {
+    state.S = LIB[i];
+    { const used = new Set(state.S.nodes.map(n => n.l).filter(Boolean)); let code = 65;
+      state.S.nodes.forEach(n => { if (n.l) return; while (used.has(String.fromCharCode(code))) code++; n.l = String.fromCharCode(code++); used.add(n.l); }); }
+    state.cut = null; state.P = null; state.kept = []; state.side = 0; state.picking = false; state.pMoved = false; cv.classList.remove('pick');
+    document.querySelectorAll('#chips button').forEach((x, k) => x.setAttribute('aria-pressed', k === i));
+    fit(); setStatus('<b>Draw a stroke</b> across the structure to cut it.'); renderAll();
+  }
+  function renderAll() { draw(); renderTiles(); renderCount(); renderFound(); }
+  /* ---------- problem reports (same flow as Stand or Fold) ---------- */
+  const FEEDBACK_URL = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=peLXMdi9TkGel76pmOvf4S44VhUkyv1FlG4mT9tVN29URVEzQ0lHNE5LNEVSUkZIQTJTQU8zUTdBUi4u";
+  const fbText = document.getElementById('fb-text'), fbMsg = document.getElementById('fb-msg'), fbLink = document.getElementById('fb-link');
+  if (FEEDBACK_URL) { fbLink.href = FEEDBACK_URL; fbLink.hidden = false; }
+  function buildReport() {
+    const lines = ['CE 329 Cut and Count: problem report', ''];
+    lines.push('What went wrong:', fbText.value.trim() || '(not described)', '');
+    lines.push('Structure: ' + state.S.name);
+    if (state.cut) {
+      lines.push('Cut stroke: ' + state.cut.line.map(p => p.join(',')).join(' '));
+      lines.push('Cuts: ' + state.cut.cuts.map(c => c.kind + (c.kind === 'hinge' ? ' at node ' + c.node : ' member ' + c.mis.join('/')) + ' @' + c.at.map(v => +v.toFixed(2)).join(',')).join('; '));
+      lines.push('Pieces: ' + state.cut.nc + ', free body: piece ' + state.side);
+      lines.push('Target: ' + (state.P ? state.P.join(',') : '(none)'));
+      lines.push('Tiles: ' + ['Fx','Fy','MP'].map(k => k + '=' + (live[k] ? live[k].st : '?')).join(', '));
+    } else lines.push('No cut on screen');
+    lines.push('Kept: ' + state.kept.length + (state.kept.length ? ' [' + state.kept.map(k => k.eq.replace(/<[^>]+>/g, '')).join(' | ') + ']' : ''));
+    lines.push('Page: ' + location.href.split('#')[0]);
+    lines.push('Browser: ' + navigator.userAgent);
+    lines.push('Screen: ' + window.innerWidth + 'x' + window.innerHeight + ' @' + (window.devicePixelRatio || 1) + 'x');
+    lines.push('When: ' + new Date().toISOString());
+    return lines.join('\n');
+  }
+  document.getElementById('fb-copy').addEventListener('click', function () {
+    const report = buildReport(), btn = this;
+    const done = ok => { fbMsg.textContent = ok ? 'Copied. Now open the form and paste it into the first question.' : 'Could not copy automatically. The report is selected below, press Cmd+C.'; fbMsg.className = ok ? 'fine good' : 'fine bad'; btn.textContent = ok ? 'Copied' : 'Copy report'; if (ok) setTimeout(() => { btn.textContent = 'Copy report'; }, 1600); };
+    const fallback = () => { fbText.value = report; fbText.focus(); fbText.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; } done(ok); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(report).then(() => done(true), fallback); else fallback();
+  });
+
+  load(0);
+  if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+  new MutationObserver(draw).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+})();
+</script>
+</body>
+</html>
