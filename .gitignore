@@ -20,3 +20,6 @@ _site/
 
 # macOS Finder metadata
 .DS_Store
+
+# Claude Code session handoffs — local-only, do not ship
+handoffs/
