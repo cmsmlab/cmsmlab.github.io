@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive demo for CE 329: draw the qualitative deflected shape of a beam or frame by dragging joints and slopes, and check it against the bending moment diagram.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Bend It">
+<meta property="og:description" content="Interactive demo for CE 329: draw the qualitative deflected shape of a beam or frame by dragging joints and slopes, and check it against the bending moment diagram.">
+<meta property="og:type" content="website">
+<title>Bend It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  /* minimal reset: the artifact host supplies one, a plain web host does not */
+  *, *::before, *::after { box-sizing: border-box; }
+  /* the artifact host supplies this; a plain host does not, and without it any
+     author `display:` rule silently overrides the hidden attribute */
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body, h1, h2, h3, p, dl, dd, ul, figure { margin: 0; }
+  ul { padding: 0; }
+  canvas { display: block; max-width: 100%; }
+  img, svg { max-width: 100%; height: auto; }
+  button, input, select { font: inherit; color: inherit; }
+
+  /* Same identity as the other CE 329 demos (Shake Test, Cut and Count, Find the Zeros): one sheet, chips on top, a canvas stage, verdicts under it. */
+  :root {
+    --paper:#EDEFEA; --panel:#F7F8F5; --panel-2:#E4E8E2; --ink:#1F2724; --ink-2:#55605B; --ink-3:#7C8781;
+    --rule:#CBD2CB; --accent:#0F6E68;
+    --good:#0F6E68; --good-bg:#DCEAE7; --bad:#B4432A; --bad-bg:#F2DFD8; --dep:#7C8781; --dep-bg:#E4E8E2; --ask:#B5811A; --ask-bg:#F3E7CC;
+    --fN:#2B5FB3; --fV:#B5811A; --fM:#7A4FA3; --react:#3A4541; --grid:#D6DCD6; --ghost:#B9C2BC; --cut:#B4432A;
+    --shadow:0 1px 2px rgba(31,39,36,.06), 0 6px 18px rgba(31,39,36,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#121614; --panel:#1A201D; --panel-2:#232A26; --ink:#DDE4DF; --ink-2:#97A39C; --ink-3:#77837C;
+      --rule:#303934; --accent:#4FBFB2;
+      --good:#4FBFB2; --good-bg:#14302D; --bad:#E87A5C; --bad-bg:#38211A; --dep:#8B968F; --dep-bg:#262E2A; --ask:#E0AE4A; --ask-bg:#33280F;
+      --fN:#7FA6E8; --fV:#E0AE4A; --fM:#B695DE; --react:#C3CCC6; --grid:#262E2A; --ghost:#4A544E; --cut:#E87A5C;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#121614; --panel:#1A201D; --panel-2:#232A26; --ink:#DDE4DF; --ink-2:#97A39C; --ink-3:#77837C;
+    --rule:#303934; --accent:#4FBFB2;
+    --good:#4FBFB2; --good-bg:#14302D; --bad:#E87A5C; --bad-bg:#38211A; --dep:#8B968F; --dep-bg:#262E2A; --ask:#E0AE4A; --ask-bg:#33280F;
+    --fN:#7FA6E8; --fV:#E0AE4A; --fM:#B695DE; --react:#C3CCC6; --grid:#262E2A; --ghost:#4A544E; --cut:#E87A5C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+    color-scheme: dark;
+  }
+
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:Archivo,"Helvetica Neue",Arial,sans-serif; font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .sheet { max-width:1400px; margin:0 auto; padding-block:clamp(12px,2vw,22px) 40px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+  .top { display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px; }
+  h1 { margin:0; font-size:clamp(20px,2.6vw,26px); line-height:1.05; font-weight:700; letter-spacing:-.01em; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; flex:1 1 auto; min-width:0; }
+  .chips.sub { margin-top:8px; }
+  .chips button { border:1px solid var(--rule); background:var(--panel); color:var(--ink-2); font:inherit; font-size:13.5px; padding:5px 12px; border-radius:999px; cursor:pointer; }
+  .chips button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--paper); font-weight:600; }
+  .chips button:focus-visible, .seg button:focus-visible, button.plain:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .mono { font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; }
+
+  .stage { position:relative; margin-top:12px; background:var(--panel); border:1px solid var(--rule); border-radius:8px; box-shadow:var(--shadow); padding:8px; }
+  canvas { display:block; width:100%; height:auto; touch-action:none; cursor:default; border-radius:6px; max-width:100%; }
+  canvas.grab { cursor:grab; } canvas.grabbing { cursor:grabbing; } canvas.place { cursor:crosshair; }
+  .status { position:absolute; left:16px; top:16px; font-size:14px; color:var(--ink-2); background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:5px 12px; box-shadow:var(--shadow); max-width:62%; }
+  .status b { color:var(--ink); font-weight:600; }
+  .status.bad { color:var(--bad); }
+  .count { position:absolute; top:16px; right:16px; user-select:none; display:flex; gap:6px; align-items:center; font-size:14px; background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:5px 12px; box-shadow:var(--shadow); }
+  .count .pill { display:inline-block; padding:1px 9px; border-radius:999px; font-size:12.5px; font-weight:600; }
+  .pill.good { background:var(--good-bg); color:var(--good); } .pill.bad { background:var(--bad-bg); color:var(--bad); } .pill.dep { background:var(--dep-bg); color:var(--dep); }
+
+  .bar { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; margin-top:10px; font-size:13px; color:var(--ink-3); }
+  .bar .spacer { flex:1 1 auto; }
+  .seg { display:inline-flex; align-items:center; gap:0; border:1px solid var(--rule); border-radius:6px; overflow:hidden; background:var(--panel); }
+  .seg .lbl { padding:5px 10px; color:var(--ink-3); border-right:1px solid var(--rule); font-size:12.5px; }
+  .seg button { border:0; background:transparent; color:var(--ink-2); font:inherit; font-size:13px; padding:5px 11px; cursor:pointer; }
+  .seg button + button { border-left:1px solid var(--rule); }
+  .seg button[aria-pressed="true"] { background:var(--panel-2); color:var(--ink); font-weight:600; }
+  button.plain { border:1px solid var(--rule); background:var(--panel); color:var(--ink); font:inherit; font-size:13.5px; padding:5px 11px; border-radius:6px; cursor:pointer; }
+  button.plain.primary { border-color:var(--accent); color:var(--accent); font-weight:600; }
+  .legend { display:flex; flex-wrap:wrap; gap:6px 14px; }
+  .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
+  .legend i.dash { height:0; border-top:2px dashed var(--accent); vertical-align:3px; }
+
+  .findings { list-style:none; margin:10px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:8px; }
+  .findings li { display:flex; gap:10px; align-items:flex-start; padding:9px 12px; border:1.5px solid var(--rule); border-radius:8px; background:var(--panel); font-size:14px; line-height:1.4; min-width:0; }
+  .findings li.good { border-color:var(--good); background:var(--good-bg); }
+  .findings li.bad { border-color:var(--bad); background:var(--bad-bg); }
+  .findings li .mk { flex:0 0 auto; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--paper); margin-top:1px; }
+  .findings li.good .mk { background:var(--good); } .findings li.bad .mk { background:var(--bad); }
+  .findings li.good { color:var(--ink); } .findings li.bad { color:var(--ink); }
+
+  .colophon { margin-top:22px; padding-top:10px; border-top:1px solid var(--rule); font-size:12px; color:var(--ink-3); }
+  .colophon p { margin:3px 0; max-width:78ch; }
+  .sheet.proj .colophon, .sheet.proj .legend { display:none; }
+  /* phones: the pills leave the canvas and sit above it, so they never cover the drawing */
+  @media (max-width:640px) {
+    .stage { display:flex; flex-direction:column; gap:8px; }
+    .status, .count { position:static; max-width:none; font-size:13px; order:-1; align-self:flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet" id="sheet">
+  <div class="top">
+    <h1>Bend It</h1>
+    <div class="chips" id="groups" role="group" aria-label="Problem set">
+      <button type="button" data-g="beams" aria-pressed="true">Beams</button>
+      <button type="button" data-g="frames" aria-pressed="false">Frames</button>
+      <button type="button" data-g="build" aria-pressed="false">Build your own</button>
+    </div>
+  </div>
+  <div class="chips sub" id="probs" role="group" aria-label="Problem"></div>
+
+  <section class="stage" aria-label="Structure and deflected shape">
+    <canvas id="cv" width="1400" height="620"></canvas>
+    <div class="status" id="status"></div>
+    <div class="count" id="count" hidden></div>
+  </section>
+
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Moment diagram">
+      <span class="lbl">Moment diagram</span>
+      <button type="button" id="m-show" aria-pressed="true">Shown</button>
+      <button type="button" id="m-hide" aria-pressed="false">Hidden</button>
+    </div>
+    <div class="seg" role="group" aria-label="Moment diagram side">
+      <span class="lbl">Draw M on the</span>
+      <button type="button" id="c-comp" aria-pressed="true">compression side</button>
+      <button type="button" id="c-tens" aria-pressed="false">tension side</button>
+    </div>
+    <span class="spacer"></span>
+    <button class="plain primary" id="b-check" type="button">Check</button>
+    <button class="plain" id="b-reveal" type="button">Reveal</button>
+    <button class="plain" id="b-reset" type="button">Reset</button>
+  </div>
+
+  <ul class="findings" id="findings" hidden aria-live="polite"></ul>
+
+  <div class="bar legend">
+    <span><i style="background:var(--accent)"></i>joint: drag to move it</span>
+    <span><i style="background:var(--fV)"></i>handle: drag to set the slope</span>
+    <span><i style="background:var(--fM)"></i>bending moment</span>
+    <span><i class="dash"></i>exact shape (Reveal)</span>
+    <span><i style="background:var(--good)"></i>curvature agrees with M</span>
+    <span><i style="background:var(--bad)"></i>curvature disagrees</span>
+  </div>
+
+  <footer class="colophon">
+    <p>The curve you draw is a cubic between neighbouring joints, set by the position and slope at each joint, the same shape a beam element uses. Joints move only in ways that keep every member its original length, and supports hold them. The slopes are yours: a wall should keep its slope at zero, a hinge may kink, a rigid corner keeps its right angle. Check compares the signs of your curvature with the bending moment, segment by segment, and the direction each joint moves. Sizes are never graded.</p>
+    <p>CE 329 Structural Analysis &middot; Teaching demo. Built with AI assistance. The moment diagram and the exact deflected shape come from a stiffness solution of the structure on screen, not generated text. Nothing you do here is graded or recorded.</p>
+  </footer>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const EI = 1, EA = 1000;                       // EA large: members stay their length, as in the drawing
+  const NS = 9, XI = Array.from({ length: NS }, (_, i) => (i + 1) / (NS + 1));   // curvature samples per segment
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- problem bank. Units are arbitrary: lengths in grid units, loads of size 1. Only signs matter here. ---------- */
+  const pin = (x, y, l) => ({ x, y, sup: 'pin', l }), roller = (x, y, l) => ({ x, y, sup: 'roller', l }), fixed = (x, y, l) => ({ x, y, sup: 'fixed', l }), free = (x, y, l) => ({ x, y, l });
+  const DOWN = [0, -1], RIGHT = [1, 0];
+  const BEAMS = [
+    { id: 'b01', name: 'Cantilever, tip load', nodes: [fixed(0, 0, 'A'), { ...free(4, 0, 'B'), F: DOWN }], members: [{ a: 0, b: 1 }] },
+    { id: 'b02', name: 'Cantilever, UDL', nodes: [fixed(0, 0, 'A'), free(4, 0, 'B')], members: [{ a: 0, b: 1, q: DOWN }] },
+    { id: 'b03', name: 'Simple beam, midspan load', nodes: [pin(0, 0, 'A'), { ...free(2, 0, 'B'), F: DOWN }, roller(4, 0, 'C')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }] },
+    { id: 'b04', name: 'Simple beam, couple at midspan', nodes: [pin(0, 0, 'A'), { ...free(2, 0, 'B'), M: -1 }, roller(4, 0, 'C')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }] },
+    { id: 'b05', name: 'Overhang, tip load', nodes: [pin(0, 0, 'A'), roller(4, 0, 'B'), { ...free(6, 0, 'C'), F: DOWN }], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }] },
+    { id: 'b06', name: 'Overhang, UDL', nodes: [pin(0, 0, 'A'), roller(4, 0, 'B'), free(6, 0, 'C')], members: [{ a: 0, b: 1, q: DOWN }, { a: 1, b: 2, q: DOWN }] },
+    { id: 'b07', name: 'Propped cantilever, UDL', nodes: [fixed(0, 0, 'A'), roller(4, 0, 'B')], members: [{ a: 0, b: 1, q: DOWN }] },
+    { id: 'b08', name: 'Fixed both ends, UDL', nodes: [fixed(0, 0, 'A'), fixed(4, 0, 'B')], members: [{ a: 0, b: 1, q: DOWN }] },
+    { id: 'b09', name: 'Two spans, UDL on both', nodes: [pin(0, 0, 'A'), roller(3, 0, 'B'), roller(6, 0, 'C')], members: [{ a: 0, b: 1, q: DOWN }, { a: 1, b: 2, q: DOWN }] },
+    { id: 'b10', name: 'Two spans, UDL on one', nodes: [pin(0, 0, 'A'), roller(3, 0, 'B'), roller(6, 0, 'C')], members: [{ a: 0, b: 1, q: DOWN }, { a: 1, b: 2 }] },
+    { id: 'b11', name: 'Hinge in the span', nodes: [fixed(0, 0, 'A'), { ...free(2, 0, 'B'), joint: 'pin' }, roller(4, 0, 'C')], members: [{ a: 0, b: 1 }, { a: 1, b: 2, q: DOWN }] },
+    { id: 'b12', name: 'Cantilever, tip couple', nodes: [fixed(0, 0, 'A'), { ...free(4, 0, 'B'), M: 1 }], members: [{ a: 0, b: 1 }] },
+  ];
+  const FRAMES = [
+    { id: 'f01', name: 'Portal, pinned bases, side load', nodes: [pin(0, 0, 'A'), { ...free(0, 3, 'B'), F: RIGHT }, free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }] },
+    { id: 'f02', name: 'Portal, fixed bases, side load', nodes: [fixed(0, 0, 'A'), { ...free(0, 3, 'B'), F: RIGHT }, free(4, 3, 'C'), fixed(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }] },
+    { id: 'f03', name: 'Portal, pinned bases, UDL on beam', nodes: [pin(0, 0, 'A'), free(0, 3, 'B'), free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2, q: DOWN }, { a: 2, b: 3 }] },
+    { id: 'f04', name: 'Portal, fixed bases, UDL on beam', nodes: [fixed(0, 0, 'A'), free(0, 3, 'B'), free(4, 3, 'C'), fixed(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2, q: DOWN }, { a: 2, b: 3 }] },
+    { id: 'f05', name: 'L-frame, load at the tip', nodes: [fixed(0, 0, 'A'), free(0, 3, 'B'), { ...free(3, 3, 'C'), F: DOWN }], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }] },
+    { id: 'f06', name: 'Three-hinged portal, side load', nodes: [pin(0, 0, 'A'), { ...free(0, 3, 'B'), F: RIGHT }, { ...free(2, 3, 'E'), joint: 'pin' }, free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }, { a: 3, b: 4 }] },
+    { id: 'f07', name: 'Portal, pinned bases, off-centre load', nodes: [pin(0, 0, 'A'), free(0, 3, 'B'), { ...free(1.5, 3, 'E'), F: DOWN }, free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }, { a: 3, b: 4 }] },
+  ];
+  const GROUPS = { beams: BEAMS, frames: FRAMES };
+
+  /* ---------- build your own: a 6-unit beam on a grid of 7 points ---------- */
+  const GRID = 6;
+  const TOOLS = [['draw', 'Draw'], ['pin', 'Pin'], ['roller', 'Roller'], ['fixed', 'Fixed'], ['hinge', 'Hinge'], ['down', 'Load ↓'], ['up', 'Load ↑'], ['cw', 'Couple ↻'], ['ccw', 'Couple ↺'], ['udl', 'UDL'], ['erase', 'Erase']];
+  const JOINT_TOOLS = ['pin', 'roller', 'fixed', 'hinge'], LOAD_TOOLS = ['down', 'up', 'cw', 'ccw'];
+  const freshBuild = () => ({ joints: Array(GRID + 1).fill(null), loads: Array(GRID + 1).fill(null), udl: Array(GRID).fill(false) });
+  function compileBuild(B) {
+    const xs = new Set([0, GRID]);
+    for (let x = 0; x <= GRID; x++) if (B.joints[x] || B.loads[x]) xs.add(x);
+    for (let i = 0; i < GRID; i++) if (B.udl[i]) { xs.add(i); xs.add(i + 1); }
+    const X = [...xs].sort((p, q) => p - q);
+    const nodes = X.map((x, i) => {
+      const n = { x, y: 0, l: String.fromCharCode(65 + i) }, j = B.joints[x], ld = B.loads[x];
+      if (j === 'hinge') { if (i > 0 && i < X.length - 1) n.joint = 'pin'; } else if (j) n.sup = j;
+      if (ld === 'down') n.F = DOWN; else if (ld === 'up') n.F = [0, 1]; else if (ld === 'cw' && !n.joint) n.M = -1; else if (ld === 'ccw' && !n.joint) n.M = 1;
+      return n;
+    });
+    const members = [];
+    for (let i = 0; i + 1 < X.length; i++) { const m = { a: i, b: i + 1 }; if (X[i + 1] - X[i] === 1 && B.udl[X[i]]) m.q = DOWN; members.push(m); }
+    return { id: 'build', name: 'Your beam', nodes, members, build: true };
+  }
+
+  /* ---------- small linear algebra ---------- */
+  const zeros = (r, c) => Array.from({ length: r }, () => new Array(c).fill(0));
+  function solveLin(A, b) {            // Gaussian elimination with partial pivoting; null when singular
+    const n = b.length, M = A.map((r, i) => r.concat([b[i]]));
+    let big = 1e-300; M.forEach(r => r.slice(0, n).forEach(v => { big = Math.max(big, Math.abs(v)); }));
+    for (let c = 0; c < n; c++) {
+      let p = c; for (let i = c + 1; i < n; i++) if (Math.abs(M[i][c]) > Math.abs(M[p][c])) p = i;
+      if (Math.abs(M[p][c]) < 1e-10 * big) return null;
+      [M[c], M[p]] = [M[p], M[c]];
+      for (let i = 0; i < n; i++) { if (i === c) continue; const f = M[i][c] / M[c][c]; if (!f) continue; for (let j = c; j <= n; j++) M[i][j] -= f * M[c][j]; }
+    }
+    return M.map((r, i) => r[n] / r[i]);
+  }
+  function nullSpace(C, k) {           // basis of { d : C d = 0 } by row reduction
+    const R = C.map(r => r.slice()), piv = []; let row = 0;
+    for (let c = 0; c < k && row < R.length; c++) {
+      let p = -1, best = 1e-9; for (let i = row; i < R.length; i++) if (Math.abs(R[i][c]) > best) { best = Math.abs(R[i][c]); p = i; }
+      if (p < 0) continue;
+      [R[row], R[p]] = [R[p], R[row]]; const d = R[row][c]; for (let j = 0; j < k; j++) R[row][j] /= d;
+      for (let i = 0; i < R.length; i++) { if (i === row) continue; const f = R[i][c]; if (!f) continue; for (let j = 0; j < k; j++) R[i][j] -= f * R[row][j]; }
+      piv.push(c); row++;
+    }
+    const out = [];
+    for (let fc = 0; fc < k; fc++) { if (piv.includes(fc)) continue; const v = new Array(k).fill(0); v[fc] = 1; piv.forEach((pc, i) => { v[pc] = -R[i][fc]; }); out.push(v); }
+    return out;
+  }
+
+  /* ---------- the structure: split UDL spans, number the rotations, solve it exactly ---------- */
+  function localK(m) { const L = m.L, a = EA / L, b = 12 * EI / L ** 3, c = 6 * EI / L ** 2, d = 4 * EI / L, e = 2 * EI / L; return [[a, 0, 0, -a, 0, 0], [0, b, c, 0, -b, c], [0, c, d, 0, -c, e], [-a, 0, 0, a, 0, 0], [0, -b, -c, 0, b, -c], [0, c, e, 0, -c, d]]; }
+  function transform(m) { const c = m.t[0], s = m.t[1]; return [[c, s, 0, 0, 0, 0], [-s, c, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0], [0, 0, 0, c, s, 0], [0, 0, 0, -s, c, 0], [0, 0, 0, 0, 0, 1]]; }
+  const dofs = m => [2 * m.a, 2 * m.a + 1, m.rotA, 2 * m.b, 2 * m.b + 1, m.rotB];
+  const qLocal = m => m.q ? [m.q[0] * m.t[0] + m.q[1] * m.t[1], m.q[0] * m.n[0] + m.q[1] * m.n[1]] : [0, 0];   // [along, across]
+  function solveExact(S) {
+    const k = S.k, K = zeros(k, k), F = new Array(k).fill(0);
+    S.members.forEach(m => {
+      const ke = localK(m), T = transform(m), D = dofs(m), KT = zeros(6, 6), Kg = zeros(6, 6);
+      for (let i = 0; i < 6; i++) for (let j = 0; j < 6; j++) for (let l = 0; l < 6; l++) KT[i][j] += ke[i][l] * T[l][j];
+      for (let i = 0; i < 6; i++) for (let j = 0; j < 6; j++) for (let l = 0; l < 6; l++) Kg[i][j] += T[l][i] * KT[l][j];
+      for (let i = 0; i < 6; i++) for (let j = 0; j < 6; j++) K[D[i]][D[j]] += Kg[i][j];
+      if (m.q) { const [qt, qn] = qLocal(m), L = m.L, fl = [qt * L / 2, qn * L / 2, qn * L * L / 12, qt * L / 2, qn * L / 2, -qn * L * L / 12]; for (let i = 0; i < 6; i++) { let s = 0; for (let l = 0; l < 6; l++) s += T[l][i] * fl[l]; F[D[i]] += s; } }
+    });
+    S.nodes.forEach((nd, i) => { if (nd.F) { F[2 * i] += nd.F[0]; F[2 * i + 1] += nd.F[1]; } if (nd.M && !nd.hinge) F[nd.rot] += nd.M; });
+    const held = new Set();
+    S.nodes.forEach((nd, i) => { if (nd.sup === 'fixed') { held.add(2 * i); held.add(2 * i + 1); if (!nd.hinge) held.add(nd.rot); } else if (nd.sup === 'pin') { held.add(2 * i); held.add(2 * i + 1); } else if (nd.sup === 'roller') held.add(2 * i + 1); });
+    const fr = []; for (let i = 0; i < k; i++) if (!held.has(i)) fr.push(i);
+    const x = solveLin(fr.map(i => fr.map(j => K[i][j])), fr.map(i => F[i]));
+    if (!x) return null;
+    const d = new Array(k).fill(0); fr.forEach((i, j) => { d[i] = x[j]; }); return d;
+  }
+  function endsLocal(m, d) { const c = m.t[0], s = m.t[1], a = m.a, b = m.b; return { ua: c * d[2 * a] + s * d[2 * a + 1], va: -s * d[2 * a] + c * d[2 * a + 1], ta: d[m.rotA], ub: c * d[2 * b] + s * d[2 * b + 1], vb: -s * d[2 * b] + c * d[2 * b + 1], tb: d[m.rotB] }; }
+  const H = (e, L, x) => e.va * (1 - 3 * x * x + 2 * x ** 3) + e.ta * L * (x - 2 * x * x + x ** 3) + e.vb * (3 * x * x - 2 * x ** 3) + e.tb * L * (-x * x + x ** 3);
+  const H2 = (e, L, x) => e.va * (-6 + 12 * x) / (L * L) + e.ta * (-4 + 6 * x) / L + e.vb * (6 - 12 * x) / (L * L) + e.tb * (-2 + 6 * x) / L;
+  // bending moment at xi along m from the exact solution: EI v'' of the cubic plus the fixed-end part of a uniform load
+  function exactM(S, m, x) { const e = endsLocal(m, S.dE), [, qn] = qLocal(m), s = x * m.L, L = m.L; return EI * H2(e, L, x) + qn * (6 * s * s - 6 * L * s + L * L) / 12; }
+  // points of a deflected member: d = the joint values, pf = how much of the uniform-load bulge to add (exact: scale, student: 0)
+  function curve(S, m, d, pf, count) {
+    const A = S.nodes[m.a], e = endsLocal(m, d), [, qn] = qLocal(m), L = m.L, out = [];
+    for (let i = 0; i <= count; i++) { const x = i / count, s = x * L, v = H(e, L, x) + pf * qn * s * s * (L - s) * (L - s) / 24, u = e.ua + (e.ub - e.ua) * x; out.push([A.x + m.t[0] * (s + u) + m.n[0] * v, A.y + m.t[1] * (s + u) + m.n[1] * v]); }
+    return out;
+  }
+
+  function prepare(P) {
+    const nodes = P.nodes.map(n => ({ ...n, name: n.l, inc: [] })), members = [];
+    P.members.forEach(m => {
+      const A = nodes[m.a], B = nodes[m.b];
+      if (!m.q) { members.push({ a: m.a, b: m.b, name: A.l + B.l, endA: A.l, endB: B.l }); return; }
+      const mi = nodes.push({ x: (A.x + B.x) / 2, y: (A.y + B.y) / 2, name: 'the midpoint of ' + A.l + B.l, half: true, inc: [] }) - 1;
+      const horiz = Math.abs(B.x - A.x) >= Math.abs(B.y - A.y);
+      const w = horiz ? (B.x >= A.x ? ['left half', 'right half'] : ['right half', 'left half']) : (B.y >= A.y ? ['lower half', 'upper half'] : ['upper half', 'lower half']);
+      members.push({ a: m.a, b: mi, q: m.q, name: `${A.l}${B.l}, ${w[0]}`, endA: A.l, endB: 'the middle' }, { a: mi, b: m.b, q: m.q, name: `${A.l}${B.l}, ${w[1]}`, endA: 'the middle', endB: B.l });
+    });
+    members.forEach((m, i) => { const A = nodes[m.a], B = nodes[m.b]; m.L = Math.hypot(B.x - A.x, B.y - A.y); m.t = [(B.x - A.x) / m.L, (B.y - A.y) / m.L]; m.n = [-m.t[1], m.t[0]]; nodes[m.a].inc.push({ m: i, end: 'a' }); nodes[m.b].inc.push({ m: i, end: 'b' }); });
+    const n = nodes.length; let nr = 0;
+    nodes.forEach(nd => {
+      if (nd.joint === 'pin' && nd.inc.length > 1) { nd.hinge = true; nd.inc.forEach(e => { members[e.m][e.end === 'a' ? 'rotA' : 'rotB'] = 2 * n + nr++; }); }
+      else { nd.rot = 2 * n + nr++; nd.inc.forEach(e => { members[e.m][e.end === 'a' ? 'rotA' : 'rotB'] = nd.rot; }); }
+    });
+    // what the drawing may do: members keep their length, supports hold their joints
+    const C = [];
+    members.forEach(m => { const r = new Array(2 * n).fill(0); r[2 * m.a] = -m.t[0]; r[2 * m.a + 1] = -m.t[1]; r[2 * m.b] = m.t[0]; r[2 * m.b + 1] = m.t[1]; C.push(r); });
+    nodes.forEach((nd, i) => { const hold = c => { const r = new Array(2 * n).fill(0); r[c] = 1; C.push(r); }; if (nd.sup === 'fixed' || nd.sup === 'pin') { hold(2 * i); hold(2 * i + 1); } else if (nd.sup === 'roller') hold(2 * i + 1); });
+    const N = nullSpace(C, 2 * n);
+    nodes.forEach((nd, i) => { nd.locked = N.every(v => Math.abs(v[2 * i]) < 1e-9 && Math.abs(v[2 * i + 1]) < 1e-9); });
+    const S = { P, nodes, members, n, k: 2 * n + nr, N, hasLoad: nodes.some(nd => nd.F || nd.M) || members.some(m => m.q) };
+    S.dE = S.hasLoad ? solveExact(S) : null;
+    S.unstable = S.hasLoad && !S.dE;
+    if (S.dE) {
+      let Mmax = 0, dmax = 0, dN = 0, thmax = 0;
+      S.members.forEach(m => { for (let i = 0; i <= 40; i++) Mmax = Math.max(Mmax, Math.abs(exactM(S, m, i / 40))); curve(S, m, S.dE, 1, 40).forEach((p, i) => { const A = S.nodes[m.a]; dmax = Math.max(dmax, Math.hypot(p[0] - (A.x + m.t[0] * m.L * i / 40), p[1] - (A.y + m.t[1] * m.L * i / 40))); }); });
+      S.nodes.forEach((nd, i) => { dN = Math.max(dN, Math.hypot(S.dE[2 * i], S.dE[2 * i + 1])); });
+      for (let i = 2 * n; i < S.k; i++) thmax = Math.max(thmax, Math.abs(S.dE[i]));
+      S.Mmax = Mmax; S.dmax = dmax; S.dN = dN; S.thmax = thmax; S.es = dmax > 1e-12 ? 0.75 / dmax : 0;
+      S.ips = [];   // inflection points: where the exact moment changes sign inside a member
+      S.members.forEach((m, mi) => {
+        let last = null;   // last clearly nonzero sample: a zero that lands exactly on a sample must not hide the crossing
+        for (let i = 0; i <= 40; i++) { const cur = exactM(S, m, i / 40); if (Math.abs(cur) < 1e-6 * Mmax) continue; if (last && Math.sign(cur) !== Math.sign(last.v)) S.ips.push({ m: mi, xi: (last.i + (i - last.i) * last.v / (last.v - cur)) / 40 }); last = { i, v: cur }; }
+      });
+    }
+    // label placement, as in Cut and Count: away from the members, and above when a support sits below
+    S.nodes.forEach((nd, i) => {
+      if (!nd.l) return; let ax = 0, ay = 0;
+      S.members.forEach(m => { if (m.a !== i && m.b !== i) return; const o = S.nodes[m.a === i ? m.b : m.a]; const L = Math.hypot(o.x - nd.x, o.y - nd.y) || 1; ax += (o.x - nd.x) / L; ay += (o.y - nd.y) / L; });
+      const up = nd.sup && ay > 0.5;      // a base: the member rises from it and the ground glyph sits below, so the label goes beside the ground
+      if (nd.sup) ay -= 1;
+      const L = Math.hypot(ax, ay); nd.lab = up ? [-0.8, -0.6] : L < 0.25 ? [0, 1] : [-ax / L, -ay / L]; nd.labD = up ? 46 : 26;
+    });
+    return S;
+  }
+
+  /* ---------- state ---------- */
+  const state = { group: 'beams', S: null, d: null, z: null, touched: false, checked: false, revealed: false, mShown: true, comp: true, tool: 'draw', build: freshBuild(), proj: false, drag: null, hover: null, items: [] };
+  const KEY = 'bend-it-v1';
+  function save() { try { localStorage.setItem(KEY, JSON.stringify({ group: state.group, id: state.S && state.S.P.id, mShown: state.mShown, comp: state.comp, build: state.build })); } catch (e) { /* storage may be unavailable */ } }
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+
+  function setProblem(P, keepTouch) {
+    state.S = prepare(P);
+    state.d = new Array(state.S.k).fill(0); state.z = new Array(state.S.N.length).fill(0);
+    state.touched = false; state.checked = false; state.revealed = false; state.items = []; state.drag = null; state.hover = null;
+    if (!keepTouch) $('findings').hidden = true;
+    fit(); renderChips(); renderStatus(); draw(); save();
+  }
+
+  /* ---------- the drawing: dragging a joint is projected onto what the members allow ---------- */
+  function dragJoint(i, T) {
+    const S = state.S, N = S.N, nb = N.length; if (!nb) return;
+    const eps = 1e-4, rows = [2 * i, 2 * i + 1], A = zeros(nb, nb), b = new Array(nb).fill(0);   // eps only pins what the drag leaves free
+    const cur = state.d;
+    for (let j = 0; j < nb; j++) {
+      for (let l = 0; l < nb; l++) { let s = 0; rows.forEach(r => { s += N[j][r] * N[l][r]; }); let s2 = 0; for (let r = 0; r < 2 * S.n; r++) s2 += N[j][r] * N[l][r]; A[j][l] = s + eps * s2; }
+      let s = 0; rows.forEach((r, ri) => { s += N[j][r] * T[ri]; }); let s2 = 0; for (let r = 0; r < 2 * S.n; r++) s2 += N[j][r] * cur[r]; b[j] = s + eps * s2;
+    }
+    const z = solveLin(A, b); if (!z) return;
+    state.z = z;
+    for (let r = 0; r < 2 * S.n; r++) { let s = 0; for (let j = 0; j < nb; j++) s += N[j][r] * z[j]; state.d[r] = s; }
+  }
+  function nodePos(i) { const nd = state.S.nodes[i]; return [nd.x + state.d[2 * i], nd.y + state.d[2 * i + 1]]; }
+  // one slope handle per member end: direction of the drawn curve leaving the joint along that member
+  function handles() {
+    const S = state.S, out = [], r = (state.proj ? 72 : 58) / sc;
+    S.nodes.forEach((nd, i) => nd.inc.forEach(e => {
+      const m = S.members[e.m], sg = e.end === 'a' ? 1 : -1, rot = e.end === 'a' ? m.rotA : m.rotB, th = state.d[rot];
+      const dx = sg * (m.t[0] + th * m.n[0]), dy = sg * (m.t[1] + th * m.n[1]), L = Math.hypot(dx, dy), p = nodePos(i);
+      out.push({ node: i, m: e.m, end: e.end, rot, pos: [p[0] + r * dx / L, p[1] + r * dy / L] });
+    }));
+    return out;
+  }
+  function dragHandle(h, P) {
+    const S = state.S, m = S.members[h.m], p = nodePos(h.node), hx = P[0] - p[0], hy = P[1] - p[1], sg = h.end === 'a' ? 1 : -1;
+    const along = sg * (hx * m.t[0] + hy * m.t[1]), across = sg * (hx * m.n[0] + hy * m.n[1]);
+    let th = along > 0.12 ? across / along : (across >= 0 ? 1.4 : -1.4);
+    state.d[h.rot] = Math.max(-1.4, Math.min(1.4, th));
+  }
+
+  /* ---------- the check: signs and zeros only ---------- */
+  const dirWord = v => Math.abs(v[0]) > Math.abs(v[1]) ? (v[0] > 0 ? 'right' : 'left') : (v[1] > 0 ? 'up' : 'down');
+  const sideWord = v => ({ up: 'top', down: 'bottom', left: 'left', right: 'right' })[dirWord(v)];
+  const runs = a => a.filter(s => s !== 0).reduce((r, s) => (r.length && r[r.length - 1] === s ? r : r.concat([s])), []);
+  function check() {
+    const S = state.S, dE = S.dE, dS = state.d, items = [];
+    if (!dE) return items;
+    const kS = S.members.map(m => { const e = endsLocal(m, dS); return XI.map(x => H2(e, m.L, x)); }), kmaxS = Math.max(...kS.map(a => Math.max(...a.map(Math.abs))));
+    const dRef = Math.max(S.dN, S.dmax);
+    S.nodes.forEach((nd, i) => {
+      if (nd.sup !== 'fixed' || nd.hinge) return;
+      const ok = Math.abs(dS[nd.rot]) < 0.04;
+      items.push({ ok, node: i, text: ok ? `${nd.name} is a fixed support: the slope there stays zero.` : `${nd.name} is a fixed support: the slope there must stay zero. Your curve leaves ${nd.name} at an angle.` });
+    });
+    S.nodes.forEach((nd, i) => {
+      const ex = [dE[2 * i], dE[2 * i + 1]], mag = Math.hypot(ex[0], ex[1]); if (nd.locked || dRef <= 0 || mag < 0.2 * dRef) return;
+      const st = [dS[2 * i], dS[2 * i + 1]], w = dirWord(ex), dot = st[0] * ex[0] + st[1] * ex[1];
+      if (Math.hypot(st[0], st[1]) < 0.02) items.push({ ok: false, node: i, text: `${cap(nd.name)} should move ${w}. Yours stays put.` });
+      else if (dot <= 0) items.push({ ok: false, node: i, text: `${cap(nd.name)} should move ${w}. Yours moves ${dirWord(st)}.` });
+      else items.push({ ok: true, node: i, text: `${cap(nd.name)} moves ${w}.` });
+    });
+    // curvature, member by member: the sequence of signs along the member is what counts, not where exactly it changes.
+    // A cubic between two joints cannot put the inflection point where the exact quartic has it, so dead zones are generous.
+    S.members.forEach((m, mi) => {
+      const ks = kS[mi], ke = XI.map(x => exactM(S, m, x)), mAbs = Math.max(...ke.map(Math.abs)), kAbs = Math.max(...ks.map(Math.abs));
+      if (mAbs < 0.03 * S.Mmax) { const bent = kAbs > 0.1 * kmaxS && kAbs > 1e-4; items.push({ ok: !bent, member: mi, text: bent ? `${m.name} carries no bending moment, so it stays straight. Yours is curved.` : `${m.name}: no moment, so it stays straight.` }); return; }
+      const se = ke.map(v => Math.abs(v) < 0.1 * mAbs ? 0 : Math.sign(v));
+      const ss = ks.map(v => (Math.abs(v) < 0.15 * kAbs || Math.abs(v) < 0.03 * kmaxS || Math.abs(v) < 1e-4) ? 0 : Math.sign(v));
+      const rE = runs(se), rS = runs(ss), same = rE.length === rS.length && rE.every((s, i) => s === rS[i]);
+      const side = sg => sideWord([sg * m.n[0], sg * m.n[1]]), sFirst = side(rE[0]), sLast = side(rE[rE.length - 1]);
+      let text;
+      if (same) text = rE.length > 1 ? `${m.name}: the curvature changes sign at the inflection point.` : `${m.name}: concave toward the ${sFirst}.`;
+      else if (!rS.length) text = rE.length > 1 ? `${m.name} should bend both ways: M changes sign inside it, so there is an inflection point. Yours is straight.` : `${m.name} should bend: M is not zero there. The compression side is the ${sFirst}, so the curve should be concave toward the ${sFirst}.`;
+      else if (rE.length === 1) text = rS.length === 1 ? `${m.name} is concave toward the ${side(rS[0])}. The compression side is the ${sFirst}, so it should be concave toward the ${sFirst}.` : `${m.name} keeps one sign of M, so it keeps one curvature. Yours has an inflection point.`;
+      else text = rS.length === 1 ? `${m.name} has an inflection point where M = 0. Near ${m.endA} it should be concave toward the ${sFirst}, near ${m.endB} toward the ${sLast}. Yours keeps one curvature.`
+        : `${m.name}: near ${m.endA} the curve should be concave toward the ${sFirst}, near ${m.endB} toward the ${sLast}.`;
+      items.push({ ok: same, member: mi, text });
+    });
+    S.nodes.forEach((nd, i) => {
+      if (!nd.hinge || nd.inc.length !== 2) return;
+      const first = nd.inc.find(e => e.end === 'b'), second = nd.inc.find(e => e.end === 'a'); if (!first || !second) return;
+      const mA = S.members[first.m], mB = S.members[second.m], rA = mA.rotB, rB = mB.rotA;
+      const dEx = dE[rB] - dE[rA], dSt = dS[rB] - dS[rA]; if (Math.abs(dEx) < 0.15 * S.thmax) return;
+      const w = sideWord([Math.sign(dEx) * mB.n[0], Math.sign(dEx) * mB.n[1]]);
+      const ok = Math.abs(dSt) > 0.03 && Math.sign(dSt) === Math.sign(dEx);
+      items.push({ ok, node: i, text: ok ? `Hinge ${nd.name}: the kink opens toward the ${w}.` : `At hinge ${nd.name} the slope jumps: the two sides should meet at a kink opening toward the ${w}.` + (Math.abs(dSt) <= 0.03 ? ' Yours runs smoothly through the hinge.' : '') });
+    });
+    return items;
+  }
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+  /* ---------- canvas ---------- */
+  const cv = $('cv'), ctx = cv.getContext('2d'), W = cv.width, Hh = cv.height;
+  let sc = 100, ox = 0, oy = 0;
+  const X = x => ox + x * sc, Y = y => oy - y * sc;
+  function fit() {
+    const S = state.S, xs = S.nodes.map(n => n.x), ys = S.nodes.map(n => n.y), pad = 1.3;
+    const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+    sc = Math.min((W - 40) / (x1 - x0), (Hh - 40) / (y1 - y0));
+    ox = W / 2 - (x0 + x1) / 2 * sc; oy = Hh / 2 + (y0 + y1) / 2 * sc;
+  }
+  function toModel(ev) { const r = cv.getBoundingClientRect(); const px = (ev.clientX - r.left) * W / r.width, py = (ev.clientY - r.top) * Hh / r.height; return [(px - ox) / sc, (oy - py) / sc]; }
+  function arrow(x0, y0, x1, y1, head) {
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    const a = Math.atan2(y1 - y0, x1 - x0); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - head * Math.cos(a - .45), y1 - head * Math.sin(a - .45)); ctx.lineTo(x1 - head * Math.cos(a + .45), y1 - head * Math.sin(a + .45)); ctx.closePath(); ctx.fill();
+  }
+  function couple(x, y, ccw, r) {
+    const a0 = ccw ? 0.3 : Math.PI - 0.3, a1 = ccw ? Math.PI + 1.0 : -1.0;
+    ctx.beginPath(); ctx.arc(x, y, r, a0, a1, !ccw); ctx.stroke();
+    const ex = x + r * Math.cos(a1), ey = y + r * Math.sin(a1), t = a1 + (ccw ? Math.PI / 2 : -Math.PI / 2);
+    ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(ex - 10 * Math.cos(t - .5), ey - 10 * Math.sin(t - .5)); ctx.lineTo(ex - 10 * Math.cos(t + .5), ey - 10 * Math.sin(t + .5)); ctx.closePath(); ctx.fill();
+  }
+  const SANS = 'Archivo, "Helvetica Neue", Arial, sans-serif', MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
+  function label(t, x, y, color, font) { ctx.fillStyle = color; ctx.font = font || ((state.proj ? '600 21px ' : '600 17px ') + SANS); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(t, x, y); }
+  function drawSupport(nd, color) {
+    const S = state.S, x = X(nd.x), y = Y(nd.y); ctx.strokeStyle = color; ctx.lineWidth = 2.4;
+    if (nd.sup === 'fixed') {
+      let ax = 0, ay = 0; nd.inc.forEach(e => { const m = S.members[e.m], sg = e.end === 'a' ? 1 : -1; ax += sg * m.t[0]; ay += sg * m.t[1]; });
+      const L = Math.hypot(ax, ay) || 1, wx = -ax / L, wy = -ay / L, px = -wy, py = wx;   // wall normal w points away from the structure
+      ctx.beginPath(); ctx.moveTo(x + px * 32, y - py * 32); ctx.lineTo(x - px * 32, y + py * 32); ctx.stroke(); ctx.lineWidth = 1.5;
+      for (let k = -28; k <= 28; k += 8) { const bx = x + px * k, by = y - py * k; ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx + wx * 9 + px * 8, by - wy * 9 - py * 8); ctx.stroke(); }
+    } else {
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 17, y + 28); ctx.lineTo(x + 17, y + 28); ctx.closePath(); ctx.stroke();
+      if (nd.sup === 'roller') { ctx.beginPath(); ctx.arc(x - 9, y + 34, 5.5, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.arc(x + 9, y + 34, 5.5, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x - 24, y + 41); ctx.lineTo(x + 24, y + 41); ctx.stroke(); }
+      else { ctx.beginPath(); ctx.moveTo(x - 24, y + 28); ctx.lineTo(x + 24, y + 28); ctx.stroke(); ctx.lineWidth = 1.3; for (let k = -18; k <= 18; k += 8) { ctx.beginPath(); ctx.moveTo(x + k, y + 28); ctx.lineTo(x + k - 7, y + 36); ctx.stroke(); } }
+    }
+  }
+  function poly(pts, close) { ctx.beginPath(); pts.forEach((p, i) => { if (i) ctx.lineTo(X(p[0]), Y(p[1])); else ctx.moveTo(X(p[0]), Y(p[1])); }); if (close) ctx.closePath(); }
+  function draw() {
+    const S = state.S, ink = css('--ink'), ink2 = css('--ink-2'), ink3 = css('--ink-3'), ghost = css('--ghost'), acc = css('--accent'), panel = css('--panel'), cM = css('--fM'), cV = css('--fV'), good = css('--good'), bad = css('--bad'), grid = css('--grid');
+    ctx.clearRect(0, 0, W, Hh);
+    const big = state.proj;
+    // the build grid
+    if (S.P.build) { ctx.strokeStyle = grid; ctx.lineWidth = 1.2; for (let x = 0; x <= GRID; x++) { ctx.beginPath(); ctx.moveTo(X(x), Y(0) - 14); ctx.lineTo(X(x), Y(0) + 14); ctx.stroke(); } }
+    // moment diagram on the compression side (or the tension side), drawn first so the structure sits on top
+    const showM = S.dE && (state.mShown || state.revealed);
+    if (showM) {
+      const h = 0.55 * (state.comp ? 1 : -1) / S.Mmax;
+      S.members.forEach(m => {
+        const A = S.nodes[m.a], pts = [];
+        for (let i = 0; i <= 40; i++) { const s = i / 40 * m.L, Mv = exactM(S, m, i / 40) * h; pts.push([A.x + m.t[0] * s + m.n[0] * Mv, A.y + m.t[1] * s + m.n[1] * Mv]); }
+        const base = [[A.x + m.t[0] * m.L, A.y + m.t[1] * m.L], [A.x, A.y]];
+        ctx.fillStyle = cM; ctx.globalAlpha = 0.16; poly(pts.concat(base), true); ctx.fill(); ctx.globalAlpha = 1;
+        ctx.strokeStyle = cM; ctx.lineWidth = 1.6; poly(pts, false); ctx.stroke();
+      });
+      ctx.fillStyle = cM; ctx.font = (big ? '500 15px ' : '500 13px ') + MONO; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+      ctx.fillText(state.comp ? 'M on the compression side' : 'M on the tension side', 18, Hh - 14);
+    }
+    // undeformed structure
+    ctx.setLineDash([]); ctx.strokeStyle = ghost; ctx.lineWidth = 2.5;
+    S.members.forEach(m => { const A = S.nodes[m.a], B = S.nodes[m.b]; ctx.beginPath(); ctx.moveTo(X(A.x), Y(A.y)); ctx.lineTo(X(B.x), Y(B.y)); ctx.stroke(); });
+    // loads
+    ctx.strokeStyle = ink2; ctx.fillStyle = ink2; ctx.lineWidth = 2.2;
+    S.members.forEach(m => {
+      if (!m.q) return; const A = S.nodes[m.a], qx = m.q[0], qy = m.q[1], qL = Math.hypot(qx, qy), ux = qx / qL, uy = qy / qL, cnt = Math.max(2, Math.round(m.L / 0.5));
+      const tails = [];
+      for (let i = 0; i <= cnt; i++) { const s = m.L * i / cnt, bx = A.x + m.t[0] * s, by = A.y + m.t[1] * s; tails.push([bx - ux * 0.62, by - uy * 0.62]); arrow(X(bx - ux * 0.62), Y(by - uy * 0.62), X(bx - ux * 0.09), Y(by - uy * 0.09), 8); }
+      ctx.lineWidth = 1.6; poly(tails, false); ctx.stroke(); ctx.lineWidth = 2.2;
+    });
+    S.nodes.forEach(nd => {
+      if (nd.F) { const fL = Math.hypot(nd.F[0], nd.F[1]), ux = nd.F[0] / fL, uy = nd.F[1] / fL; ctx.lineWidth = 2.6; arrow(X(nd.x - ux * 0.95), Y(nd.y - uy * 0.95), X(nd.x - ux * 0.1), Y(nd.y - uy * 0.1), 11); }
+      if (nd.M) { ctx.lineWidth = 2.4; couple(X(nd.x), Y(nd.y), nd.M > 0, 0.3 * sc); }
+    });
+    // supports, hinges, labels
+    S.nodes.forEach(nd => {
+      if (nd.sup) drawSupport(nd, ink);
+      if (nd.l) label(nd.l, X(nd.x) + nd.lab[0] * nd.labD, Y(nd.y) - nd.lab[1] * nd.labD, ink2);
+    });
+    // exact shape, after Reveal
+    if (state.revealed && S.dE) {
+      const dEs = S.dE.map(v => v * S.es);
+      ctx.setLineDash([9, 6]); ctx.strokeStyle = acc; ctx.lineWidth = 2.6; ctx.lineJoin = 'round';
+      S.members.forEach(m => { poly(curve(S, m, dEs, S.es, 36), false); ctx.stroke(); });
+      ctx.setLineDash([]);
+      S.ips.forEach(ip => { const m = S.members[ip.m], p = curve(S, m, dEs, S.es, 1).length && curveAt(S, m, dEs, S.es, ip.xi); ctx.fillStyle = panel; ctx.strokeStyle = acc; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), big ? 7 : 5.5, 0, 7); ctx.fill(); ctx.stroke(); });
+    }
+    // the student's curve
+    const segStatus = {}; if (state.touched && (state.mShown || state.checked) && state.items.length) state.items.forEach(it => { if (it.member !== undefined) segStatus[it.member] = it.ok ? 'good' : 'bad'; });
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    S.members.forEach((m, mi) => { ctx.strokeStyle = segStatus[mi] === 'good' ? good : segStatus[mi] === 'bad' ? bad : ink; ctx.lineWidth = big ? 4.5 : 3.4; poly(curve(S, m, state.d, 0, 28), false); ctx.stroke(); });
+    // hinges ride on the drawn curve
+    S.nodes.forEach((nd, i) => { if (nd.joint !== 'pin') return; const p = nodePos(i); ctx.fillStyle = panel; ctx.strokeStyle = ink; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), 7, 0, 7); ctx.fill(); ctx.stroke(); });
+    // handles and joints
+    if (S.dE || !S.hasLoad) {
+      const hs = handles(), rH = big ? 8 : 6, rD = big ? 10 : 7.5;
+      hs.forEach(h => { const p = nodePos(h.node); ctx.strokeStyle = cV; ctx.lineWidth = 1.6; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(X(p[0]), Y(p[1])); ctx.lineTo(X(h.pos[0]), Y(h.pos[1])); ctx.stroke(); ctx.setLineDash([]); });
+      hs.forEach(h => { const on = state.hover && state.hover.kind === 'handle' && state.hover.h.rot === h.rot && state.hover.h.m === h.m; ctx.fillStyle = on ? cV : panel; ctx.strokeStyle = cV; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.arc(X(h.pos[0]), Y(h.pos[1]), rH, 0, 7); ctx.fill(); ctx.stroke(); });
+      S.nodes.forEach((nd, i) => {
+        const p = nodePos(i);
+        if (nd.locked) { ctx.fillStyle = panel; ctx.strokeStyle = ink3; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), 5, 0, 7); ctx.fill(); ctx.stroke(); return; }
+        const on = state.hover && state.hover.kind === 'joint' && state.hover.i === i;
+        ctx.fillStyle = acc; ctx.strokeStyle = panel; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), on ? rD + 2 : rD, 0, 7); ctx.fill(); ctx.stroke();
+      });
+    }
+  }
+  function curveAt(S, m, d, pf, x) { const A = S.nodes[m.a], e = endsLocal(m, d), [, qn] = qLocal(m), L = m.L, s = x * L, v = H(e, L, x) + pf * qn * s * s * (L - s) * (L - s) / 24, u = e.ua + (e.ub - e.ua) * x; return [A.x + m.t[0] * (s + u) + m.n[0] * v, A.y + m.t[1] * (s + u) + m.n[1] * v]; }
+
+  /* ---------- pointer ---------- */
+  function hit(P) {
+    const dpx = W / (cv.getBoundingClientRect().width || W);          // canvas px per screen px: a phone scales the canvas down
+    const tol = Math.max(state.proj ? 16 : 13, 20 * dpx) / sc;
+    for (const h of handles()) if (Math.hypot(h.pos[0] - P[0], h.pos[1] - P[1]) < tol) return { kind: 'handle', h };
+    for (let i = 0; i < state.S.nodes.length; i++) { if (state.S.nodes[i].locked) continue; const p = nodePos(i); if (Math.hypot(p[0] - P[0], p[1] - P[1]) < tol) return { kind: 'joint', i }; }
+    return null;
+  }
+  function changed() { state.touched = true; if (state.checked || state.mShown) state.items = check(); if (state.checked) renderFindings(); draw(); }
+  cv.addEventListener('pointerdown', ev => {
+    const S = state.S; if (!S) return; const P = toModel(ev);
+    if (S.P.build && state.tool !== 'draw') { applyTool(P); ev.preventDefault(); return; }   // a tool in hand places things, even on a joint
+    const t = (S.dE || !S.hasLoad) ? hit(P) : null;
+    if (t) { state.drag = t; cv.setPointerCapture(ev.pointerId); cv.classList.add('grabbing'); ev.preventDefault(); }
+  });
+  cv.addEventListener('pointermove', ev => {
+    const S = state.S; if (!S) return; const P = toModel(ev);
+    if (state.drag) {
+      if (state.drag.kind === 'joint') { const i = state.drag.i, nd = S.nodes[i]; let T = [P[0] - nd.x, P[1] - nd.y]; const L = Math.hypot(T[0], T[1]); if (L > 1.2) T = [T[0] * 1.2 / L, T[1] * 1.2 / L]; dragJoint(i, T); }
+      else dragHandle(state.drag.h, P);
+      changed(); return;
+    }
+    const h = (S.dE || !S.hasLoad) && !(S.P.build && state.tool !== 'draw') ? hit(P) : null;
+    const was = state.hover; state.hover = h;
+    cv.classList.toggle('grab', !!h); cv.classList.toggle('place', !h && S.P.build && state.tool !== 'draw');
+    if ((was && !h) || (h && !was) || (h && was && (h.kind !== was.kind || h.i !== was.i || (h.h && was.h && h.h.rot !== was.h.rot)))) draw();
+  });
+  const endDrag = ev => { if (!state.drag) return; state.drag = null; cv.classList.remove('grabbing'); try { cv.releasePointerCapture(ev.pointerId); } catch (e) { /* already released */ } draw(); };
+  cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+  cv.addEventListener('pointerleave', () => { if (state.hover) { state.hover = null; draw(); } });
+
+  /* ---------- build tools ---------- */
+  function applyTool(P) {
+    if (Math.abs(P[1]) > 0.7) return;
+    const B = state.build, xr = Math.round(P[0]), onPoint = Math.abs(P[0] - xr) < 0.3 && xr >= 0 && xr <= GRID, span = Math.floor(P[0]);
+    const tool = state.tool;
+    if (JOINT_TOOLS.includes(tool)) { if (!onPoint) return; B.joints[xr] = B.joints[xr] === tool ? null : tool; }
+    else if (LOAD_TOOLS.includes(tool)) { if (!onPoint) return; B.loads[xr] = B.loads[xr] === tool ? null : tool; }
+    else if (tool === 'udl') { if (onPoint || span < 0 || span >= GRID) return; B.udl[span] = !B.udl[span]; }
+    else if (tool === 'erase') { if (onPoint) { B.joints[xr] = null; B.loads[xr] = null; } else if (span >= 0 && span < GRID) B.udl[span] = false; }
+    setProblem(compileBuild(B));
+  }
+
+  /* ---------- chips, status, findings ---------- */
+  function renderChips() {
+    $('groups').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.g === state.group)));
+    const box = $('probs'); box.innerHTML = '';
+    if (state.group === 'build') {
+      TOOLS.forEach(([id, name]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = name; b.setAttribute('aria-pressed', String(state.tool === id)); b.addEventListener('click', () => { state.tool = id; renderChips(); renderStatus(); }); box.appendChild(b); });
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Clear beam'; b.addEventListener('click', () => { state.build = freshBuild(); setProblem(compileBuild(state.build)); }); box.appendChild(b);
+    } else GROUPS[state.group].forEach(P => { const b = document.createElement('button'); b.type = 'button'; b.textContent = P.name; b.setAttribute('aria-pressed', String(state.S && state.S.P.id === P.id)); b.addEventListener('click', () => setProblem(P)); box.appendChild(b); });
+    $('m-show').setAttribute('aria-pressed', String(state.mShown)); $('m-hide').setAttribute('aria-pressed', String(!state.mShown));
+    $('c-comp').setAttribute('aria-pressed', String(state.comp)); $('c-tens').setAttribute('aria-pressed', String(!state.comp));
+  }
+  function renderStatus() {
+    const S = state.S, st = $('status'); st.classList.remove('bad');
+    if (S.unstable) { st.classList.add('bad'); st.innerHTML = '<b>Unstable.</b> This beam cannot carry its load as built. Add or move a support, or remove a hinge.'; }
+    else if (!S.hasLoad) st.innerHTML = S.P.build ? '<b>Add a load.</b> Pick a load tool and click the beam.' : '<b>No load.</b>';
+    else if (S.P.build && state.tool !== 'draw') st.innerHTML = `<b>${TOOLS.find(t => t[0] === state.tool)[1]}.</b> Click a grid point${state.tool === 'udl' || state.tool === 'erase' ? ' or a span' : ''} on the beam. Click again to remove it.`;
+    else st.innerHTML = '<b>Draw the deflected shape.</b> Drag a joint to move it, drag a handle to set the slope there.';
+    const c = $('count'); if (!state.checked || !state.items.length) { c.hidden = true; return; }
+    const ok = state.items.filter(i => i.ok).length, n = state.items.length;
+    c.hidden = false; c.innerHTML = `<span class="pill ${ok === n ? 'good' : 'bad'}">${ok} of ${n}</span> checks pass`;
+  }
+  function renderFindings() {
+    const ul = $('findings'); ul.innerHTML = '';
+    state.items.forEach(it => { const li = document.createElement('li'); li.className = it.ok ? 'good' : 'bad'; li.innerHTML = `<span class="mk">${it.ok ? '✓' : '!'}</span><span>${it.text}</span>`; ul.appendChild(li); });
+    ul.hidden = !state.items.length; renderStatus();
+  }
+
+  $('groups').addEventListener('click', ev => {
+    const b = ev.target.closest('button'); if (!b) return; state.group = b.dataset.g;
+    if (state.group === 'build') { state.tool = 'draw'; setProblem(compileBuild(state.build)); } else setProblem(GROUPS[state.group][0]);
+  });
+  $('m-show').addEventListener('click', () => { state.mShown = true; changed(); renderChips(); save(); });
+  $('m-hide').addEventListener('click', () => { state.mShown = false; state.items = state.checked ? state.items : []; renderChips(); draw(); save(); });
+  $('c-comp').addEventListener('click', () => { state.comp = true; renderChips(); draw(); save(); });
+  $('c-tens').addEventListener('click', () => { state.comp = false; renderChips(); draw(); save(); });
+  $('b-check').addEventListener('click', () => { if (!state.S.dE) { renderStatus(); return; } state.checked = true; state.touched = true; state.items = check(); renderFindings(); draw(); });
+  $('b-reveal').addEventListener('click', () => { if (!state.S.dE) { renderStatus(); return; } state.revealed = !state.revealed; $('b-reveal').textContent = state.revealed ? 'Hide exact' : 'Reveal'; draw(); });
+  $('b-reset').addEventListener('click', () => { state.d.fill(0); state.z.fill(0); state.touched = false; state.checked = false; state.revealed = false; state.items = []; $('b-reveal').textContent = 'Reveal'; $('findings').hidden = true; renderStatus(); draw(); });
+
+  if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  /* ---------- start ---------- */
+  const saved = load() || {};
+  if (typeof saved.mShown === 'boolean') state.mShown = saved.mShown;
+  if (typeof saved.comp === 'boolean') state.comp = saved.comp;
+  if (saved.build && saved.build.joints && saved.build.joints.length === GRID + 1 && saved.build.udl && saved.build.udl.length === GRID) state.build = saved.build;
+  else { state.build.joints[0] = 'pin'; state.build.joints[6] = 'roller'; state.build.loads[2] = 'down'; }
+  const byId = id => BEAMS.find(p => p.id === id) || FRAMES.find(p => p.id === id);
+  // #projector enlarges the drawing and drops the footer; #b05 or #f01 opens that problem
+  function route(first) {
+    const hash = (location.hash || '').slice(1).toLowerCase();
+    const proj = hash === 'projector'; if (proj !== state.proj) { state.proj = proj; $('sheet').classList.toggle('proj', proj); if (state.S) draw(); }
+    const P = byId(hash);
+    if (P) { state.group = FRAMES.includes(P) ? 'frames' : 'beams'; setProblem(P); return; }
+    if (!first) return;
+    const start = saved.group === 'build' ? null : byId(saved.id);
+    if (start) { state.group = FRAMES.includes(start) ? 'frames' : 'beams'; setProblem(start); }
+    else if (saved.group === 'build') { state.group = 'build'; setProblem(compileBuild(state.build)); }
+    else setProblem(BEAMS[0]);
+  }
+  route(true);
+  window.addEventListener('hashchange', () => route(false));
+  // for the offline tests only; the page never reads this
+  window.__bendit = { BEAMS, FRAMES, prepare, exactM, check, curve, endsLocal, compileBuild, freshBuild, state, setProblem, dragJoint, dragHandle, handles, px: (x, y) => [X(x), Y(y)] };
+})();
+</script>
+</body>
+</html>
