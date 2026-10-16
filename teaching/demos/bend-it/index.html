@@ -107,6 +107,8 @@
   .legend { display:flex; flex-wrap:wrap; gap:6px 14px; }
   .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; }
   .legend i.dash { height:0; border-top:2px dashed var(--accent); vertical-align:3px; }
+  .legend .key { font-weight:600; padding:2px 9px 2px 7px; border-radius:999px; }
+  .legend .key.good { color:var(--good); background:var(--good-bg); } .legend .key.bad { color:var(--bad); background:var(--bad-bg); }
 
   .findings { list-style:none; margin:10px 0 0; padding:0; display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:8px; }
   .findings li { display:flex; gap:10px; align-items:flex-start; padding:9px 12px; border:1.5px solid var(--rule); border-radius:8px; background:var(--panel); font-size:14px; line-height:1.4; min-width:0; }
@@ -151,7 +153,7 @@
     </div>
     <span class="spacer"></span>
     <button class="plain primary" id="b-check" type="button">Check</button>
-    <button class="plain" id="b-reveal" type="button">Reveal</button>
+    <button class="plain" id="b-reveal" type="button">Show a solution</button>
     <button class="plain" id="b-reset" type="button">Reset</button>
   </div>
 
@@ -161,9 +163,9 @@
     <span><i style="background:var(--accent)"></i>joint: drag to move it</span>
     <span><i style="background:var(--fV)"></i>handle: pull to set the slope</span>
     <span><i style="background:var(--fM)"></i>bending moment</span>
-    <span><i class="dash"></i>exact shape (Reveal)</span>
-    <span><i style="background:var(--good)"></i>curvature agrees with M</span>
-    <span><i style="background:var(--bad)"></i>curvature disagrees</span>
+    <span><i class="dash"></i>a solution (Show a solution)</span>
+    <span class="key good"><i style="background:var(--good)"></i>curvature agrees with M</span>
+    <span class="key bad"><i style="background:var(--bad)"></i>curvature disagrees</span>
   </div>
   </div>
 
@@ -180,7 +182,7 @@
 
   <footer class="colophon">
     <p>The curve you draw is a cubic between neighbouring joints, set by the position and slope at each joint, the same shape a beam element uses. Joints move only in ways that keep every member its original length, and supports hold them. The slopes are yours: a wall should keep its slope at zero, a hinge may kink, a rigid corner keeps its right angle. Check compares the signs of your curvature with the bending moment, segment by segment, and the direction each joint moves. Sizes are never graded. For beams the moment diagram is drawn on its own axis above the beam, positive up; for frames it is drawn on the compression side of each member, and the sign follows the member's own axis (beams left to right, columns bottom to top). The round button in the corner of the drawing flips it to the other side.</p>
-    <p>CE 329 Structural Analysis &middot; Teaching demo. Built with AI assistance. The moment diagram and the exact deflected shape come from a stiffness solution of the structure on screen, not generated text. Nothing you do here is graded or recorded.</p>
+    <p>CE 329 Structural Analysis &middot; Teaching demo. Built with AI assistance. The moment diagram and the solution shape come from a stiffness solution of the structure on screen, not generated text. Nothing you do here is graded or recorded.</p>
   </footer>
 </div>
 
@@ -367,7 +369,7 @@
     state.S = prepare(P);
     state.d = new Array(state.S.k).fill(0); state.z = new Array(state.S.N.length).fill(0);
     state.touched = false; state.checked = false; state.revealed = false; state.items = []; state.drag = null; state.hover = null; state.lastNode = -1;
-    $('b-reveal').textContent = 'Reveal';
+    $('b-reveal').textContent = 'Show a solution';
     if (!keepTouch) $('findings').hidden = true;
     fit(); renderChips(); renderStatus(); draw(); save(); ensureTick();
   }
@@ -607,7 +609,7 @@
       if (nd.sup) drawSupport(nd, ink);
       if (nd.l) label(nd.l, X(nd.x) + nd.lab[0] * nd.labD, Y(nd.y) - nd.lab[1] * nd.labD, ink2);
     });
-    // exact shape, after Reveal
+    // the solution shape, after Show a solution
     if (state.revealed && S.dE) {
       const dEs = S.dE.map(v => v * S.es);
       ctx.setLineDash([9, 6]); ctx.strokeStyle = acc; ctx.lineWidth = 2.6; ctx.lineJoin = 'round';
@@ -618,6 +620,8 @@
     // the student's curve
     const segStatus = {}; if (state.touched && (state.mShown || state.checked) && state.items.length) state.items.forEach(it => { if (it.member !== undefined) segStatus[it.member] = it.ok ? 'good' : 'bad'; });
     ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    // a verdict gets a wide soft band under the curve as well as its colour, so it reads from the back of the room
+    S.members.forEach((m, mi) => { const st = segStatus[mi]; if (!st) return; ctx.strokeStyle = st === 'good' ? good : bad; ctx.globalAlpha = 0.22; ctx.lineWidth = big ? 22 : 16; poly(curve(S, m, state.d, 0, 28), false); ctx.stroke(); ctx.globalAlpha = 1; });
     S.members.forEach((m, mi) => { ctx.strokeStyle = segStatus[mi] === 'good' ? good : segStatus[mi] === 'bad' ? bad : ink; ctx.lineWidth = big ? 7 : 5.5; poly(curve(S, m, state.d, 0, 28), false); ctx.stroke(); });
     // hinges ride on the drawn curve
     S.nodes.forEach((nd, i) => { if (nd.joint !== 'pin') return; const p = nodePos(i); ctx.fillStyle = panel; ctx.strokeStyle = ink; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), 7, 0, 7); ctx.fill(); ctx.stroke(); });
@@ -717,8 +721,8 @@
       const fn = freeNode(S), ok = state.items.filter(i => i.ok).length, n = state.items.length;
       if (!state.usedDot && fn >= 0) st.innerHTML = `<b>Step 1 of 3.</b> Drag the orange dot at ${S.nodes[fn].name} to move that joint.`;
       else if (!state.usedHandle) st.innerHTML = '<b>Step 2 of 3.</b> Pull a blue handle to set the slope at its joint. A wall keeps its slope at zero; a hinge may kink.';
-      else if (!state.checked) st.innerHTML = '<b>Step 3 of 3.</b> Press Check. Red segments disagree with the moment diagram; Reveal shows the exact shape.';
-      else if (n && ok === n) st.innerHTML = '<b>All checks pass.</b> Try Reveal, then the next problem.';
+      else if (!state.checked) st.innerHTML = '<b>Step 3 of 3.</b> Press Check. Green segments agree with the moment diagram, red ones disagree. Show a solution overlays one.';
+      else if (n && ok === n) st.innerHTML = '<b>All checks pass.</b> Compare with Show a solution, then try the next problem.';
       else st.innerHTML = '<b>Fix the red items.</b> The list updates as you drag.';
     }
     const c = $('count'); if (!state.checked || !state.items.length) { c.hidden = true; return; }
@@ -739,8 +743,8 @@
   $('m-hide').addEventListener('click', () => { state.mShown = false; state.items = state.checked ? state.items : []; renderChips(); draw(); save(); });
   $('c-side').addEventListener('click', () => { state.comp = !state.comp; renderChips(); draw(); save(); });
   $('b-check').addEventListener('click', () => { if (!state.S.dE) { renderStatus(); return; } state.checked = true; state.touched = true; state.items = check(); renderFindings(); draw(); });
-  $('b-reveal').addEventListener('click', () => { if (!state.S.dE) { renderStatus(); return; } state.revealed = !state.revealed; $('b-reveal').textContent = state.revealed ? 'Hide exact' : 'Reveal'; renderChips(); draw(); });
-  $('b-reset').addEventListener('click', () => { state.d.fill(0); state.z.fill(0); state.touched = false; state.checked = false; state.revealed = false; state.items = []; $('b-reveal').textContent = 'Reveal'; $('findings').hidden = true; renderChips(); renderStatus(); draw(); });
+  $('b-reveal').addEventListener('click', () => { if (!state.S.dE) { renderStatus(); return; } state.revealed = !state.revealed; $('b-reveal').textContent = state.revealed ? 'Hide the solution' : 'Show a solution'; renderChips(); draw(); });
+  $('b-reset').addEventListener('click', () => { state.d.fill(0); state.z.fill(0); state.touched = false; state.checked = false; state.revealed = false; state.items = []; $('b-reveal').textContent = 'Show a solution'; $('findings').hidden = true; renderChips(); renderStatus(); draw(); });
 
   if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
   new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
