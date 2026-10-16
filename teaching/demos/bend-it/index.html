@@ -26,29 +26,31 @@
   img, svg { max-width: 100%; height: auto; }
   button, input, select { font: inherit; color: inherit; }
 
-  /* Same identity as the other CE 329 demos (Shake Test, Cut and Count, Find the Zeros): one sheet, chips on top, a canvas stage, verdicts under it. */
+  /* Same layout as the other CE 329 demos (one sheet, a canvas stage, verdicts under it), in the UT Austin palette:
+     burnt orange #BF5700 for the joints and the selection, charcoal #333F48 for the ink, limestone #D6D2C4 for the rules,
+     bluebonnet #005F86 for the slope handles, turquoise #00A9B7 for the moment diagram, cactus #579D42 for a pass. */
   :root {
-    --paper:#EDEFEA; --panel:#F7F8F5; --panel-2:#E4E8E2; --ink:#1F2724; --ink-2:#55605B; --ink-3:#7C8781;
-    --rule:#CBD2CB; --accent:#0F6E68;
-    --good:#0F6E68; --good-bg:#DCEAE7; --bad:#B4432A; --bad-bg:#F2DFD8; --dep:#7C8781; --dep-bg:#E4E8E2; --ask:#B5811A; --ask-bg:#F3E7CC;
-    --fN:#2B5FB3; --fV:#B5811A; --fM:#7A4FA3; --react:#3A4541; --grid:#D6DCD6; --ghost:#B9C2BC; --cut:#B4432A;
-    --shadow:0 1px 2px rgba(31,39,36,.06), 0 6px 18px rgba(31,39,36,.05);
+    --paper:#F3F1EB; --panel:#FBFAF7; --panel-2:#ECE8DD; --ink:#333F48; --ink-2:#5B6770; --ink-3:#86919A;
+    --rule:#D6D2C4; --accent:#BF5700;
+    --good:#4E8F3A; --good-bg:#E1EDD8; --bad:#B23A2B; --bad-bg:#F3DEDA; --dep:#86919A; --dep-bg:#ECE8DD; --ask:#D9821A; --ask-bg:#FBE9D2;
+    --fN:#005F86; --fV:#005F86; --fM:#0E97A3; --react:#333F48; --grid:#E2DED2; --ghost:#B7B1A3; --cut:#B23A2B;
+    --shadow:0 1px 2px rgba(51,63,72,.06), 0 6px 18px rgba(51,63,72,.06);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --paper:#121614; --panel:#1A201D; --panel-2:#232A26; --ink:#DDE4DF; --ink-2:#97A39C; --ink-3:#77837C;
-      --rule:#303934; --accent:#4FBFB2;
-      --good:#4FBFB2; --good-bg:#14302D; --bad:#E87A5C; --bad-bg:#38211A; --dep:#8B968F; --dep-bg:#262E2A; --ask:#E0AE4A; --ask-bg:#33280F;
-      --fN:#7FA6E8; --fV:#E0AE4A; --fM:#B695DE; --react:#C3CCC6; --grid:#262E2A; --ghost:#4A544E; --cut:#E87A5C;
+      --paper:#1C2227; --panel:#242C33; --panel-2:#303941; --ink:#E9E5DB; --ink-2:#B3BBC1; --ink-3:#8A949B;
+      --rule:#3E474F; --accent:#F08A3C;
+      --good:#8FC66E; --good-bg:#26381E; --bad:#E8806F; --bad-bg:#3C2320; --dep:#8A949B; --dep-bg:#303941; --ask:#F8971F; --ask-bg:#3A2A10;
+      --fN:#6CB6DC; --fV:#6CB6DC; --fM:#4FCBD5; --react:#C9D0D5; --grid:#2E373E; --ghost:#5A646D; --cut:#E8806F;
       --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --paper:#121614; --panel:#1A201D; --panel-2:#232A26; --ink:#DDE4DF; --ink-2:#97A39C; --ink-3:#77837C;
-    --rule:#303934; --accent:#4FBFB2;
-    --good:#4FBFB2; --good-bg:#14302D; --bad:#E87A5C; --bad-bg:#38211A; --dep:#8B968F; --dep-bg:#262E2A; --ask:#E0AE4A; --ask-bg:#33280F;
-    --fN:#7FA6E8; --fV:#E0AE4A; --fM:#B695DE; --react:#C3CCC6; --grid:#262E2A; --ghost:#4A544E; --cut:#E87A5C;
+    --paper:#1C2227; --panel:#242C33; --panel-2:#303941; --ink:#E9E5DB; --ink-2:#B3BBC1; --ink-3:#8A949B;
+    --rule:#3E474F; --accent:#F08A3C;
+    --good:#8FC66E; --good-bg:#26381E; --bad:#E8806F; --bad-bg:#3C2320; --dep:#8A949B; --dep-bg:#303941; --ask:#F8971F; --ask-bg:#3A2A10;
+    --fN:#6CB6DC; --fV:#6CB6DC; --fM:#4FCBD5; --react:#C9D0D5; --grid:#2E373E; --ghost:#5A646D; --cut:#E8806F;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
     color-scheme: dark;
   }
