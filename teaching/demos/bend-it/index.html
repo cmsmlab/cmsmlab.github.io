@@ -198,7 +198,6 @@
   const DOWN = [0, -1], RIGHT = [1, 0];
   const BEAMS = [
     { id: 'b01', name: 'Cantilever, tip load', nodes: [fixed(0, 0, 'A'), { ...free(4, 0, 'B'), F: DOWN }], members: [{ a: 0, b: 1 }] },
-    { id: 'b02', name: 'Cantilever, UDL', nodes: [fixed(0, 0, 'A'), free(4, 0, 'B')], members: [{ a: 0, b: 1, q: DOWN }] },
     { id: 'b03', name: 'Simple beam, midspan load', nodes: [pin(0, 0, 'A'), { ...free(2, 0, 'B'), F: DOWN }, roller(4, 0, 'C')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }] },
     { id: 'b04', name: 'Simple beam, couple at midspan', nodes: [pin(0, 0, 'A'), { ...free(2, 0, 'B'), M: -1 }, roller(4, 0, 'C')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }] },
     { id: 'b05', name: 'Overhang, tip load', nodes: [pin(0, 0, 'A'), roller(4, 0, 'B'), { ...free(6, 0, 'C'), F: DOWN }], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }] },
