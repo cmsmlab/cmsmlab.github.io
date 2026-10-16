@@ -298,10 +298,21 @@
   const H2 = (e, L, x) => e.va * (-6 + 12 * x) / (L * L) + e.ta * (-4 + 6 * x) / L + e.vb * (6 - 12 * x) / (L * L) + e.tb * (-2 + 6 * x) / L;
   // bending moment at xi along m from the exact solution: EI v'' of the cubic plus the fixed-end part of a uniform load
   function exactM(S, m, x) { const e = endsLocal(m, S.dE), [, qn] = qLocal(m), s = x * m.L, L = m.L; return EI * H2(e, L, x) + qn * (6 * s * s - 6 * L * s + L * L) / 12; }
-  // points of a deflected member: d = the joint values, pf = how much of the uniform-load bulge to add (exact: scale, student: 0)
+  // a member between its two displaced joints: the chord it now spans, and the end slopes measured from that chord.
+  // Drawn this way a big sway is a leaning member with a gentle curve, not a wave; for small drawings it is the same cubic as before.
+  function chordEnds(S, m, d) {
+    const A = S.nodes[m.a], Bn = S.nodes[m.b];
+    const Pa = [A.x + d[2 * m.a], A.y + d[2 * m.a + 1]], Pb = [Bn.x + d[2 * m.b], Bn.y + d[2 * m.b + 1]];
+    let cx = Pb[0] - Pa[0], cy = Pb[1] - Pa[1]; const Lc = Math.hypot(cx, cy) || 1e-9; cx /= Lc; cy /= Lc;
+    const psi = Math.atan2(m.t[0] * cy - m.t[1] * cx, m.t[0] * cx + m.t[1] * cy);      // how far the chord has turned from the member's axis
+    const rel = th => Math.max(-5, Math.min(5, Math.tan(Math.atan(th) - psi)));        // a handle sets a tangent angle; this is its slope from the chord
+    return { Pa, tc: [cx, cy], nc: [-cy, cx], Lc, ta: rel(d[m.rotA]), tb: rel(d[m.rotB]) };
+  }
+  const chordKappa = (c, x) => (c.ta * (-4 + 6 * x) + c.tb * (-2 + 6 * x)) / c.Lc;
+  // points of a deflected member: d = the joint values, pf = how much of the uniform-load bulge to add (solution: scale, student: 0)
   function curve(S, m, d, pf, count) {
-    const A = S.nodes[m.a], e = endsLocal(m, d), [, qn] = qLocal(m), L = m.L, out = [];
-    for (let i = 0; i <= count; i++) { const x = i / count, s = x * L, v = H(e, L, x) + pf * qn * s * s * (L - s) * (L - s) / 24, u = e.ua + (e.ub - e.ua) * x; out.push([A.x + m.t[0] * (s + u) + m.n[0] * v, A.y + m.t[1] * (s + u) + m.n[1] * v]); }
+    const c = chordEnds(S, m, d), [, qn] = qLocal(m), L = m.L, out = [];
+    for (let i = 0; i <= count; i++) { const x = i / count, s = x * L, v = c.Lc * (c.ta * (x - 2 * x * x + x ** 3) + c.tb * (-x * x + x ** 3)) + pf * qn * s * s * (L - s) * (L - s) / 24; out.push([c.Pa[0] + c.tc[0] * x * c.Lc + c.nc[0] * v, c.Pa[1] + c.tc[1] * x * c.Lc + c.nc[1] * v]); }
     return out;
   }
 
@@ -420,7 +431,7 @@
   function check() {
     const S = state.S, dE = S.dE, dS = state.d, items = [];
     if (!dE) return items;
-    const kS = S.members.map(m => { const e = endsLocal(m, dS); return XI.map(x => H2(e, m.L, x)); }), kmaxS = Math.max(...kS.map(a => Math.max(...a.map(Math.abs))));
+    const kS = S.members.map(m => { const c = chordEnds(S, m, dS); return XI.map(x => chordKappa(c, x)); }), kmaxS = Math.max(...kS.map(a => Math.max(...a.map(Math.abs))));
     const dRef = Math.max(S.dN, S.dmax);
     let thS = 0; for (let i = 2 * S.n; i < S.k; i++) thS = Math.max(thS, Math.abs(dS[i]));
     S.nodes.forEach((nd, i) => {
@@ -439,7 +450,7 @@
     // A cubic between two joints cannot follow the exact quartic under a uniform load (at a free end it even reverses a little),
     // so the student's pattern is accepted if it matches the true moment OR the cubic drawn through the exact joint values.
     S.members.forEach((m, mi) => {
-      const ks = kS[mi], ke = XI.map(x => exactM(S, m, x)), eR = endsLocal(m, dE), kr = XI.map(x => H2(eR, m.L, x));
+      const ks = kS[mi], ke = XI.map(x => exactM(S, m, x)), cR = chordEnds(S, m, dE), kr = XI.map(x => chordKappa(cR, x));
       const mAbs = Math.max(...ke.map(Math.abs)), kAbs = Math.max(...ks.map(Math.abs)), rAbs = Math.max(...kr.map(Math.abs));
       if (mAbs < 0.03 * S.Mmax) { const bent = kAbs > 0.1 * kmaxS && kAbs > 1e-4; items.push({ ok: !bent, member: mi, text: bent ? `${m.name} carries no bending moment, so it stays straight. Yours is curved.` : `${m.name}: no moment, so it stays straight.` }); return; }
       const se = ke.map(v => Math.abs(v) < 0.06 * mAbs ? 0 : Math.sign(v));
@@ -655,7 +666,7 @@
       });
     }
   }
-  function curveAt(S, m, d, pf, x) { const A = S.nodes[m.a], e = endsLocal(m, d), [, qn] = qLocal(m), L = m.L, s = x * L, v = H(e, L, x) + pf * qn * s * s * (L - s) * (L - s) / 24, u = e.ua + (e.ub - e.ua) * x; return [A.x + m.t[0] * (s + u) + m.n[0] * v, A.y + m.t[1] * (s + u) + m.n[1] * v]; }
+  function curveAt(S, m, d, pf, x) { const c = chordEnds(S, m, d), [, qn] = qLocal(m), L = m.L, s = x * L, v = c.Lc * (c.ta * (x - 2 * x * x + x ** 3) + c.tb * (-x * x + x ** 3)) + pf * qn * s * s * (L - s) * (L - s) / 24; return [c.Pa[0] + c.tc[0] * x * c.Lc + c.nc[0] * v, c.Pa[1] + c.tc[1] * x * c.Lc + c.nc[1] * v]; }
 
   /* ---------- pointer ---------- */
   function hit(P) {
