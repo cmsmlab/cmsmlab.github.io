@@ -584,8 +584,9 @@
     const showM = S.dE && (state.mShown || state.revealed);
     if (showM) drawM(S, cM, ink3);
     // undeformed structure
-    ctx.setLineDash([]); ctx.strokeStyle = ghost; ctx.lineWidth = 2.5;
+    ctx.setLineDash([]); ctx.strokeStyle = ghost; ctx.lineWidth = big ? 6 : 4.5; ctx.lineCap = 'round';
     S.members.forEach(m => { const A = S.nodes[m.a], B = S.nodes[m.b]; ctx.beginPath(); ctx.moveTo(X(A.x), Y(A.y)); ctx.lineTo(X(B.x), Y(B.y)); ctx.stroke(); });
+    ctx.lineCap = 'butt';
     // loads
     ctx.strokeStyle = ink2; ctx.fillStyle = ink2; ctx.lineWidth = 2.2;
     S.members.forEach(m => {
@@ -614,7 +615,7 @@
     // the student's curve
     const segStatus = {}; if (state.touched && (state.mShown || state.checked) && state.items.length) state.items.forEach(it => { if (it.member !== undefined) segStatus[it.member] = it.ok ? 'good' : 'bad'; });
     ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    S.members.forEach((m, mi) => { ctx.strokeStyle = segStatus[mi] === 'good' ? good : segStatus[mi] === 'bad' ? bad : ink; ctx.lineWidth = big ? 4.5 : 3.4; poly(curve(S, m, state.d, 0, 28), false); ctx.stroke(); });
+    S.members.forEach((m, mi) => { ctx.strokeStyle = segStatus[mi] === 'good' ? good : segStatus[mi] === 'bad' ? bad : ink; ctx.lineWidth = big ? 7 : 5.5; poly(curve(S, m, state.d, 0, 28), false); ctx.stroke(); });
     // hinges ride on the drawn curve
     S.nodes.forEach((nd, i) => { if (nd.joint !== 'pin') return; const p = nodePos(i); ctx.fillStyle = panel; ctx.strokeStyle = ink; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), 7, 0, 7); ctx.fill(); ctx.stroke(); });
     // handles and joints
