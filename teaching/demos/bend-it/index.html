@@ -214,6 +214,7 @@
   ];
   const FRAMES = [
     { id: 'f01', name: 'Portal, pinned bases, side load', nodes: [pin(0, 0, 'A'), { ...free(0, 3, 'B'), F: RIGHT }, free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }] },
+    { id: 'f02', name: 'Portal, fixed bases, side load', nodes: [fixed(0, 0, 'A'), { ...free(0, 3, 'B'), F: RIGHT }, free(4, 3, 'C'), fixed(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }] },
     { id: 'f03', name: 'Portal, pinned bases, UDL on beam', nodes: [pin(0, 0, 'A'), free(0, 3, 'B'), free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2, q: DOWN }, { a: 2, b: 3 }] },
     { id: 'f04', name: 'Portal, fixed bases, UDL on beam', nodes: [fixed(0, 0, 'A'), free(0, 3, 'B'), free(4, 3, 'C'), fixed(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2, q: DOWN }, { a: 2, b: 3 }] },
     { id: 'f05', name: 'L-frame, load at the tip', nodes: [fixed(0, 0, 'A'), free(0, 3, 'B'), { ...free(3, 3, 'C'), F: DOWN }], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }] },
@@ -334,7 +335,7 @@
       S.members.forEach(m => { for (let i = 0; i <= 40; i++) Mmax = Math.max(Mmax, Math.abs(exactM(S, m, i / 40))); curve(S, m, S.dE, 1, 40).forEach((p, i) => { const A = S.nodes[m.a]; dmax = Math.max(dmax, Math.hypot(p[0] - (A.x + m.t[0] * m.L * i / 40), p[1] - (A.y + m.t[1] * m.L * i / 40))); }); });
       S.nodes.forEach((nd, i) => { dN = Math.max(dN, Math.hypot(S.dE[2 * i], S.dE[2 * i + 1])); });
       for (let i = 2 * n; i < S.k; i++) thmax = Math.max(thmax, Math.abs(S.dE[i]));
-      S.Mmax = Mmax; S.dmax = dmax; S.dN = dN; S.thmax = thmax; S.es = dmax > 1e-12 ? 0.75 / dmax : 0;
+      S.Mmax = Mmax; S.dmax = dmax; S.dN = dN; S.thmax = thmax; S.es = dmax > 1e-12 ? (isBeam(S) ? 0.75 : 1.0) / dmax : 0;   // the solution is drawn large, frames larger
       S.ips = [];   // inflection points: where the exact moment changes sign inside a member
       S.members.forEach((m, mi) => {
         let last = null;   // last clearly nonzero sample: a zero that lands exactly on a sample must not hide the crossing
@@ -397,7 +398,7 @@
   function nodePos(i) { const nd = state.S.nodes[i]; return [nd.x + state.d[2 * i], nd.y + state.d[2 * i + 1]]; }
   // one slope handle per member end: direction of the drawn curve leaving the joint along that member
   function handles() {
-    const S = state.S, out = [], r = (state.proj ? 72 : 58) / sc;
+    const S = state.S, out = [], r = (state.proj ? 84 : isBeam(S) ? 58 : 72) / sc;
     S.nodes.forEach((nd, i) => nd.inc.forEach(e => {
       const m = S.members[e.m], sg = e.end === 'a' ? 1 : -1, rot = e.end === 'a' ? m.rotA : m.rotB, th = state.d[rot];
       const dx = sg * (m.t[0] + th * m.n[0]), dy = sg * (m.t[1] + th * m.n[1]), L = Math.hypot(dx, dy), p = nodePos(i);
@@ -474,12 +475,13 @@
   const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 
   /* ---------- canvas ---------- */
-  const cv = $('cv'), ctx = cv.getContext('2d'), W = cv.width, Hh = cv.height;
+  const cv = $('cv'), ctx = cv.getContext('2d'), W = cv.width; let Hh = cv.height;
   let sc = 100, ox = 0, oy = 0;
   const X = x => ox + x * sc, Y = y => oy - y * sc;
   function fit() {
-    const S = state.S, xs = S.nodes.map(n => n.x), ys = S.nodes.map(n => n.y), pad = 1.3;
-    const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + (isBeam(S) ? STRIP + 0.85 : pad);
+    const S = state.S, xs = S.nodes.map(n => n.x), ys = S.nodes.map(n => n.y), beam = isBeam(S), pad = beam ? 1.3 : 1.0;
+    cv.height = beam ? 620 : 760; Hh = cv.height;   // frames get a taller stage and less padding, so the drawing is big
+    const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + (beam ? STRIP + 0.85 : pad);
     sc = Math.min((W - 40) / (x1 - x0), (Hh - 40) / (y1 - y0));
     ox = W / 2 - (x0 + x1) / 2 * sc; oy = Hh / 2 + (y0 + y1) / 2 * sc;
   }
@@ -677,7 +679,7 @@
   cv.addEventListener('pointermove', ev => {
     const S = state.S; if (!S) return; const P = toModel(ev);
     if (state.drag) {
-      if (state.drag.kind === 'joint') { const i = state.drag.i, nd = S.nodes[i]; let T = [P[0] - nd.x, P[1] - nd.y]; const L = Math.hypot(T[0], T[1]); if (L > 1.2) T = [T[0] * 1.2 / L, T[1] * 1.2 / L]; dragJoint(i, T); }
+      if (state.drag.kind === 'joint') { const i = state.drag.i, nd = S.nodes[i]; let T = [P[0] - nd.x, P[1] - nd.y]; const L = Math.hypot(T[0], T[1]); if (L > 1.8) T = [T[0] * 1.8 / L, T[1] * 1.8 / L]; dragJoint(i, T); }
       else dragHandle(state.drag.h, P);
       changed(); return;
     }
@@ -725,7 +727,7 @@
     else if (S.P.build && state.tool !== 'draw') st.innerHTML = `<b>${TOOLS.find(t => t[0] === state.tool)[1]}.</b> Click a grid point${state.tool === 'udl' || state.tool === 'erase' ? ' or a span' : ''} on the beam. Click again to remove it.`;
     else {
       const fn = freeNode(S), ok = state.items.filter(i => i.ok).length, n = state.items.length;
-      if (!state.usedDot && fn >= 0) st.innerHTML = `<b>Drag</b> the orange dot at ${S.nodes[fn].name} to move that joint.`;
+      if (!state.usedDot && fn >= 0) st.innerHTML = `<b>Drag</b> the orange dot at ${S.nodes[fn].name} to move that joint. Draw big: sizes are never graded.`;
       else if (!state.usedHandle) st.innerHTML = '<b>Pull</b> a blue handle to set the slope at its joint. A wall keeps its slope at zero; a hinge may kink.';
       else if (!state.checked) st.innerHTML = '<b>Press Check</b> when the shape is done.';
       else if (n && ok === n) st.innerHTML = '<b>All checks pass.</b>';
