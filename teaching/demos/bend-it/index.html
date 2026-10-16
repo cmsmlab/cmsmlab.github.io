@@ -94,6 +94,10 @@
   button.icon { position:absolute; left:16px; bottom:16px; width:32px; height:32px; border-radius:50%; border:1px solid var(--rule); background:var(--panel); color:var(--fM); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:var(--shadow); }
   button.icon:hover { border-color:var(--fM); } button.icon:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
   button.icon svg { width:18px; height:18px; display:block; }
+  button.icon.second { left:54px; }
+  button.icon[aria-pressed="true"] { background:var(--fM); border-color:var(--fM); color:var(--panel); }
+  .caption { position:absolute; left:96px; bottom:23px; font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--fM); pointer-events:none; white-space:nowrap; }
+  .caption b { font-weight:600; }
 
   .bar { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; margin-top:10px; font-size:13px; color:var(--ink-3); }
   .bar .spacer { flex:1 1 auto; }
@@ -125,7 +129,7 @@
   @media (max-width:640px) {
     .stage { display:flex; flex-direction:column; gap:8px; }
     .status, .count { position:static; max-width:none; font-size:13px; order:-1; align-self:flex-start; }
-    button.icon { left:12px; bottom:12px; }
+    button.icon { left:12px; bottom:12px; } button.icon.second { left:50px; } .caption { left:90px; bottom:19px; font-size:11.5px; }
   }
 </style>
 </head>
@@ -142,15 +146,12 @@
     <canvas id="cv" width="1400" height="620"></canvas>
     <div class="status" id="status"></div>
     <div class="count" id="count" hidden></div>
-    <button class="icon" id="c-side" type="button" aria-label="Flip the moment diagram to the other side" title="Flip M to the tension side"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v14M7 3 4 6M7 3l3 3"/><path d="M13 17V3M13 17l-3-3M13 17l3-3"/></svg></button>
+    <button class="icon" id="m-toggle" type="button" aria-pressed="true" aria-label="Show or hide the moment diagram" title="Hide the moment diagram"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h14"/><path d="M3 14c3-8 11-8 14 0" fill="currentColor" fill-opacity=".25"/></svg></button>
+    <span class="caption" id="m-caption"></span>
+    <button class="icon second" id="c-side" type="button" aria-label="Flip the sign convention" title="Sign convention: flip M to the other side"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v14M7 3 4 6M7 3l3 3"/><path d="M13 17V3M13 17l-3-3M13 17l3-3"/></svg></button>
   </section>
 
   <div class="bar">
-    <div class="seg" role="group" aria-label="Moment diagram">
-      <span class="lbl">Moment diagram</span>
-      <button type="button" id="m-show" aria-pressed="true">Shown</button>
-      <button type="button" id="m-hide" aria-pressed="false">Hidden</button>
-    </div>
     <span class="spacer"></span>
     <button class="plain primary" id="b-check" type="button">Check</button>
     <button class="plain" id="b-reveal" type="button">Show a solution</button>
@@ -181,7 +182,7 @@
   </div>
 
   <footer class="colophon">
-    <p>The curve you draw is a cubic between neighbouring joints, set by the position and slope at each joint, the same shape a beam element uses. Joints move only in ways that keep every member its original length, and supports hold them. The slopes are yours: a wall should keep its slope at zero, a hinge may kink, a rigid corner keeps its right angle. Check compares the signs of your curvature with the bending moment, segment by segment, and the direction each joint moves. Sizes are never graded. For beams the moment diagram is drawn on its own axis above the beam, positive up; for frames it is drawn on the compression side of each member, and the sign follows the member's own axis (beams left to right, columns bottom to top). The round button in the corner of the drawing flips it to the other side.</p>
+    <p>The curve you draw is a cubic between neighbouring joints, set by the position and slope at each joint, the same shape a beam element uses. Joints move only in ways that keep every member its original length, and supports hold them. The slopes are yours: a wall should keep its slope at zero, a hinge may kink, a rigid corner keeps its right angle. Check compares the signs of your curvature with the bending moment, segment by segment, and the direction each joint moves. Sizes are never graded. For beams the moment diagram is drawn on its own axis above the beam, positive up; for frames it is drawn on the compression side of each member, and the sign follows the member's own axis (beams left to right, columns bottom to top). The two round buttons in the corner of the drawing show or hide the moment diagram and flip its sign convention.</p>
     <p>CE 329 Structural Analysis &middot; Teaching demo. Built with AI assistance. The moment diagram and the solution shape come from a stiffness solution of the structure on screen, not generated text. Nothing you do here is graded or recorded.</p>
   </footer>
 </div>
@@ -576,8 +577,6 @@
       // where M = 0 inside a member: a hollow circle on the member, the inflection point of the shape
       S.ips.forEach(ip => { const m = S.members[ip.m], A = S.nodes[m.a], s = ip.xi * m.L; ctx.fillStyle = panel; ctx.strokeStyle = cM; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(A.x + m.t[0] * s), Y(A.y + m.t[1] * s), big ? 7 : 5.5, 0, 7); ctx.fill(); ctx.stroke(); });
     }
-    ctx.fillStyle = cM; ctx.font = (big ? '500 15px ' : '500 13px ') + MONO; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-    ctx.fillText(state.comp ? (isBeam(S) ? 'M, positive up' : 'M on the compression side') : (isBeam(S) ? 'M, positive down' : 'M on the tension side'), 58, Hh - 22);
   }
   function draw() {
     const S = state.S, ink = css('--ink'), ink2 = css('--ink-2'), ink3 = css('--ink-3'), ghost = css('--ghost'), acc = css('--accent'), panel = css('--panel'), cM = css('--fM'), cV = css('--fV'), good = css('--good'), bad = css('--bad'), grid = css('--grid');
@@ -707,9 +706,11 @@
       const gap = document.createElement('div'); gap.className = 'gap'; box.appendChild(gap);
       const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Clear beam'; b.addEventListener('click', () => { state.build = freshBuild(); setProblem(compileBuild(state.build)); }); box.appendChild(b);
     } else GROUPS[state.group].forEach(P => { const b = document.createElement('button'); b.type = 'button'; b.textContent = P.name; b.setAttribute('aria-pressed', String(state.S && state.S.P.id === P.id)); b.addEventListener('click', () => setProblem(P)); box.appendChild(b); });
-    $('m-show').setAttribute('aria-pressed', String(state.mShown)); $('m-hide').setAttribute('aria-pressed', String(!state.mShown));
-    $('c-side').title = state.comp ? 'Flip M to the tension side' : 'Flip M back to the compression side';
-    $('c-side').hidden = !(state.S && state.S.dE && (state.mShown || state.revealed));
+    const S = state.S, mOn = !!(S && S.dE && (state.mShown || state.revealed));
+    $('m-toggle').setAttribute('aria-pressed', String(state.mShown)); $('m-toggle').title = state.mShown ? 'Hide the moment diagram' : 'Show the moment diagram';
+    $('c-side').title = 'Sign convention: ' + (state.comp ? 'flip M to the tension side' : 'flip M back to the compression side');
+    $('c-side').hidden = !mOn;
+    $('m-caption').innerHTML = !mOn ? (S && S.dE ? 'moment diagram hidden' : '') : '<b>Sign convention:</b> ' + (isBeam(S) ? (state.comp ? 'M positive up' : 'M positive down') : (state.comp ? 'M on the compression side' : 'M on the tension side'));
     ensureTick();
   }
   function renderStatus() {
@@ -721,8 +722,8 @@
       const fn = freeNode(S), ok = state.items.filter(i => i.ok).length, n = state.items.length;
       if (!state.usedDot && fn >= 0) st.innerHTML = `<b>Step 1 of 3.</b> Drag the orange dot at ${S.nodes[fn].name} to move that joint.`;
       else if (!state.usedHandle) st.innerHTML = '<b>Step 2 of 3.</b> Pull a blue handle to set the slope at its joint. A wall keeps its slope at zero; a hinge may kink.';
-      else if (!state.checked) st.innerHTML = '<b>Step 3 of 3.</b> Press Check. Green segments agree with the moment diagram, red ones disagree. Show a solution overlays one.';
-      else if (n && ok === n) st.innerHTML = '<b>All checks pass.</b> Compare with Show a solution, then try the next problem.';
+      else if (!state.checked) st.innerHTML = '<b>Step 3 of 3.</b> Press Check.';
+      else if (n && ok === n) st.innerHTML = '<b>All checks pass.</b>';
       else st.innerHTML = '<b>Fix the red items.</b> The list updates as you drag.';
     }
     const c = $('count'); if (!state.checked || !state.items.length) { c.hidden = true; return; }
@@ -739,8 +740,7 @@
     const b = ev.target.closest('button'); if (!b) return; state.group = b.dataset.g;
     if (state.group === 'build') { state.tool = 'draw'; setProblem(compileBuild(state.build)); } else setProblem(GROUPS[state.group][0]);
   });
-  $('m-show').addEventListener('click', () => { state.mShown = true; changed(); renderChips(); save(); });
-  $('m-hide').addEventListener('click', () => { state.mShown = false; state.items = state.checked ? state.items : []; renderChips(); draw(); save(); });
+  $('m-toggle').addEventListener('click', () => { state.mShown = !state.mShown; if (state.mShown) changed(); else { state.items = state.checked ? state.items : []; draw(); } renderChips(); save(); });
   $('c-side').addEventListener('click', () => { state.comp = !state.comp; renderChips(); draw(); save(); });
   $('b-check').addEventListener('click', () => { if (!state.S.dE) { renderStatus(); return; } state.checked = true; state.touched = true; state.items = check(); renderFindings(); draw(); });
   $('b-reveal').addEventListener('click', () => { if (!state.S.dE) { renderStatus(); return; } state.revealed = !state.revealed; $('b-reveal').textContent = state.revealed ? 'Hide the solution' : 'Show a solution'; renderChips(); draw(); });
