@@ -343,7 +343,8 @@
     S.unstable = S.hasLoad && !S.dE;
     if (S.dE) {
       let Mmax = 0, dmax = 0, dN = 0, thmax = 0;
-      S.members.forEach(m => { for (let i = 0; i <= 40; i++) Mmax = Math.max(Mmax, Math.abs(exactM(S, m, i / 40))); curve(S, m, S.dE, 1, 40).forEach((p, i) => { const A = S.nodes[m.a]; dmax = Math.max(dmax, Math.hypot(p[0] - (A.x + m.t[0] * m.L * i / 40), p[1] - (A.y + m.t[1] * m.L * i / 40))); }); });
+      // dmax from the linear (small-displacement) shape: the raw solution can be huge, and the chord drawing is only meant for drawn sizes
+      S.members.forEach(m => { const e = endsLocal(m, S.dE), [, qn] = qLocal(m); for (let i = 0; i <= 40; i++) { const x = i / 40, s = x * m.L; Mmax = Math.max(Mmax, Math.abs(exactM(S, m, x))); dmax = Math.max(dmax, Math.hypot(e.ua + (e.ub - e.ua) * x, H(e, m.L, x) + qn * s * s * (m.L - s) * (m.L - s) / 24)); } });
       S.nodes.forEach((nd, i) => { dN = Math.max(dN, Math.hypot(S.dE[2 * i], S.dE[2 * i + 1])); });
       for (let i = 2 * n; i < S.k; i++) thmax = Math.max(thmax, Math.abs(S.dE[i]));
       S.Mmax = Mmax; S.dmax = dmax; S.dN = dN; S.thmax = thmax; S.es = dmax > 1e-12 ? (isBeam(S) ? 0.75 : 1.0) / dmax : 0;   // the solution is drawn large, frames larger
@@ -407,18 +408,20 @@
     for (let r = 0; r < 2 * S.n; r++) { let s = 0; for (let j = 0; j < nb; j++) s += N[j][r] * z[j]; state.d[r] = s; }
   }
   function nodePos(i) { const nd = state.S.nodes[i]; return [nd.x + state.d[2 * i], nd.y + state.d[2 * i + 1]]; }
-  // one slope handle per member end: direction of the drawn curve leaving the joint along that member
+  // one slope handle per member end: a point on the tangent of the drawn curve at that joint. At a joint with a member on each side,
+  // or at a support, the handle sits over the member; at a free tip it continues the tangent past the tip, where a pen would go next
+  const handleSg = (nd, end) => (end === 'a' ? 1 : -1) * (nd.inc.length === 1 && !nd.sup ? -1 : 1);
   function handles() {
     const S = state.S, out = [], r = (state.proj ? 84 : isBeam(S) ? 58 : 72) / sc;
     S.nodes.forEach((nd, i) => nd.inc.forEach(e => {
-      const m = S.members[e.m], sg = e.end === 'a' ? 1 : -1, rot = e.end === 'a' ? m.rotA : m.rotB, th = state.d[rot];
+      const m = S.members[e.m], sg = handleSg(nd, e.end), rot = e.end === 'a' ? m.rotA : m.rotB, th = state.d[rot];
       const dx = sg * (m.t[0] + th * m.n[0]), dy = sg * (m.t[1] + th * m.n[1]), L = Math.hypot(dx, dy), p = nodePos(i);
       out.push({ node: i, m: e.m, end: e.end, rot, pos: [p[0] + r * dx / L, p[1] + r * dy / L] });
     }));
     return out;
   }
   function dragHandle(h, P) {
-    const S = state.S, m = S.members[h.m], p = nodePos(h.node), hx = P[0] - p[0], hy = P[1] - p[1], sg = h.end === 'a' ? 1 : -1;
+    const S = state.S, m = S.members[h.m], p = nodePos(h.node), hx = P[0] - p[0], hy = P[1] - p[1], sg = handleSg(S.nodes[h.node], h.end);
     const along = sg * (hx * m.t[0] + hy * m.t[1]), across = sg * (hx * m.n[0] + hy * m.n[1]);
     let th = along > 0.12 ? across / along : (across >= 0 ? 1.4 : -1.4);
     state.d[h.rot] = Math.max(-1.4, Math.min(1.4, th));
@@ -449,8 +452,9 @@
     // curvature, member by member: the sequence of signs along the member is what counts, not where exactly it changes.
     // A cubic between two joints cannot follow the exact quartic under a uniform load (at a free end it even reverses a little),
     // so the student's pattern is accepted if it matches the true moment OR the cubic drawn through the exact joint values.
+    const dEs = dE.map(v => v * S.es);   // the solution at drawn size: the reference cubic is the one Show a solution draws, not the raw (huge) displacements
     S.members.forEach((m, mi) => {
-      const ks = kS[mi], ke = XI.map(x => exactM(S, m, x)), cR = chordEnds(S, m, dE), kr = XI.map(x => chordKappa(cR, x));
+      const ks = kS[mi], ke = XI.map(x => exactM(S, m, x)), cR = chordEnds(S, m, dEs), kr = XI.map(x => chordKappa(cR, x));
       const mAbs = Math.max(...ke.map(Math.abs)), kAbs = Math.max(...ks.map(Math.abs)), rAbs = Math.max(...kr.map(Math.abs));
       if (mAbs < 0.03 * S.Mmax) { const bent = kAbs > 0.1 * kmaxS && kAbs > 1e-4; items.push({ ok: !bent, member: mi, text: bent ? `${m.name} carries no bending moment, so it stays straight. Yours is curved.` : `${m.name}: no moment, so it stays straight.` }); return; }
       const se = ke.map(v => Math.abs(v) < 0.06 * mAbs ? 0 : Math.sign(v));
@@ -459,14 +463,16 @@
       const eq = (a, b) => a.length === b.length && a.every((s, i) => s === b[i]);
       const rE = runs(se), rS = runs(ss), same = eq(rS, rE) || eq(rS, runs(sr));
       const side = sg => sideWord([sg * m.n[0], sg * m.n[1]]), sFirst = side(rE[0]), sLast = side(rE[rE.length - 1]);
+      // the handle to name: never the one at a wall, whose slope is fixed; the other end is where the shape can change
+      const wall = i => S.nodes[i].sup === 'fixed' && !S.nodes[i].hinge, handleAt = atA => (atA && wall(m.a) && !wall(m.b) ? m.endB : !atA && wall(m.b) && !wall(m.a) ? m.endA : atA ? m.endA : m.endB);
       let text;
       if (same) text = rE.length > 1 ? `${m.name}: the curvature changes sign at the inflection point.` : `${m.name}: concave toward the ${sFirst}.`;
       else if (!rS.length) text = rE.length > 1 ? `${m.name} should bend both ways: M changes sign inside it, so there is an inflection point. Yours is straight.` : `${m.name} should bend: M is not zero there. The compression side is the ${sFirst}, so the curve should be concave toward the ${sFirst}.`;
-      else if (rE.length === 1) text = rS.length === 1 ? `${m.name} is concave toward the ${side(rS[0])}. The compression side is the ${sFirst}, so it should be concave toward the ${sFirst}.` : `${m.name} keeps one sign of M, so it keeps one curvature. Yours has an inflection point.`;
+      else if (rE.length === 1) text = rS.length === 1 ? `${m.name} is concave toward the ${side(rS[0])}. The compression side is the ${sFirst}, so it should be concave toward the ${sFirst}.` : `${m.name} keeps one sign of M, so it keeps one curvature. Yours has an inflection point. Turn the handle at ${handleAt(rS[0] !== rE[0])} until the whole member is concave toward the ${sFirst}.`;
       else if (rS.length === 1) {
         // one curvature where two are needed: say which end is wrong, so the student knows which handle to turn back
         const wrongA = rS[0] !== rE[0], wrongB = rS[0] !== rE[rE.length - 1];
-        const fix = wrongA && wrongB ? '' : ` Turn the handle at ${wrongA ? m.endA : m.endB} a little the other way; a smaller rotation there brings the inflection point back.`;
+        const fix = wrongA && wrongB ? '' : ` Turn the handle at ${handleAt(wrongA)} a little the other way; a smaller rotation there brings the inflection point back.`;
         text = `${m.name} has an inflection point where M = 0. Near ${m.endA} it should be concave toward the ${sFirst}, near ${m.endB} toward the ${sLast}. Yours keeps one curvature.${fix}`;
       }
       else text = `${m.name}: near ${m.endA} the curve should be concave toward the ${sFirst}, near ${m.endB} toward the ${sLast}.`;
