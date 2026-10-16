@@ -59,13 +59,27 @@
   .top { display:flex; align-items:center; flex-wrap:wrap; gap:8px 18px; }
   h1 { margin:0; font-size:clamp(20px,2.6vw,26px); line-height:1.05; font-weight:700; letter-spacing:-.01em; }
   .chips { display:flex; flex-wrap:wrap; gap:6px; flex:1 1 auto; min-width:0; }
-  .chips.sub { margin-top:8px; }
+  /* stage on the left, the problem list on the right */
+  .main { display:flex; gap:14px; align-items:flex-start; margin-top:12px; }
+  .work { flex:1 1 auto; min-width:0; }
+  .side { flex:0 0 250px; width:250px; background:var(--panel); border:1px solid var(--rule); border-radius:8px; box-shadow:var(--shadow); padding:12px 10px 10px; position:sticky; top:12px; }
+  .side .eyebrow { font-size:11.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); padding:0 6px 8px; }
+  .side .chips { padding:0 4px 10px; border-bottom:1px solid var(--rule); margin-bottom:8px; }
+  .side .chips button { font-size:12.5px; padding:4px 10px; }
+  .list { display:flex; flex-direction:column; gap:2px; }
+  .list button { display:block; width:100%; text-align:left; padding:7px 10px 7px 11px; border:0; border-left:3px solid transparent; background:transparent; color:var(--ink-2); font:inherit; font-size:14px; line-height:1.3; cursor:pointer; border-radius:0 6px 6px 0; }
+  .list button:hover { background:var(--panel-2); color:var(--ink); }
+  .list button[aria-pressed="true"] { border-left-color:var(--accent); background:var(--panel-2); color:var(--ink); font-weight:600; }
+  .list button:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
+  .list .gap { height:8px; }
+  @media (max-width:900px) { .main { flex-direction:column; } .side { width:100%; flex:1 1 auto; position:static; order:-1; } .list { display:grid; grid-template-columns:1fr 1fr; gap:2px 8px; } }
+  @media (max-width:520px) { .list { grid-template-columns:1fr; } }
   .chips button { border:1px solid var(--rule); background:var(--panel); color:var(--ink-2); font:inherit; font-size:13.5px; padding:5px 12px; border-radius:999px; cursor:pointer; }
   .chips button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--paper); font-weight:600; }
   .chips button:focus-visible, .seg button:focus-visible, button.plain:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
   .mono { font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; }
 
-  .stage { position:relative; margin-top:12px; background:var(--panel); border:1px solid var(--rule); border-radius:8px; box-shadow:var(--shadow); padding:8px; }
+  .stage { position:relative; background:var(--panel); border:1px solid var(--rule); border-radius:8px; box-shadow:var(--shadow); padding:8px; }
   canvas { display:block; width:100%; height:auto; touch-action:none; cursor:default; border-radius:6px; max-width:100%; }
   canvas.grab { cursor:grab; } canvas.grabbing { cursor:grabbing; } canvas.place { cursor:crosshair; }
   .status { position:absolute; left:16px; top:16px; font-size:14px; color:var(--ink-2); background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:5px 12px; box-shadow:var(--shadow); max-width:62%; }
@@ -74,6 +88,10 @@
   .count { position:absolute; top:16px; right:16px; user-select:none; display:flex; gap:6px; align-items:center; font-size:14px; background:var(--panel); border:1px solid var(--rule); border-radius:999px; padding:5px 12px; box-shadow:var(--shadow); }
   .count .pill { display:inline-block; padding:1px 9px; border-radius:999px; font-size:12.5px; font-weight:600; }
   .pill.good { background:var(--good-bg); color:var(--good); } .pill.bad { background:var(--bad-bg); color:var(--bad); } .pill.dep { background:var(--dep-bg); color:var(--dep); }
+  /* the side flip for the moment diagram: an icon only, in the corner of the stage */
+  button.icon { position:absolute; left:16px; bottom:16px; width:32px; height:32px; border-radius:50%; border:1px solid var(--rule); background:var(--panel); color:var(--fM); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; box-shadow:var(--shadow); }
+  button.icon:hover { border-color:var(--fM); } button.icon:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  button.icon svg { width:18px; height:18px; display:block; }
 
   .bar { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; margin-top:10px; font-size:13px; color:var(--ink-3); }
   .bar .spacer { flex:1 1 auto; }
@@ -103,6 +121,7 @@
   @media (max-width:640px) {
     .stage { display:flex; flex-direction:column; gap:8px; }
     .status, .count { position:static; max-width:none; font-size:13px; order:-1; align-self:flex-start; }
+    button.icon { left:12px; bottom:12px; }
   }
 </style>
 </head>
@@ -110,18 +129,16 @@
 <div class="sheet" id="sheet">
   <div class="top">
     <h1>Bend It</h1>
-    <div class="chips" id="groups" role="group" aria-label="Problem set">
-      <button type="button" data-g="beams" aria-pressed="true">Beams</button>
-      <button type="button" data-g="frames" aria-pressed="false">Frames</button>
-      <button type="button" data-g="build" aria-pressed="false">Build your own</button>
-    </div>
+    <span style="font-size:14px;color:var(--ink-3)">Draw the qualitative deflected shape, then check it against the moment diagram.</span>
   </div>
-  <div class="chips sub" id="probs" role="group" aria-label="Problem"></div>
 
+  <div class="main">
+  <div class="work">
   <section class="stage" aria-label="Structure and deflected shape">
     <canvas id="cv" width="1400" height="620"></canvas>
     <div class="status" id="status"></div>
     <div class="count" id="count" hidden></div>
+    <button class="icon" id="c-side" type="button" aria-label="Flip the moment diagram to the other side" title="Flip M to the tension side"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v14M7 3 4 6M7 3l3 3"/><path d="M13 17V3M13 17l-3-3M13 17l3-3"/></svg></button>
   </section>
 
   <div class="bar">
@@ -129,11 +146,6 @@
       <span class="lbl">Moment diagram</span>
       <button type="button" id="m-show" aria-pressed="true">Shown</button>
       <button type="button" id="m-hide" aria-pressed="false">Hidden</button>
-    </div>
-    <div class="seg" role="group" aria-label="Moment diagram side">
-      <span class="lbl">Draw M on the</span>
-      <button type="button" id="c-comp" aria-pressed="true">compression side</button>
-      <button type="button" id="c-tens" aria-pressed="false">tension side</button>
     </div>
     <span class="spacer"></span>
     <button class="plain primary" id="b-check" type="button">Check</button>
@@ -145,15 +157,27 @@
 
   <div class="bar legend">
     <span><i style="background:var(--accent)"></i>joint: drag to move it</span>
-    <span><i style="background:var(--fV)"></i>handle: drag to set the slope</span>
+    <span><i style="background:var(--fV)"></i>handle: pull to set the slope</span>
     <span><i style="background:var(--fM)"></i>bending moment</span>
     <span><i class="dash"></i>exact shape (Reveal)</span>
     <span><i style="background:var(--good)"></i>curvature agrees with M</span>
     <span><i style="background:var(--bad)"></i>curvature disagrees</span>
   </div>
+  </div>
+
+  <aside class="side" aria-label="Problems">
+    <div class="eyebrow">Problems</div>
+    <div class="chips" id="groups" role="group" aria-label="Problem set">
+      <button type="button" data-g="beams" aria-pressed="true">Beams</button>
+      <button type="button" data-g="frames" aria-pressed="false">Frames</button>
+      <button type="button" data-g="build" aria-pressed="false">Build your own</button>
+    </div>
+    <div class="list" id="probs" role="group" aria-label="Problem"></div>
+  </aside>
+  </div>
 
   <footer class="colophon">
-    <p>The curve you draw is a cubic between neighbouring joints, set by the position and slope at each joint, the same shape a beam element uses. Joints move only in ways that keep every member its original length, and supports hold them. The slopes are yours: a wall should keep its slope at zero, a hinge may kink, a rigid corner keeps its right angle. Check compares the signs of your curvature with the bending moment, segment by segment, and the direction each joint moves. Sizes are never graded.</p>
+    <p>The curve you draw is a cubic between neighbouring joints, set by the position and slope at each joint, the same shape a beam element uses. Joints move only in ways that keep every member its original length, and supports hold them. The slopes are yours: a wall should keep its slope at zero, a hinge may kink, a rigid corner keeps its right angle. Check compares the signs of your curvature with the bending moment, segment by segment, and the direction each joint moves. Sizes are never graded. For beams the moment diagram is drawn on its own axis above the beam, positive up; for frames it is drawn on the compression side of each member, and the sign follows the member's own axis (beams left to right, columns bottom to top). The round button in the corner of the drawing flips it to the other side.</p>
     <p>CE 329 Structural Analysis &middot; Teaching demo. Built with AI assistance. The moment diagram and the exact deflected shape come from a stiffness solution of the structure on screen, not generated text. Nothing you do here is graded or recorded.</p>
   </footer>
 </div>
@@ -322,11 +346,18 @@
       if (nd.sup) ay -= 1;
       const L = Math.hypot(ax, ay); nd.lab = up ? [-0.8, -0.6] : L < 0.25 ? [0, 1] : [-ax / L, -ay / L]; nd.labD = up ? 46 : 26;
     });
+    // where a coaching tag ("drag") goes: away from the members, below when the members run straight through
+    S.nodes.forEach((nd, i) => {
+      let ax = 0, ay = 0;
+      nd.inc.forEach(e => { const m = S.members[e.m], sg = e.end === 'a' ? 1 : -1; ax += sg * m.t[0]; ay += sg * m.t[1]; });
+      const L = Math.hypot(ax, ay); nd.tag = L < 0.25 ? [0, -1] : [-ax / L, -ay / L];
+    });
     return S;
   }
 
   /* ---------- state ---------- */
-  const state = { group: 'beams', S: null, d: null, z: null, touched: false, checked: false, revealed: false, mShown: true, comp: true, tool: 'draw', build: freshBuild(), proj: false, drag: null, hover: null, items: [] };
+  const state = { group: 'beams', S: null, d: null, z: null, touched: false, checked: false, revealed: false, mShown: true, comp: true, tool: 'draw', build: freshBuild(), proj: false, drag: null, hover: null, items: [], usedDot: false, usedHandle: false, lastNode: -1 };
+  const STRIP = 1.9;   // beams: the moment diagram gets its own axis this far above the beam, clear of the load arrows
   const KEY = 'bend-it-v1';
   function save() { try { localStorage.setItem(KEY, JSON.stringify({ group: state.group, id: state.S && state.S.P.id, mShown: state.mShown, comp: state.comp, build: state.build })); } catch (e) { /* storage may be unavailable */ } }
   function load() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
@@ -334,10 +365,18 @@
   function setProblem(P, keepTouch) {
     state.S = prepare(P);
     state.d = new Array(state.S.k).fill(0); state.z = new Array(state.S.N.length).fill(0);
-    state.touched = false; state.checked = false; state.revealed = false; state.items = []; state.drag = null; state.hover = null;
+    state.touched = false; state.checked = false; state.revealed = false; state.items = []; state.drag = null; state.hover = null; state.lastNode = -1;
+    $('b-reveal').textContent = 'Reveal';
     if (!keepTouch) $('findings').hidden = true;
-    fit(); renderChips(); renderStatus(); draw(); save();
+    fit(); renderChips(); renderStatus(); draw(); save(); ensureTick();
   }
+  const isBeam = S => S.nodes.every(nd => Math.abs(nd.y - S.nodes[0].y) < 1e-9);
+  const freeNode = S => S.nodes.findIndex(nd => !nd.locked);
+  // the coach: pulse the dots until one has been dragged, then the handles until one has been pulled
+  const coaching = () => !reduceMotion && state.S && (state.S.dE || !state.S.hasLoad) && !(state.S.P.build && state.tool !== 'draw') && ((!state.usedDot && freeNode(state.S) >= 0) || !state.usedHandle);
+  let raf = 0;
+  function tick() { raf = 0; if (coaching()) { draw(); raf = requestAnimationFrame(tick); } }
+  function ensureTick() { if (!raf && coaching()) raf = requestAnimationFrame(tick); }
 
   /* ---------- the drawing: dragging a joint is projected onto what the members allow ---------- */
   function dragJoint(i, T) {
@@ -427,7 +466,7 @@
   const X = x => ox + x * sc, Y = y => oy - y * sc;
   function fit() {
     const S = state.S, xs = S.nodes.map(n => n.x), ys = S.nodes.map(n => n.y), pad = 1.3;
-    const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + pad;
+    const x0 = Math.min(...xs) - pad, x1 = Math.max(...xs) + pad, y0 = Math.min(...ys) - pad, y1 = Math.max(...ys) + (isBeam(S) ? STRIP + 0.85 : pad);
     sc = Math.min((W - 40) / (x1 - x0), (Hh - 40) / (y1 - y0));
     ox = W / 2 - (x0 + x1) / 2 * sc; oy = Hh / 2 + (y0 + y1) / 2 * sc;
   }
@@ -458,6 +497,81 @@
     }
   }
   function poly(pts, close) { ctx.beginPath(); pts.forEach((p, i) => { if (i) ctx.lineTo(X(p[0]), Y(p[1])); else ctx.moveTo(X(p[0]), Y(p[1])); }); if (close) ctx.closePath(); }
+  // runs of collinear members joined end to end (the two halves of a UDL span, the two spans of a simple beam), so a lobe of M is labelled once
+  function chains(S) {
+    const used = new Set(), out = [];
+    S.members.forEach((m0, i0) => {
+      if (used.has(i0)) return; const ch = [i0]; used.add(i0); let cur = m0;
+      for (;;) { const nx = S.members.findIndex((m, i) => !used.has(i) && m.a === cur.b && m.t[0] * cur.t[0] + m.t[1] * cur.t[1] > 0.999); if (nx < 0) break; used.add(nx); ch.push(nx); cur = S.members[nx]; }
+      out.push(ch);
+    });
+    return out;
+  }
+  // runs of one sign of M along a chain, each with the sample of largest |M| (nudged in from the ends so the label stays inside)
+  function lobes(S, ch) {
+    const sm = []; ch.forEach(mi => { const m = S.members[mi]; for (let i = 0; i <= 40; i++) sm.push({ m, xi: i / 40, v: exactM(S, m, i / 40) }); });
+    const out = []; let cur = null;
+    sm.forEach((p, k) => {
+      const s = Math.abs(p.v) < 0.02 * S.Mmax ? 0 : Math.sign(p.v);
+      if (cur && (s === 0 || s !== cur.s)) { out.push(cur); cur = null; }
+      if (s !== 0) { if (!cur) cur = { s, k, v: p.v }; else if (Math.abs(p.v) > Math.abs(cur.v)) { cur.v = p.v; cur.k = k; } }
+    });
+    if (cur) out.push(cur);
+    return out.filter(l => Math.abs(l.v) > 0.08 * S.Mmax).map(l => {
+      const k = Math.max(4, Math.min(sm.length - 5, l.k));
+      const endNode = l.k < 4 ? S.members[ch[0]].a : l.k > sm.length - 5 ? S.members[ch[ch.length - 1]].b : -1;   // a peak at a corner is shared with the next member
+      return { s: l.s, m: sm[k].m, xi: sm[k].xi, v: sm[k].v, endNode };
+    });
+  }
+  function tag(text, x, y, color, font, bg) {   // a label on a translucent pad, readable over the diagram
+    ctx.font = font; const w = ctx.measureText(text).width + 8, h = parseInt(font.match(/(\d+)px/)[1], 10) + 4;
+    ctx.fillStyle = bg; ctx.globalAlpha = 0.82; ctx.beginPath(); ctx.roundRect(x - w / 2, y - h / 2, w, h, 4); ctx.fill(); ctx.globalAlpha = 1;
+    label(text, x, y, color, font);
+  }
+  function drawM(S, cM, cAxis) {
+    const amp = 0.55, sg = state.comp ? 1 : -1, big = state.proj, font = (big ? '700 22px ' : '700 18px ') + SANS, panel = css('--panel');
+    const lobe = (pts, base, m) => { ctx.fillStyle = cM; ctx.globalAlpha = 0.16; poly(pts.concat(base), true); ctx.fill(); ctx.globalAlpha = 1; ctx.strokeStyle = cM; ctx.lineWidth = 1.6; poly(pts, false); ctx.stroke(); };
+    if (isBeam(S)) {
+      // beams: M on its own axis above the beam, positive up (positive down after the flip)
+      const y0 = S.nodes[0].y + STRIP, xs = S.nodes.map(n => n.x), xa = Math.min(...xs), xb = Math.max(...xs);
+      ctx.strokeStyle = cAxis; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(X(xa), Y(y0)); ctx.lineTo(X(xb), Y(y0)); ctx.stroke();
+      label('M', X(xa) - 24, Y(y0), cM, (big ? '600 19px ' : '600 16px ') + SANS);
+      // alignment lines from every joint up to the axis, as on the quiz sheets
+      const yb = S.nodes[0].y;
+      ctx.strokeStyle = cAxis; ctx.lineWidth = 1; ctx.setLineDash([2, 5]); ctx.globalAlpha = 0.7;
+      S.nodes.forEach(nd => { if (nd.half) return; ctx.beginPath(); ctx.moveTo(X(nd.x), Y(yb) - 6); ctx.lineTo(X(nd.x), Y(y0)); ctx.stroke(); });
+      ctx.globalAlpha = 1; ctx.setLineDash([]);
+      // where M = 0 inside a span: a dashed line down to the beam and a hollow circle on it (an inflection point of the shape)
+      S.ips.forEach(ip => {
+        const m = S.members[ip.m], x = S.nodes[m.a].x + m.t[0] * ip.xi * m.L;
+        ctx.strokeStyle = cM; ctx.lineWidth = 1.3; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(X(x), Y(y0)); ctx.lineTo(X(x), Y(yb)); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = panel; ctx.beginPath(); ctx.arc(X(x), Y(yb), big ? 7 : 5.5, 0, 7); ctx.fill(); ctx.lineWidth = 2; ctx.stroke();
+        tag('M = 0', X(x), Y(yb + 1.2), cM, (big ? '500 14px ' : '500 12px ') + MONO, panel);
+      });
+      S.members.forEach(m => {
+        const A = S.nodes[m.a], pts = [];
+        for (let i = 0; i <= 40; i++) pts.push([A.x + m.t[0] * m.L * i / 40, y0 + sg * amp * exactM(S, m, i / 40) / S.Mmax]);
+        lobe(pts, [[A.x + m.t[0] * m.L, y0], [A.x, y0]], m);
+      });
+      chains(S).forEach(ch => lobes(S, ch).forEach(l => { const A = S.nodes[l.m.a]; tag(l.v > 0 ? '+' : '−', X(A.x + l.m.t[0] * l.m.L * l.xi), Y(y0 + sg * amp * l.v / S.Mmax * 0.5), cM, font, panel); }));
+    } else {
+      // frames: M on the compression side of each member (tension side after the flip); the sign follows the member's own axis
+      S.members.forEach(m => {
+        const A = S.nodes[m.a], pts = [], h = sg * amp / S.Mmax;
+        for (let i = 0; i <= 40; i++) { const s = i / 40 * m.L, Mv = exactM(S, m, i / 40) * h; pts.push([A.x + m.t[0] * s + m.n[0] * Mv, A.y + m.t[1] * s + m.n[1] * Mv]); }
+        lobe(pts, [[A.x + m.t[0] * m.L, A.y + m.t[1] * m.L], [A.x, A.y]], m);
+      });
+      const seen = new Set();
+      chains(S).forEach(ch => lobes(S, ch).forEach(l => {
+        if (l.endNode >= 0) { const key = l.endNode + ':' + l.s; if (seen.has(key)) return; seen.add(key); }
+        const m = l.m, A = S.nodes[m.a], s = l.xi * m.L, Mv = l.v * sg * amp / S.Mmax * 0.5; tag(l.v > 0 ? '+' : '−', X(A.x + m.t[0] * s + m.n[0] * Mv), Y(A.y + m.t[1] * s + m.n[1] * Mv), cM, font, panel);
+      }));
+      // where M = 0 inside a member: a hollow circle on the member, the inflection point of the shape
+      S.ips.forEach(ip => { const m = S.members[ip.m], A = S.nodes[m.a], s = ip.xi * m.L; ctx.fillStyle = panel; ctx.strokeStyle = cM; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(A.x + m.t[0] * s), Y(A.y + m.t[1] * s), big ? 7 : 5.5, 0, 7); ctx.fill(); ctx.stroke(); });
+    }
+    ctx.fillStyle = cM; ctx.font = (big ? '500 15px ' : '500 13px ') + MONO; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText(state.comp ? (isBeam(S) ? 'M, positive up' : 'M on the compression side') : (isBeam(S) ? 'M, positive down' : 'M on the tension side'), 58, Hh - 22);
+  }
   function draw() {
     const S = state.S, ink = css('--ink'), ink2 = css('--ink-2'), ink3 = css('--ink-3'), ghost = css('--ghost'), acc = css('--accent'), panel = css('--panel'), cM = css('--fM'), cV = css('--fV'), good = css('--good'), bad = css('--bad'), grid = css('--grid');
     ctx.clearRect(0, 0, W, Hh);
@@ -466,18 +580,7 @@
     if (S.P.build) { ctx.strokeStyle = grid; ctx.lineWidth = 1.2; for (let x = 0; x <= GRID; x++) { ctx.beginPath(); ctx.moveTo(X(x), Y(0) - 14); ctx.lineTo(X(x), Y(0) + 14); ctx.stroke(); } }
     // moment diagram on the compression side (or the tension side), drawn first so the structure sits on top
     const showM = S.dE && (state.mShown || state.revealed);
-    if (showM) {
-      const h = 0.55 * (state.comp ? 1 : -1) / S.Mmax;
-      S.members.forEach(m => {
-        const A = S.nodes[m.a], pts = [];
-        for (let i = 0; i <= 40; i++) { const s = i / 40 * m.L, Mv = exactM(S, m, i / 40) * h; pts.push([A.x + m.t[0] * s + m.n[0] * Mv, A.y + m.t[1] * s + m.n[1] * Mv]); }
-        const base = [[A.x + m.t[0] * m.L, A.y + m.t[1] * m.L], [A.x, A.y]];
-        ctx.fillStyle = cM; ctx.globalAlpha = 0.16; poly(pts.concat(base), true); ctx.fill(); ctx.globalAlpha = 1;
-        ctx.strokeStyle = cM; ctx.lineWidth = 1.6; poly(pts, false); ctx.stroke();
-      });
-      ctx.fillStyle = cM; ctx.font = (big ? '500 15px ' : '500 13px ') + MONO; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-      ctx.fillText(state.comp ? 'M on the compression side' : 'M on the tension side', 18, Hh - 14);
-    }
+    if (showM) drawM(S, cM, ink3);
     // undeformed structure
     ctx.setLineDash([]); ctx.strokeStyle = ghost; ctx.lineWidth = 2.5;
     S.members.forEach(m => { const A = S.nodes[m.a], B = S.nodes[m.b]; ctx.beginPath(); ctx.moveTo(X(A.x), Y(A.y)); ctx.lineTo(X(B.x), Y(B.y)); ctx.stroke(); });
@@ -514,14 +617,25 @@
     S.nodes.forEach((nd, i) => { if (nd.joint !== 'pin') return; const p = nodePos(i); ctx.fillStyle = panel; ctx.strokeStyle = ink; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), 7, 0, 7); ctx.fill(); ctx.stroke(); });
     // handles and joints
     if (S.dE || !S.hasLoad) {
-      const hs = handles(), rH = big ? 8 : 6, rD = big ? 10 : 7.5;
-      hs.forEach(h => { const p = nodePos(h.node); ctx.strokeStyle = cV; ctx.lineWidth = 1.6; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(X(p[0]), Y(p[1])); ctx.lineTo(X(h.pos[0]), Y(h.pos[1])); ctx.stroke(); ctx.setLineDash([]); });
-      hs.forEach(h => { const on = state.hover && state.hover.kind === 'handle' && state.hover.h.rot === h.rot && state.hover.h.m === h.m; ctx.fillStyle = on ? cV : panel; ctx.strokeStyle = cV; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.arc(X(h.pos[0]), Y(h.pos[1]), rH, 0, 7); ctx.fill(); ctx.stroke(); });
+      const hs = handles(), rH = big ? 9 : 7, rD = big ? 10 : 7.5, tagFont = (big ? '600 16px ' : '600 13.5px ') + SANS;
+      const canCoach = !(S.P.build && state.tool !== 'draw'), fn = freeNode(S);
+      const coachDot = canCoach && !state.usedDot && fn >= 0, coachHandle = canCoach && !coachDot && !state.usedHandle;
+      const pulse = reduceMotion ? 2 : 2.5 * (1 + Math.sin(performance.now() / 260));
+      const tagNode = state.lastNode >= 0 ? state.lastNode : fn >= 0 ? fn : 0;
+      hs.forEach(h => { const p = nodePos(h.node); ctx.strokeStyle = cV; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X(p[0]), Y(p[1])); ctx.lineTo(X(h.pos[0]), Y(h.pos[1])); ctx.stroke(); });
+      hs.forEach(h => {
+        const on = state.hover && state.hover.kind === 'handle' && state.hover.h.rot === h.rot && state.hover.h.m === h.m, x = X(h.pos[0]), y = Y(h.pos[1]);
+        if (coachHandle) { ctx.strokeStyle = cV; ctx.globalAlpha = 0.45; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, rH + 5 + pulse, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
+        ctx.fillStyle = cV; ctx.strokeStyle = panel; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, on ? rH + 2 : rH, 0, 7); ctx.fill(); ctx.stroke();
+      });
+      if (coachHandle) { const h = hs.find(k => k.node === tagNode) || hs[0]; if (h) { const horiz = Math.abs(S.members[h.m].t[0]) > 0.5; tag('pull', X(h.pos[0]) + (horiz ? 0 : 30), Y(h.pos[1]) + (horiz ? 22 : 0), cV, tagFont, panel); } }
       S.nodes.forEach((nd, i) => {
-        const p = nodePos(i);
-        if (nd.locked) { ctx.fillStyle = panel; ctx.strokeStyle = ink3; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), 5, 0, 7); ctx.fill(); ctx.stroke(); return; }
+        const p = nodePos(i), x = X(p[0]), y = Y(p[1]);
+        if (nd.locked) { ctx.fillStyle = panel; ctx.strokeStyle = ink3; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fill(); ctx.stroke(); return; }
         const on = state.hover && state.hover.kind === 'joint' && state.hover.i === i;
-        ctx.fillStyle = acc; ctx.strokeStyle = panel; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(p[0]), Y(p[1]), on ? rD + 2 : rD, 0, 7); ctx.fill(); ctx.stroke();
+        if (coachDot) { ctx.strokeStyle = acc; ctx.globalAlpha = 0.45; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, rD + 5 + pulse, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
+        ctx.fillStyle = acc; ctx.strokeStyle = panel; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, on ? rD + 2 : rD, 0, 7); ctx.fill(); ctx.stroke();
+        if (coachDot && i === fn) { const far = nd.l ? rD + 44 : rD + 22; tag('drag', x + nd.tag[0] * far, y - nd.tag[1] * (far - 2), acc, tagFont, panel); }
       });
     }
   }
@@ -540,7 +654,11 @@
     const S = state.S; if (!S) return; const P = toModel(ev);
     if (S.P.build && state.tool !== 'draw') { applyTool(P); ev.preventDefault(); return; }   // a tool in hand places things, even on a joint
     const t = (S.dE || !S.hasLoad) ? hit(P) : null;
-    if (t) { state.drag = t; cv.setPointerCapture(ev.pointerId); cv.classList.add('grabbing'); ev.preventDefault(); }
+    if (t) {
+      state.drag = t; cv.setPointerCapture(ev.pointerId); cv.classList.add('grabbing'); ev.preventDefault();
+      if (t.kind === 'joint') { state.usedDot = true; state.lastNode = t.i; } else state.usedHandle = true;
+      renderStatus(); ensureTick();
+    }
   });
   cv.addEventListener('pointermove', ev => {
     const S = state.S; if (!S) return; const P = toModel(ev);
@@ -576,17 +694,27 @@
     const box = $('probs'); box.innerHTML = '';
     if (state.group === 'build') {
       TOOLS.forEach(([id, name]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = name; b.setAttribute('aria-pressed', String(state.tool === id)); b.addEventListener('click', () => { state.tool = id; renderChips(); renderStatus(); }); box.appendChild(b); });
+      const gap = document.createElement('div'); gap.className = 'gap'; box.appendChild(gap);
       const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Clear beam'; b.addEventListener('click', () => { state.build = freshBuild(); setProblem(compileBuild(state.build)); }); box.appendChild(b);
     } else GROUPS[state.group].forEach(P => { const b = document.createElement('button'); b.type = 'button'; b.textContent = P.name; b.setAttribute('aria-pressed', String(state.S && state.S.P.id === P.id)); b.addEventListener('click', () => setProblem(P)); box.appendChild(b); });
     $('m-show').setAttribute('aria-pressed', String(state.mShown)); $('m-hide').setAttribute('aria-pressed', String(!state.mShown));
-    $('c-comp').setAttribute('aria-pressed', String(state.comp)); $('c-tens').setAttribute('aria-pressed', String(!state.comp));
+    $('c-side').title = state.comp ? 'Flip M to the tension side' : 'Flip M back to the compression side';
+    $('c-side').hidden = !(state.S && state.S.dE && (state.mShown || state.revealed));
+    ensureTick();
   }
   function renderStatus() {
     const S = state.S, st = $('status'); st.classList.remove('bad');
     if (S.unstable) { st.classList.add('bad'); st.innerHTML = '<b>Unstable.</b> This beam cannot carry its load as built. Add or move a support, or remove a hinge.'; }
     else if (!S.hasLoad) st.innerHTML = S.P.build ? '<b>Add a load.</b> Pick a load tool and click the beam.' : '<b>No load.</b>';
     else if (S.P.build && state.tool !== 'draw') st.innerHTML = `<b>${TOOLS.find(t => t[0] === state.tool)[1]}.</b> Click a grid point${state.tool === 'udl' || state.tool === 'erase' ? ' or a span' : ''} on the beam. Click again to remove it.`;
-    else st.innerHTML = '<b>Draw the deflected shape.</b> Drag a joint to move it, drag a handle to set the slope there.';
+    else {
+      const fn = freeNode(S), ok = state.items.filter(i => i.ok).length, n = state.items.length;
+      if (!state.usedDot && fn >= 0) st.innerHTML = `<b>Step 1 of 3.</b> Drag the teal dot at ${S.nodes[fn].name} to move that joint.`;
+      else if (!state.usedHandle) st.innerHTML = '<b>Step 2 of 3.</b> Pull an amber handle to set the slope at its joint. A wall keeps its slope at zero; a hinge may kink.';
+      else if (!state.checked) st.innerHTML = '<b>Step 3 of 3.</b> Press Check. Red segments disagree with the moment diagram; Reveal shows the exact shape.';
+      else if (n && ok === n) st.innerHTML = '<b>All checks pass.</b> Try Reveal, then the next problem.';
+      else st.innerHTML = '<b>Fix the red items.</b> The list updates as you drag.';
+    }
     const c = $('count'); if (!state.checked || !state.items.length) { c.hidden = true; return; }
     const ok = state.items.filter(i => i.ok).length, n = state.items.length;
     c.hidden = false; c.innerHTML = `<span class="pill ${ok === n ? 'good' : 'bad'}">${ok} of ${n}</span> checks pass`;
@@ -603,11 +731,10 @@
   });
   $('m-show').addEventListener('click', () => { state.mShown = true; changed(); renderChips(); save(); });
   $('m-hide').addEventListener('click', () => { state.mShown = false; state.items = state.checked ? state.items : []; renderChips(); draw(); save(); });
-  $('c-comp').addEventListener('click', () => { state.comp = true; renderChips(); draw(); save(); });
-  $('c-tens').addEventListener('click', () => { state.comp = false; renderChips(); draw(); save(); });
+  $('c-side').addEventListener('click', () => { state.comp = !state.comp; renderChips(); draw(); save(); });
   $('b-check').addEventListener('click', () => { if (!state.S.dE) { renderStatus(); return; } state.checked = true; state.touched = true; state.items = check(); renderFindings(); draw(); });
-  $('b-reveal').addEventListener('click', () => { if (!state.S.dE) { renderStatus(); return; } state.revealed = !state.revealed; $('b-reveal').textContent = state.revealed ? 'Hide exact' : 'Reveal'; draw(); });
-  $('b-reset').addEventListener('click', () => { state.d.fill(0); state.z.fill(0); state.touched = false; state.checked = false; state.revealed = false; state.items = []; $('b-reveal').textContent = 'Reveal'; $('findings').hidden = true; renderStatus(); draw(); });
+  $('b-reveal').addEventListener('click', () => { if (!state.S.dE) { renderStatus(); return; } state.revealed = !state.revealed; $('b-reveal').textContent = state.revealed ? 'Hide exact' : 'Reveal'; renderChips(); draw(); });
+  $('b-reset').addEventListener('click', () => { state.d.fill(0); state.z.fill(0); state.touched = false; state.checked = false; state.revealed = false; state.items = []; $('b-reveal').textContent = 'Reveal'; $('findings').hidden = true; renderChips(); renderStatus(); draw(); });
 
   if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
   new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
