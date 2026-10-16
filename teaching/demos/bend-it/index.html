@@ -432,13 +432,17 @@
       else items.push({ ok: true, node: i, text: `${cap(nd.name)} moves ${w}.` });
     });
     // curvature, member by member: the sequence of signs along the member is what counts, not where exactly it changes.
-    // A cubic between two joints cannot put the inflection point where the exact quartic has it, so dead zones are generous.
+    // A cubic between two joints cannot follow the exact quartic under a uniform load (at a free end it even reverses a little),
+    // so the student's pattern is accepted if it matches the true moment OR the cubic drawn through the exact joint values.
     S.members.forEach((m, mi) => {
-      const ks = kS[mi], ke = XI.map(x => exactM(S, m, x)), mAbs = Math.max(...ke.map(Math.abs)), kAbs = Math.max(...ks.map(Math.abs));
+      const ks = kS[mi], ke = XI.map(x => exactM(S, m, x)), eR = endsLocal(m, dE), kr = XI.map(x => H2(eR, m.L, x));
+      const mAbs = Math.max(...ke.map(Math.abs)), kAbs = Math.max(...ks.map(Math.abs)), rAbs = Math.max(...kr.map(Math.abs));
       if (mAbs < 0.03 * S.Mmax) { const bent = kAbs > 0.1 * kmaxS && kAbs > 1e-4; items.push({ ok: !bent, member: mi, text: bent ? `${m.name} carries no bending moment, so it stays straight. Yours is curved.` : `${m.name}: no moment, so it stays straight.` }); return; }
-      const se = ke.map(v => Math.abs(v) < 0.1 * mAbs ? 0 : Math.sign(v));
-      const ss = ks.map(v => (Math.abs(v) < 0.15 * kAbs || Math.abs(v) < 0.03 * kmaxS || Math.abs(v) < 1e-4) ? 0 : Math.sign(v));
-      const rE = runs(se), rS = runs(ss), same = rE.length === rS.length && rE.every((s, i) => s === rS[i]);
+      const se = ke.map(v => Math.abs(v) < 0.06 * mAbs ? 0 : Math.sign(v));
+      const sr = kr.map(v => Math.abs(v) < 0.06 * rAbs ? 0 : Math.sign(v));
+      const ss = ks.map(v => (Math.abs(v) < 0.06 * kAbs || Math.abs(v) < 0.03 * kmaxS || Math.abs(v) < 1e-4) ? 0 : Math.sign(v));
+      const eq = (a, b) => a.length === b.length && a.every((s, i) => s === b[i]);
+      const rE = runs(se), rS = runs(ss), same = eq(rS, rE) || eq(rS, runs(sr));
       const side = sg => sideWord([sg * m.n[0], sg * m.n[1]]), sFirst = side(rE[0]), sLast = side(rE[rE.length - 1]);
       let text;
       if (same) text = rE.length > 1 ? `${m.name}: the curvature changes sign at the inflection point.` : `${m.name}: concave toward the ${sFirst}.`;
