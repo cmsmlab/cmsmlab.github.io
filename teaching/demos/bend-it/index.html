@@ -214,7 +214,6 @@
   ];
   const FRAMES = [
     { id: 'f01', name: 'Portal, pinned bases, side load', nodes: [pin(0, 0, 'A'), { ...free(0, 3, 'B'), F: RIGHT }, free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }] },
-    { id: 'f02', name: 'Portal, fixed bases, side load', nodes: [fixed(0, 0, 'A'), { ...free(0, 3, 'B'), F: RIGHT }, free(4, 3, 'C'), fixed(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }] },
     { id: 'f03', name: 'Portal, pinned bases, UDL on beam', nodes: [pin(0, 0, 'A'), free(0, 3, 'B'), free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2, q: DOWN }, { a: 2, b: 3 }] },
     { id: 'f04', name: 'Portal, fixed bases, UDL on beam', nodes: [fixed(0, 0, 'A'), free(0, 3, 'B'), free(4, 3, 'C'), fixed(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2, q: DOWN }, { a: 2, b: 3 }] },
     { id: 'f05', name: 'L-frame, load at the tip', nodes: [fixed(0, 0, 'A'), free(0, 3, 'B'), { ...free(3, 3, 'C'), F: DOWN }], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }] },
