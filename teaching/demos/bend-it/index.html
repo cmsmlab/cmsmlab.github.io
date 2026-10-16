@@ -422,9 +422,10 @@
     if (!dE) return items;
     const kS = S.members.map(m => { const e = endsLocal(m, dS); return XI.map(x => H2(e, m.L, x)); }), kmaxS = Math.max(...kS.map(a => Math.max(...a.map(Math.abs))));
     const dRef = Math.max(S.dN, S.dmax);
+    let thS = 0; for (let i = 2 * S.n; i < S.k; i++) thS = Math.max(thS, Math.abs(dS[i]));
     S.nodes.forEach((nd, i) => {
       if (nd.sup !== 'fixed' || nd.hinge) return;
-      const ok = Math.abs(dS[nd.rot]) < 0.04;
+      const ok = Math.abs(dS[nd.rot]) < Math.max(0.1, 0.2 * thS);   // a brushed handle is not a mistake; a clear tilt is
       items.push({ ok, node: i, text: ok ? `${nd.name} is a fixed support: the slope there stays zero.` : `${nd.name} is a fixed support: the slope there must stay zero. Your curve leaves ${nd.name} at an angle.` });
     });
     S.nodes.forEach((nd, i) => {
@@ -451,8 +452,13 @@
       if (same) text = rE.length > 1 ? `${m.name}: the curvature changes sign at the inflection point.` : `${m.name}: concave toward the ${sFirst}.`;
       else if (!rS.length) text = rE.length > 1 ? `${m.name} should bend both ways: M changes sign inside it, so there is an inflection point. Yours is straight.` : `${m.name} should bend: M is not zero there. The compression side is the ${sFirst}, so the curve should be concave toward the ${sFirst}.`;
       else if (rE.length === 1) text = rS.length === 1 ? `${m.name} is concave toward the ${side(rS[0])}. The compression side is the ${sFirst}, so it should be concave toward the ${sFirst}.` : `${m.name} keeps one sign of M, so it keeps one curvature. Yours has an inflection point.`;
-      else text = rS.length === 1 ? `${m.name} has an inflection point where M = 0. Near ${m.endA} it should be concave toward the ${sFirst}, near ${m.endB} toward the ${sLast}. Yours keeps one curvature.`
-        : `${m.name}: near ${m.endA} the curve should be concave toward the ${sFirst}, near ${m.endB} toward the ${sLast}.`;
+      else if (rS.length === 1) {
+        // one curvature where two are needed: say which end is wrong, so the student knows which handle to turn back
+        const wrongA = rS[0] !== rE[0], wrongB = rS[0] !== rE[rE.length - 1];
+        const fix = wrongA && wrongB ? '' : ` Turn the handle at ${wrongA ? m.endA : m.endB} a little the other way; a smaller rotation there brings the inflection point back.`;
+        text = `${m.name} has an inflection point where M = 0. Near ${m.endA} it should be concave toward the ${sFirst}, near ${m.endB} toward the ${sLast}. Yours keeps one curvature.${fix}`;
+      }
+      else text = `${m.name}: near ${m.endA} the curve should be concave toward the ${sFirst}, near ${m.endB} toward the ${sLast}.`;
       items.push({ ok: same, member: mi, text });
     });
     S.nodes.forEach((nd, i) => {
