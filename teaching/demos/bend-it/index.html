@@ -720,9 +720,9 @@
     else if (S.P.build && state.tool !== 'draw') st.innerHTML = `<b>${TOOLS.find(t => t[0] === state.tool)[1]}.</b> Click a grid point${state.tool === 'udl' || state.tool === 'erase' ? ' or a span' : ''} on the beam. Click again to remove it.`;
     else {
       const fn = freeNode(S), ok = state.items.filter(i => i.ok).length, n = state.items.length;
-      if (!state.usedDot && fn >= 0) st.innerHTML = `<b>Step 1 of 3.</b> Drag the orange dot at ${S.nodes[fn].name} to move that joint.`;
-      else if (!state.usedHandle) st.innerHTML = '<b>Step 2 of 3.</b> Pull a blue handle to set the slope at its joint. A wall keeps its slope at zero; a hinge may kink.';
-      else if (!state.checked) st.innerHTML = '<b>Step 3 of 3.</b> Press Check.';
+      if (!state.usedDot && fn >= 0) st.innerHTML = `<b>Drag</b> the orange dot at ${S.nodes[fn].name} to move that joint.`;
+      else if (!state.usedHandle) st.innerHTML = '<b>Pull</b> a blue handle to set the slope at its joint. A wall keeps its slope at zero; a hinge may kink.';
+      else if (!state.checked) st.innerHTML = '<b>Press Check</b> when the shape is done.';
       else if (n && ok === n) st.innerHTML = '<b>All checks pass.</b>';
       else st.innerHTML = '<b>Fix the red items.</b> The list updates as you drag.';
     }
