@@ -2165,7 +2165,6 @@ window.ZFM_BUILD = "ftz-d87f6e72";
   const PRACTICE_SET = SET.filter(p => !TEST_IDS.has(p.id));
   // Finished tests go to a Google Apps Script web app (its /exec URL) that adds them to a Google Sheet; '' = saving off.
   // Records carry no name or ID (see find-the-zeros/results-collector/).
-  // Collector set up 10/7 in Berkin's Google account (berkindort@gmail.com), sheet "Find the Zeros test results".
   let RESULTS_URL = 'https://script.google.com/macros/s/AKfycby07czCDNjH9oZ5_at40qfzdROeoHMg_STXAK0ES6cPZsLNm4Tbz9JeP6k2_rxOamw/exec';
   // the claude.ai preview cannot reach Google (its sandbox blocks other hosts): there, results stay on screen
   const PREVIEW = /claude/i.test(location.hostname);
