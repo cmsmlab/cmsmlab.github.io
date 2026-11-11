@@ -68,6 +68,8 @@ I committed <file> by mistake. Remove it from the history safely; explain first.
 
 **Optional:** GitHub Education (<https://education.github.com>) gives graduate students free GitHub Pro. **Stuck?** Paste the exact error into Claude and ask what to do, or ask me or a labmate.
 
+<p style="font-size:.85rem;color:#666;margin-top:2rem"><em>This guide was prepared with the help of AI (Claude).</em></p>
+
 </div>
 
 <script>
