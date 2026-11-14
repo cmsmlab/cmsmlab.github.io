@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Interactive demo for CE 329: draw the qualitative deflected shape of a beam or frame by dragging joints and slopes, and check it against the bending moment diagram.">
+<meta name="description" content="Interactive demo for CE 329: draw the qualitative deflected shape of a beam by dragging joints and slopes, and check it against the bending moment diagram.">
 <meta name="color-scheme" content="light dark">
 <meta property="og:title" content="Bend It">
-<meta property="og:description" content="Interactive demo for CE 329: draw the qualitative deflected shape of a beam or frame by dragging joints and slopes, and check it against the bending moment diagram.">
+<meta property="og:description" content="Interactive demo for CE 329: draw the qualitative deflected shape of a beam by dragging joints and slopes, and check it against the bending moment diagram.">
 <meta property="og:type" content="website">
 <title>Bend It</title>
 <!-- Google Analytics -->
@@ -145,7 +145,6 @@
 <div class="sheet" id="sheet">
   <div class="top">
     <h1>Bend It</h1>
-    <span style="font-size:14px;color:var(--ink-3)">Draw the qualitative deflected shape, then check it against the moment diagram.</span>
   </div>
 
   <div class="main">
@@ -169,20 +168,18 @@
   <ul class="findings" id="findings" hidden aria-live="polite"></ul>
 
   <div class="bar legend">
-    <span><i style="background:var(--accent)"></i>joint: drag to move it</span>
-    <span><i style="background:var(--fV)"></i>handle: pull to set the slope</span>
+    <span><i style="background:var(--accent)"></i>joint</span>
+    <span><i style="background:var(--fV)"></i>slope handle</span>
     <span><i style="background:var(--fM)"></i>bending moment</span>
-    <span><i class="dash"></i>a solution (Show a solution)</span>
+    <span><i class="dash"></i>a solution</span>
     <span class="key good"><i style="background:var(--good)"></i>curvature agrees with M</span>
     <span class="key bad"><i style="background:var(--bad)"></i>curvature disagrees</span>
   </div>
   </div>
 
   <aside class="side" aria-label="Problems">
-    <div class="eyebrow">Problems</div>
     <div class="chips" id="groups" role="group" aria-label="Problem set">
       <button type="button" data-g="beams" aria-pressed="true">Beams</button>
-      <button type="button" data-g="frames" aria-pressed="false">Frames</button>
       <button type="button" data-g="build" aria-pressed="false">Build your own</button>
     </div>
     <div class="list" id="probs" role="group" aria-label="Problem"></div>
@@ -190,8 +187,7 @@
   </div>
 
   <footer class="colophon">
-    <p>The curve you draw is a cubic between neighbouring joints, set by the position and slope at each joint, the same shape a beam element uses. Joints move only in ways that keep every member its original length, and supports hold them. The slopes are yours: a wall should keep its slope at zero, a hinge may kink, a rigid corner keeps its right angle. Check compares the signs of your curvature with the bending moment, segment by segment, and the direction each joint moves. Sizes are never graded. For beams the moment diagram is drawn on its own axis above the beam, positive up; for frames it is drawn on the compression side of each member, and the sign follows the member's own axis (beams left to right, columns bottom to top). The two round buttons in the corner of the drawing show or hide the moment diagram and flip its sign convention.</p>
-    <p>CE 329 Structural Analysis &middot; Teaching demo. Built with AI assistance. The moment diagram and the solution shape come from a stiffness solution of the structure on screen, not generated text. Nothing you do here is graded or recorded.</p>
+    <p>CE 329 Structural Analysis &middot; Teaching demo. Built with AI assistance.</p>
   </footer>
 </div>
 
@@ -220,6 +216,8 @@
     { id: 'b11', name: 'Hinge in the span', nodes: [fixed(0, 0, 'A'), { ...free(2, 0, 'B'), joint: 'pin' }, roller(4, 0, 'C')], members: [{ a: 0, b: 1 }, { a: 1, b: 2, q: DOWN }] },
     { id: 'b12', name: 'Cantilever, tip couple', nodes: [fixed(0, 0, 'A'), { ...free(4, 0, 'B'), M: 1 }], members: [{ a: 0, b: 1 }] },
   ];
+  // Frames are no longer offered on the page (beams only since 11/6). FRAMES stays so the engine tests keep
+  // exercising the 2D frame solver, and so frames can come back by adding them to GROUPS and byId again.
   const FRAMES = [
     { id: 'f01', name: 'Portal, pinned bases, side load', nodes: [pin(0, 0, 'A'), { ...free(0, 3, 'B'), F: RIGHT }, free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }] },
     { id: 'f02', name: 'Portal, fixed bases, side load', nodes: [fixed(0, 0, 'A'), { ...free(0, 3, 'B'), F: RIGHT }, free(4, 3, 'C'), fixed(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }] },
@@ -229,7 +227,7 @@
     { id: 'f06', name: 'Three-hinged portal, side load', nodes: [pin(0, 0, 'A'), { ...free(0, 3, 'B'), F: RIGHT }, { ...free(2, 3, 'E'), joint: 'pin' }, free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }, { a: 3, b: 4 }] },
     { id: 'f07', name: 'Portal, pinned bases, off-centre load', nodes: [pin(0, 0, 'A'), free(0, 3, 'B'), { ...free(1.5, 3, 'E'), F: DOWN }, free(4, 3, 'C'), pin(4, 0, 'D')], members: [{ a: 0, b: 1 }, { a: 1, b: 2 }, { a: 2, b: 3 }, { a: 3, b: 4 }] },
   ];
-  const GROUPS = { beams: BEAMS, frames: FRAMES };
+  const GROUPS = { beams: BEAMS };
 
   /* ---------- build your own: a 6-unit beam on a grid of 7 points ---------- */
   const GRID = 6;
@@ -787,18 +785,18 @@
   if (typeof saved.comp === 'boolean') state.comp = saved.comp;
   if (saved.build && saved.build.joints && saved.build.joints.length === GRID + 1 && saved.build.udl && saved.build.udl.length === GRID) state.build = saved.build;
   else { state.build.joints[0] = 'pin'; state.build.joints[6] = 'roller'; state.build.loads[2] = 'down'; }
-  const byId = id => BEAMS.find(p => p.id === id) || FRAMES.find(p => p.id === id);
-  // #projector enlarges the drawing and drops the footer; #b05 or #f01 opens that problem
+  const byId = id => BEAMS.find(p => p.id === id);   // beams only: a frame id (#f01, or one saved before 11/6) finds nothing and falls back to a beam
+  // #projector enlarges the drawing and drops the footer; #b05 opens that problem
   function route(first) {
     const hash = (location.hash || '').slice(1).toLowerCase();
     const proj = hash === 'projector'; if (proj !== state.proj) { state.proj = proj; $('sheet').classList.toggle('proj', proj); if (state.S) draw(); }
     const P = byId(hash);
-    if (P) { state.group = FRAMES.includes(P) ? 'frames' : 'beams'; setProblem(P); return; }
+    if (P) { state.group = 'beams'; setProblem(P); return; }
     if (!first) return;
     const start = saved.group === 'build' ? null : byId(saved.id);
-    if (start) { state.group = FRAMES.includes(start) ? 'frames' : 'beams'; setProblem(start); }
+    if (start) { state.group = 'beams'; setProblem(start); }
     else if (saved.group === 'build') { state.group = 'build'; setProblem(compileBuild(state.build)); }
-    else setProblem(BEAMS[0]);
+    else { state.group = 'beams'; setProblem(BEAMS[0]); }
   }
   route(true);
   window.addEventListener('hashchange', () => route(false));
