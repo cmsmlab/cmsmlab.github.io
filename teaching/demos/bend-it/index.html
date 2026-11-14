@@ -673,7 +673,9 @@
         if (nd.locked) { ctx.fillStyle = panel; ctx.strokeStyle = ink3; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fill(); ctx.stroke(); return; }
         const on = state.hover && state.hover.kind === 'joint' && state.hover.i === i;
         if (coachDot) { ctx.strokeStyle = acc; ctx.globalAlpha = 0.45; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, rD + 5 + pulse, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; }
-        ctx.fillStyle = acc; ctx.strokeStyle = panel; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, on ? rD + 2 : rD, 0, 7); ctx.fill(); ctx.stroke();
+        // a hinge keeps the hollow-circle symbol: the drag dot there is an open ring, so it does not paint over the hinge
+        if (nd.joint === 'pin') { const r = (on ? rD + 2 : rD) + 2; ctx.fillStyle = panel; ctx.strokeStyle = panel; ctx.lineWidth = 7; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.stroke(); ctx.strokeStyle = acc; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.stroke(); }
+        else { ctx.fillStyle = acc; ctx.strokeStyle = panel; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, y, on ? rD + 2 : rD, 0, 7); ctx.fill(); ctx.stroke(); }
         if (coachDot && i === fn) { const far = nd.l ? rD + 44 : rD + 22; tag('drag', x + nd.tag[0] * far, y - nd.tag[1] * (far - 2), acc, tagFont, panel); }
       });
     }
