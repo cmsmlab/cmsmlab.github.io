@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive demo for CE 329: draw a truss, add supports and loads, heat or cool a member, and see the member forces, the reactions, and how the joints move.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Truss Lab">
+<meta property="og:description" content="Interactive demo for CE 329: draw a truss, add supports and loads, heat or cool a member, and see the member forces, the reactions, and how the joints move.">
+<meta property="og:type" content="website">
+<title>Truss Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  /* minimal reset: the artifact host supplies one, a plain web host does not */
+  *, *::before, *::after { box-sizing: border-box; }
+  /* the artifact host supplies this; a plain host does not, and without it any
+     author `display:` rule silently overrides the hidden attribute */
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body, h1, h2, h3, p, dl, dd, ul, figure { margin: 0; }
+  ul { padding: 0; }
+  canvas { display: block; max-width: 100%; }
+  img, svg { max-width: 100%; height: auto; }
+  button, input, select { font: inherit; color: inherit; }
+
+  /* Same sheet as the other CE 329 demos, in the UT Austin palette: burnt orange #BF5700 for the accent, charcoal #333F48
+     for the ink, limestone #D6D2C4 for the rules, turquoise #00A9B7 for the selection, cactus green for "determinate".
+     Heated members shade to a warm red-orange, cooled members to blue. */
+  :root {
+    --paper:#F3F1EB; --panel:#FBFAF7; --panel-2:#ECE8DD; --ink:#333F48; --ink-2:#5B6770; --ink-3:#7B8790;
+    --rule:#D6D2C4; --accent:#BF5700;
+    --good:#3F7A2E; --good-bg:#E1EDD8; --ask:#A85A00; --ask-bg:#FBE9D2; --bad:#B23A2B; --bad-bg:#F3DEDA;
+    --hot:#D9360B; --cold:#0E76C8; --sel:#00A9B7; --ghost:#B7B1A3; --dot:#C9C4B5;
+    --shadow:0 1px 2px rgba(51,63,72,.06), 0 6px 18px rgba(51,63,72,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#1C2227; --panel:#242C33; --panel-2:#303941; --ink:#E9E5DB; --ink-2:#B3BBC1; --ink-3:#8A949B;
+      --rule:#3E474F; --accent:#F08A3C;
+      --good:#8FC66E; --good-bg:#26381E; --ask:#F8A94A; --ask-bg:#3A2A10; --bad:#F08C7C; --bad-bg:#3C2320;
+      --hot:#FF6B3D; --cold:#4DB1F7; --sel:#4FCBD5; --ghost:#5A646D; --dot:#46505A;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#1C2227; --panel:#242C33; --panel-2:#303941; --ink:#E9E5DB; --ink-2:#B3BBC1; --ink-3:#8A949B;
+    --rule:#3E474F; --accent:#F08A3C;
+    --good:#8FC66E; --good-bg:#26381E; --ask:#F8A94A; --ask-bg:#3A2A10; --bad:#F08C7C; --bad-bg:#3C2320;
+    --hot:#FF6B3D; --cold:#4DB1F7; --sel:#4FCBD5; --ghost:#5A646D; --dot:#46505A;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+    color-scheme: dark;
+  }
+
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:Archivo,"Helvetica Neue",Arial,sans-serif; font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .sheet { max-width:1040px; margin:0 auto; padding-block:clamp(12px,2vw,22px) 40px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+  .top { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 18px; }
+  h1 { margin:0; font-size:clamp(20px,2.6vw,26px); line-height:1.05; font-weight:700; letter-spacing:-.01em; }
+  select { border:1px solid var(--rule); background:var(--panel); color:var(--ink); border-radius:6px; padding:4px 6px; font:inherit; font-size:13.5px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; min-width:0; }
+  .chips button { border:1px solid var(--rule); background:var(--panel); color:var(--ink-2); font:inherit; font-size:13.5px; padding:5px 12px; border-radius:999px; cursor:pointer; }
+  .chips button.lead { margin-left:14px; }
+  .chips button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--paper); font-weight:600; }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .mono { font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; }
+  .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+
+  .stage { margin-top:12px; background:var(--panel); border:1px solid var(--rule); border-radius:8px; box-shadow:var(--shadow); padding:8px; min-width:0; }
+  .bar { display:flex; flex-wrap:wrap; gap:8px 12px; justify-content:space-between; align-items:center; padding:4px 4px 0; }
+  .count { display:flex; gap:8px; align-items:center; font-size:13px; color:var(--ink-2); white-space:nowrap; }
+  .pill { display:inline-block; padding:2px 10px; border-radius:999px; font-size:13px; font-weight:600; background:var(--panel-2); color:var(--ink-2); }
+  .pill.good { background:var(--good-bg); color:var(--good); } .pill.ask { background:var(--ask-bg); color:var(--ask); } .pill.bad { background:var(--bad-bg); color:var(--bad); }
+
+  /* the drawing */
+  #hi-svg { display:block; width:100%; height:auto; touch-action:manipulation; user-select:none; -webkit-user-select:none; outline:none; border-radius:6px; }
+  #hi-svg.t-draw { touch-action:none; cursor:crosshair; } #hi-svg.t-erase { cursor:pointer; }
+  #hi-svg:focus-visible { box-shadow:inset 0 0 0 2px var(--accent); }
+  #hi-svg text { font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; fill:var(--ink); pointer-events:none; }
+  .dot { fill:var(--dot); }
+  .ghost { stroke:var(--ghost); stroke-width:2; stroke-linecap:round; }
+  .mem { cursor:pointer; outline:none; }
+  .mem .base { stroke:var(--ink); stroke-width:4; stroke-linecap:round; }
+  .mem .temp { stroke-width:6; stroke-linecap:round; }
+  .mem .temp.hot { stroke:var(--hot); } .mem .temp.cold { stroke:var(--cold); }
+  .mem .halo { stroke:var(--sel); stroke-width:16; stroke-linecap:round; stroke-opacity:0; }
+  .mem.sel .halo { stroke-opacity:.42; }
+  .mem:focus-visible .halo { stroke-opacity:.8; }
+  .narrow .mem .base { stroke-width:3; } .narrow .mem .temp { stroke-width:4.5; } .narrow .mem .halo { stroke-width:13; }
+  .sup { fill:var(--panel); stroke:var(--ink); stroke-width:2; stroke-linejoin:round; }
+  .ground { stroke:var(--ink); stroke-width:2; fill:none; }
+  .hatch { stroke:var(--ink-3); stroke-width:1.2; }
+  .joint { fill:var(--panel); stroke:var(--ink); stroke-width:2.2; }
+  .joint.stray { stroke:var(--ink-3); stroke-dasharray:3 2; }
+  .ring { fill:none; stroke:var(--sel); stroke-width:3; }
+  .cursor { fill:none; stroke:var(--accent); stroke-width:2; stroke-dasharray:4 3; }
+  .rubber { stroke:var(--sel); stroke-width:3; stroke-dasharray:6 5; stroke-linecap:round; }
+  .load { stroke:var(--ink); stroke-width:2.6; fill:none; stroke-linecap:round; } .loadhead { fill:var(--ink); }
+  #hi-svg text.jl { font-family:Archivo,"Helvetica Neue",Arial,sans-serif; font-weight:700; text-anchor:middle; dominant-baseline:central; }
+  #hi-svg text.ll { text-anchor:middle; dominant-baseline:central; font-weight:600; }
+  .flab rect { fill:var(--panel); fill-opacity:.94; stroke:var(--rule); stroke-width:1; }
+  .flab text { text-anchor:middle; dominant-baseline:central; }
+  #hi-svg .flab.zero text { fill:var(--ink-3); }
+  .flab.on rect { stroke:var(--accent); stroke-width:1.5; fill-opacity:1; }
+  #hi-svg .flab.on text { font-weight:600; }
+  #hi-svg text.rx { text-anchor:middle; fill:var(--accent); font-weight:600; }
+
+  /* slider, load editor, reset, magnification: one row */
+  .ctl { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; margin-top:10px; min-height:40px; }
+  .heat { display:flex; align-items:center; gap:10px; flex:1 1 300px; min-width:0; }
+  .heat label { flex:0 0 auto; font-size:14px; font-weight:600; min-width:28px; }
+  .heat label.none { font-weight:400; color:var(--ink-3); }
+  .heat input { flex:1 1 auto; min-width:0; width:100%; height:34px; margin:0; accent-color:var(--accent); cursor:pointer; touch-action:pan-y; }
+  .heat input:disabled { cursor:not-allowed; opacity:.5; }
+  .heat output { flex:0 0 auto; min-width:78px; text-align:right; font-size:18px; font-weight:600; }
+  .heat output.hot { color:var(--hot); } .heat output.cold { color:var(--cold); }
+  .loadrow { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; flex:1 1 300px; font-size:14px; }
+  .loadrow b { font-weight:600; margin-right:2px; }
+  .loadrow .dirs { display:inline-flex; border:1px solid var(--rule); border-radius:6px; overflow:hidden; }
+  .loadrow .dirs button { border:0; background:var(--panel); color:var(--ink-2); font:inherit; font-size:15px; width:34px; height:32px; cursor:pointer; }
+  .loadrow .dirs button + button { border-left:1px solid var(--rule); }
+  .loadrow .dirs button[aria-pressed="true"] { background:var(--accent); color:var(--paper); }
+  .loadrow input { width:68px; border:1px solid var(--rule); background:var(--panel); color:var(--ink); border-radius:6px; padding:4px 6px; font-size:14px; }
+  .hint { flex:1 1 200px; margin:0; font-size:13.5px; color:var(--ink-3); }
+  button.plain { border:1px solid var(--rule); background:var(--panel); color:var(--ink); font:inherit; font-size:13.5px; padding:5px 11px; border-radius:6px; cursor:pointer; }
+  #hi-mag { font-size:12.5px; padding:3px 4px; color:var(--ink-2); }
+
+  .result { margin:8px 0 0; font-size:15px; display:flex; flex-wrap:wrap; gap:2px 22px; min-height:1.5em; }
+  .result b { font-weight:600; }
+  .result .zero b { color:var(--good); } .result .bad { color:var(--bad); font-weight:600; }
+
+  @media (max-width:480px) { .chips { gap:4px; } .chips button { font-size:13px; padding:5px 8px; } .chips button.lead { margin-left:8px; } }
+  .colophon { margin-top:22px; padding-top:10px; border-top:1px solid var(--rule); font-size:12px; color:var(--ink-3); }
+  .colophon p { margin:3px 0; }
+</style>
+</head>
+<body>
+<div class="sheet" id="sheet">
+  <div class="top">
+    <h1>Truss Lab</h1>
+    <select id="hi-start" aria-label="Start from"></select>
+  </div>
+
+  <section class="stage" aria-label="Truss">
+    <div class="bar">
+      <div class="chips" id="hi-tools" role="group" aria-label="Tool"></div>
+      <div class="count" id="hi-count" aria-live="polite"></div>
+    </div>
+    <svg id="hi-svg" tabindex="0" role="group" aria-label="Truss drawing on a 5 ft grid. Arrow keys move the grid cursor and Enter uses the current tool there. Each member is a button: Enter selects it, arrow keys change its temperature, Delete removes it." xmlns="http://www.w3.org/2000/svg"></svg>
+  </section>
+
+  <div class="ctl">
+    <div class="heat" id="hi-heat">
+      <label for="hi-dt" id="hi-who" class="none">Pick a member</label>
+      <input type="range" id="hi-dt" min="-100" max="100" step="5" value="0" disabled>
+      <output class="mono" id="hi-dt-out" for="hi-dt">0 &deg;F</output>
+    </div>
+    <div class="loadrow" id="hi-load" hidden>
+      <b id="hi-load-who"></b>
+      <span class="dirs" role="group" aria-label="Direction">
+        <button type="button" data-d="0,-1" aria-label="Down">&darr;</button><button type="button" data-d="0,1" aria-label="Up">&uarr;</button><button type="button" data-d="-1,0" aria-label="Left">&larr;</button><button type="button" data-d="1,0" aria-label="Right">&rarr;</button>
+      </span>
+      <input type="number" id="hi-load-mag" min="1" max="500" step="1" value="10" inputmode="numeric" aria-label="Load in kips"> k
+      <button class="plain" id="hi-load-rm" type="button">Remove</button>
+    </div>
+    <p class="hint" id="hi-hint" hidden></p>
+    <button class="plain" id="hi-reset" type="button" title="Clear every temperature change and load">Reset</button>
+    <select id="hi-mag" aria-label="Joint movement is drawn this many times larger than it is" title="Joint movement is drawn this many times larger than it is">
+      <option value="1">&times;1</option><option value="2">&times;2</option><option value="5">&times;5</option><option value="10">&times;10</option><option value="20">&times;20</option><option value="50">&times;50</option><option value="100">&times;100</option><option value="200" selected>&times;200</option><option value="500">&times;500</option>
+    </select>
+  </div>
+
+  <p class="result" id="hi-result" aria-live="polite"></p>
+  <p class="sr" id="hi-live" aria-live="polite"></p>
+
+  <footer class="colophon">
+    <p>CE 329 Structural Analysis &middot; Teaching demo. Built with AI assistance.</p>
+    <p>All members A = 4 in&sup2;, E = 30,000 ksi, &alpha; = 6.5 &times; 10<sup>&minus;6</sup> per &deg;F.</p>
+  </footer>
+</div>
+
+<script>
+(() => {
+  /* =====================================================================================================
+     ENGINE. No DOM in this part; truss-lab/test-engine.js runs it in node.
+     2D pin-jointed truss, direct stiffness, small displacements. Units: kips and inches, tension positive.
+     A temperature change dT puts an initial strain alpha*dT in a member: equivalent joint loads E*A*alpha*dT
+     push its two ends apart, and afterwards N = (E*A/L)*(elongation) - E*A*alpha*dT.
+     Ported from truss-temperature/truss_temperature.py.
+
+     A model is { nodes: [{ x, y (ft, on the grid), sup: null | 'pin' | 'roller' | 'rollerV', load: null | [Fx, Fy] (k) }],
+                  members: [{ a, b (node indices), dT (degrees F) }] }.
+     'roller' rolls horizontally (holds y), 'rollerV' rolls vertically (holds x). Joint i is lettered A, B, C ...
+     ===================================================================================================== */
+  const FT = 12, GRID = 5, GX = 60, GY = 25, MAX_JOINTS = 26;
+  const PROPS = { A: 4, E: 30000, alpha: 6.5e-6 };      // in^2, ksi, per degree F (the class value)
+  const DT_MAX = 100, DT_STEP = 5;
+  const FORCE_TOL = 1e-6, DISP_TOL = 1e-8;              // below this a force (k) or a movement (in) is shown as 0
+
+  // Starting points. nodes: [x ft, y ft, support]; a member is named by its two joint letters.
+  const PRESETS = [
+    { id: 'midterm', name: 'Midterm 2 truss', nodes: [[10, 0, 'pin'], [30, 0, 'roller'], [50, 0], [30, 15]], members: ['AB', 'BC', 'AD', 'BD', 'DC'] },
+    { id: 'triangle', name: 'Triangle', nodes: [[20, 0, 'pin'], [40, 0, 'roller'], [40, 15]], members: ['AB', 'BC', 'AC'] },
+    { id: 'pratt', name: 'Pratt truss', nodes: [[0, 0, 'pin'], [15, 0], [30, 0], [45, 0], [60, 0, 'roller'], [15, 20], [30, 20], [45, 20]],
+      members: ['AB', 'BC', 'CD', 'DE', 'FG', 'GH', 'AF', 'HE', 'BF', 'CG', 'DH', 'FC', 'HC'] },
+    { id: 'warren', name: 'Warren truss', nodes: [[0, 0, 'pin'], [20, 0], [40, 0], [60, 0, 'roller'], [10, 15], [30, 15], [50, 15]],
+      members: ['AB', 'BC', 'CD', 'EF', 'FG', 'AE', 'EB', 'BF', 'FC', 'CG', 'GD'] },
+    { id: 'blank', name: 'Blank', nodes: [], members: [] },
+  ];
+  const letter = i => String.fromCharCode(65 + i);
+  const mname = mb => letter(mb.a) + letter(mb.b);
+  function fromPreset(P) {
+    return { nodes: P.nodes.map(n => ({ x: n[0], y: n[1], sup: n[2] || null, load: null })),
+             members: P.members.map(s => ({ a: s.charCodeAt(0) - 65, b: s.charCodeAt(1) - 65, dT: 0 })) };
+  }
+
+  /* ----- editing ----- */
+  const findJoint = (M, x, y) => M.nodes.findIndex(n => n.x === x && n.y === y);
+  const hasMember = (M, a, b) => M.members.some(m => (m.a === a && m.b === b) || (m.a === b && m.b === a));
+  // where P sits along A-B (0 to 1) when it lies strictly inside the segment, else -1
+  function onSeg(A, B, P) {
+    const dx = B.x - A.x, dy = B.y - A.y;
+    if (Math.abs(dx * (P.y - A.y) - dy * (P.x - A.x)) > 1e-9) return -1;
+    const t = ((P.x - A.x) * dx + (P.y - A.y) * dy) / (dx * dx + dy * dy);
+    return t > 1e-9 && t < 1 - 1e-9 ? t : -1;
+  }
+  // A joint dropped on a member splits it, so members only ever meet at joints.
+  function addJoint(M, x, y) {
+    let i = findJoint(M, x, y); if (i >= 0) return i;
+    if (M.nodes.length >= MAX_JOINTS) return -1;
+    M.nodes.push({ x, y, sup: null, load: null }); i = M.nodes.length - 1;
+    M.members.slice().forEach(mb => { if (onSeg(M.nodes[mb.a], M.nodes[mb.b], M.nodes[i]) > 0) { const b = mb.b; mb.b = i; M.members.push({ a: i, b, dT: mb.dT }); } });
+    return i;
+  }
+  // A member drawn through other joints becomes one member per gap. Returns true when something was added.
+  function addMember(M, a, b) {
+    if (a < 0 || b < 0 || a === b || !M.nodes[a] || !M.nodes[b]) return false;
+    const mids = M.nodes.map((n, i) => ({ i, t: onSeg(M.nodes[a], M.nodes[b], n) })).filter(q => q.t > 0).sort((p, q) => p.t - q.t).map(q => q.i);
+    const chain = [a].concat(mids, [b]); let added = false;
+    for (let k = 0; k + 1 < chain.length; k++) if (!hasMember(M, chain[k], chain[k + 1])) { M.members.push({ a: chain[k], b: chain[k + 1], dT: 0 }); added = true; }
+    return added;
+  }
+  function removeMember(M, k) { M.members.splice(k, 1); }
+  function removeJoint(M, i) {
+    M.members = M.members.filter(m => m.a !== i && m.b !== i);
+    M.members.forEach(m => { if (m.a > i) m.a--; if (m.b > i) m.b--; });
+    M.nodes.splice(i, 1);
+  }
+  // Pin tool: pin on, pin off. Roller tool: rolls sideways, rolls up and down, off.
+  function cycleSupport(M, i, tool) {
+    const n = M.nodes[i];
+    if (tool === 'pin') n.sup = n.sup === 'pin' ? null : 'pin';
+    else n.sup = n.sup === 'roller' ? 'rollerV' : n.sup === 'rollerV' ? null : 'roller';
+  }
+
+  /* ----- analysis ----- */
+  // Gaussian elimination with partial pivoting. Returns null when the matrix is singular (a mechanism).
+  function gauss(A, b) {
+    const n = b.length, M = A.map((r, i) => r.concat(b[i]));
+    let scale = 0; for (let i = 0; i < n; i++) scale = Math.max(scale, Math.abs(M[i][i]));
+    for (let col = 0; col < n; col++) {
+      let piv = col; for (let i = col + 1; i < n; i++) if (Math.abs(M[i][col]) > Math.abs(M[piv][col])) piv = i;
+      if (Math.abs(M[piv][col]) < 1e-9 * scale || scale === 0) return null;
+      [M[col], M[piv]] = [M[piv], M[col]];
+      for (let i = col + 1; i < n; i++) { const f = M[i][col] / M[col][col]; if (f) for (let k = col; k <= n; k++) M[i][k] -= f * M[col][k]; }
+    }
+    const x = new Array(n).fill(0);
+    for (let i = n - 1; i >= 0; i--) { let s = M[i][n]; for (let k = i + 1; k < n; k++) s -= M[i][k] * x[k]; x[i] = s / M[i][i]; }
+    return x;
+  }
+
+  // Classify and, when it can stand, solve. Joints with no member are left out of everything (stray[i] is true).
+  //   cls: 'empty' (no members) | 'unstable' | 'determinate' | 'indeterminate';   degree = m + r - 2j
+  //   res: { u (2 per joint, in), N (per member, k), R (2 per joint, k) }, or null when empty or unstable
+  // The count alone is not trusted: a truss is unstable whenever its free-joint stiffness matrix is singular,
+  // even with m + r = 2j (a square with no diagonal) or m + r > 2j.
+  function analyze(M, opt) {
+    const P = Object.assign({}, PROPS, opt || {}), EA = P.E * P.A, nn = M.nodes.length, n = 2 * nn;
+    const deg = new Array(nn).fill(0); M.members.forEach(m => { deg[m.a]++; deg[m.b]++; });
+    const stray = deg.map(d => d === 0), m = M.members.length, j = stray.filter(s => !s).length;
+    let r = 0; M.nodes.forEach((nd, i) => { if (!stray[i]) r += nd.sup === 'pin' ? 2 : nd.sup ? 1 : 0; });
+    const out = { m, r, j, degree: m + r - 2 * j, stray, cls: 'empty', res: null, ec: 0, dE: 0, dI: 0 };
+    if (!m) return out;
+    // External and internal determinacy, in the words of the course (LN03):
+    //   rho = rank of the member direction matrix = how many joint motions the members alone resist (at most 2j - 3)
+    //   ec  = (2j - 3) - rho : equations of condition (ways the unsupported truss can still change shape)
+    //   dE  = r - (3 + ec)   : external degree;   dI = m - rho : internal degree;   dE + dI = m + r - 2j
+    { const col = new Map(); M.nodes.forEach((nd, i) => { if (!stray[i]) col.set(i, col.size); });
+      const B = M.members.map(mb => { const A0 = M.nodes[mb.a], B0 = M.nodes[mb.b], dx = B0.x - A0.x, dy = B0.y - A0.y, L = Math.hypot(dx, dy), row = new Array(2 * j).fill(0);
+        row[2 * col.get(mb.a)] = -dx / L; row[2 * col.get(mb.a) + 1] = -dy / L; row[2 * col.get(mb.b)] = dx / L; row[2 * col.get(mb.b) + 1] = dy / L; return row; });
+      let rho = 0; for (let c = 0; c < 2 * j && rho < B.length; c++) { let p = rho; for (let i = rho + 1; i < B.length; i++) if (Math.abs(B[i][c]) > Math.abs(B[p][c])) p = i;
+        if (Math.abs(B[p][c]) < 1e-9) continue; [B[rho], B[p]] = [B[p], B[rho]];
+        for (let i = rho + 1; i < B.length; i++) { const f = B[i][c] / B[rho][c]; if (f) for (let q = c; q < 2 * j; q++) B[i][q] -= f * B[rho][q]; } rho++; }
+      out.ec = Math.max(0, 2 * j - 3 - rho); out.dI = m - rho; out.dE = r - 3 - out.ec; }
+    const K = Array.from({ length: n }, () => new Array(n).fill(0)), F = new Array(n).fill(0);
+    const geo = M.members.map(mb => {
+      const A = M.nodes[mb.a], B = M.nodes[mb.b], dx = (B.x - A.x) * FT, dy = (B.y - A.y) * FT, L = Math.hypot(dx, dy), c = dx / L, s = dy / L;
+      const d = [2 * mb.a, 2 * mb.a + 1, 2 * mb.b, 2 * mb.b + 1], t = [-c, -s, c, s], kk = EA / L, f = EA * P.alpha * (mb.dT || 0);
+      for (let i = 0; i < 4; i++) { F[d[i]] += f * t[i]; for (let q = 0; q < 4; q++) K[d[i]][d[q]] += kk * t[i] * t[q]; }
+      return { d, t, kk, f, L };
+    });
+    M.nodes.forEach((nd, i) => { if (nd.load && !stray[i]) { F[2 * i] += nd.load[0]; F[2 * i + 1] += nd.load[1]; } });
+    const held = new Array(n).fill(false), fixed = [];
+    M.nodes.forEach((nd, i) => {
+      if (stray[i]) { held[2 * i] = held[2 * i + 1] = true; return; }
+      if (nd.sup === 'pin' || nd.sup === 'rollerV') { held[2 * i] = true; fixed.push(2 * i); }
+      if (nd.sup === 'pin' || nd.sup === 'roller') { held[2 * i + 1] = true; fixed.push(2 * i + 1); }
+    });
+    const free = []; for (let d = 0; d < n; d++) if (!held[d]) free.push(d);
+    const uf = free.length ? gauss(free.map(i => free.map(q => K[i][q])), free.map(i => F[i])) : [];
+    if (!uf || uf.some(v => !Number.isFinite(v))) { out.cls = 'unstable'; return out; }
+    const u = new Array(n).fill(0); free.forEach((d, i) => { u[d] = uf[i]; });
+    const R = new Array(n).fill(0);
+    fixed.forEach(d => { let s = -F[d]; for (let q = 0; q < n; q++) s += K[d][q] * u[q]; R[d] = s; });
+    const N = geo.map(g => g.kk * (g.t[0] * u[g.d[0]] + g.t[1] * u[g.d[1]] + g.t[2] * u[g.d[2]] + g.t[3] * u[g.d[3]]) - g.f);
+    out.cls = out.degree > 0 ? 'indeterminate' : 'determinate';
+    out.res = { u, N, R, L: geo.map(g => g.L) };
+    return out;
+  }
+  const ordinal = d => (['1st', '2nd', '3rd'][d - 1] || d + 'th');
+  // What the page says. The main verdict is EXTERNAL determinacy (r against 3 + ec), as stated in class.
+  // A truss can be externally determinate and still have more members than it needs; verdictInt says so.
+  const verdict = an => (an.cls === 'empty' ? 'no members yet' : an.cls === 'unstable' ? 'unstable' : an.dE > 0 ? `externally indeterminate, ${ordinal(an.dE)} degree` : 'externally determinate');
+  const verdictInt = an => (an.res && an.dI > 0 ? `internally indeterminate, ${ordinal(an.dI)} degree` : '');
+
+  // Display helpers. Anything under the tolerance is 0, so nobody sees 1e-14 or "-0".
+  const zap = (v, tol) => (Math.abs(v) < tol ? 0 : v);
+  function mag2(a, dp) { let s = a.toFixed(dp); if (+s === 0) s = a.toPrecision(1); return s; }
+  const kips = a => mag2(a, a < 9.995 ? 2 : 1);      // 9.87, 10.0, 78.0
+  function fForce(v) { v = zap(v, FORCE_TOL); if (v === 0) return { mag: '0', tag: '', zero: true }; return { mag: kips(Math.abs(v)), tag: v > 0 ? 'T' : 'C', zero: false }; }
+  const fReact = (v, pos, neg) => { v = zap(v, FORCE_TOL); if (v === 0) return '0'; return kips(Math.abs(v)) + ' ' + (v > 0 ? pos : neg); };
+  const fDisp = v => { v = zap(v, DISP_TOL); return v === 0 ? '0' : mag2(Math.abs(v), 3); };
+  const fSigned = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v);
+
+  const api = { FT, GRID, GX, GY, PROPS, DT_MAX, DT_STEP, FORCE_TOL, DISP_TOL, PRESETS, fromPreset, letter, mname, findJoint, addJoint, addMember, removeMember, removeJoint, cycleSupport, analyze, verdict, verdictInt, zap, fForce, fReact, fDisp };
+  (typeof window !== 'undefined' ? window : globalThis).__heatit = api;
+  if (typeof document === 'undefined' || !document.getElementById('hi-svg')) return;
+
+  /* =====================================================================================================
+     PAGE. Nothing is recorded or sent anywhere. localStorage keeps the truss on screen and the magnification.
+     ===================================================================================================== */
+  const $ = id => document.getElementById(id);
+  const svg = $('hi-svg'), NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+  const KEY = 'ce329-truss-lab', MAGS = [1, 2, 5, 10, 20, 50, 100, 200, 500];
+  // toolbar order: act on the truss (heat, load) | build it (draw, pin, roller) | erase. The third entry marks the first tool of a group.
+  const TOOLS = [['heat', 'Heat'], ['load', 'Load'], ['draw', 'Draw', 1], ['pin', 'Pin'], ['roller', 'Roller'], ['erase', 'Erase', 1]];
+  const HINTS = { draw: 'Tap two grid points to join them.', pin: 'Tap a joint.', roller: 'Tap a joint. Tap again to turn it.', load: 'Tap a joint.', erase: 'Tap a joint or a member.' };
+  const state = { M: fromPreset(PRESETS[0]), start: 'midterm', tool: 'heat', sel: -1, armed: -1, loadSel: -1, mag: 200, cur: { x: 30, y: 0 }, drag: null, hover: null };
+  let V = null, P = [], last = null;      // view, joint positions on screen (as drawn), last analysis
+
+  function validModel(M) {
+    return M && Array.isArray(M.nodes) && Array.isArray(M.members) && M.nodes.length <= MAX_JOINTS &&
+      M.nodes.every(n => n && Number.isFinite(n.x) && Number.isFinite(n.y) && n.x >= 0 && n.x <= GX && n.y >= 0 && n.y <= GY && [null, 'pin', 'roller', 'rollerV'].includes(n.sup) && (n.load === null || (Array.isArray(n.load) && n.load.length === 2 && n.load.every(Number.isFinite)))) &&
+      M.members.every(m => m && Number.isInteger(m.a) && Number.isInteger(m.b) && m.a !== m.b && M.nodes[m.a] && M.nodes[m.b] && Number.isFinite(m.dT) && Math.abs(m.dT) <= DT_MAX);
+  }
+  try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) { if (validModel(s.model)) { state.M = s.model; state.start = PRESETS.some(p => p.id === s.start) ? s.start : 'midterm'; } if (MAGS.includes(s.mag)) state.mag = s.mag; } } catch (e) { /* storage may be unavailable */ }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ model: state.M, start: state.start, mag: state.mag })); } catch (e) { /* storage may be unavailable */ } };
+
+  /* ----- geometry of the view: a fixed 5 ft grid, 60 ft by 25 ft, so nothing shifts while you draw ----- */
+  function layout() {
+    const W = Math.max(250, Math.round(svg.parentNode.clientWidth - 16)), narrow = W < 560, tiny = W < 330;
+    const mx = tiny ? 24 : narrow ? 30 : 56, mt = narrow ? 46 : 56, mb = narrow ? 70 : 84, c = (W - 2 * mx) / (GX / GRID);
+    V = { W, H: Math.round(mt + c * GY / GRID + mb), mx, mt, c, narrow, tiny, k: narrow ? 0.8 : 1, fs: tiny ? 9.5 : narrow ? 10.5 : 12.5 };
+  }
+  const X = x => V.mx + x / GRID * V.c, Y = y => V.mt + (GY - y) / GRID * V.c;
+  const r1 = v => Math.round(v * 10) / 10;
+  const local = ev => { const r = svg.getBoundingClientRect(); return [(ev.clientX - r.left) * V.W / r.width, (ev.clientY - r.top) * V.H / r.height]; };
+  const jointAt = (p, tol) => { let b = -1, bd = tol; P.forEach((q, i) => { const d = Math.hypot(p[0] - q[0], p[1] - q[1]); if (d < bd) { bd = d; b = i; } }); return b; };
+  function memberAt(p, tol) {
+    let b = -1, bd = tol;
+    state.M.members.forEach((mb, k) => { const A = P[mb.a], B = P[mb.b], vx = B[0] - A[0], vy = B[1] - A[1], t = Math.max(0, Math.min(1, ((p[0] - A[0]) * vx + (p[1] - A[1]) * vy) / (vx * vx + vy * vy))), d = Math.hypot(p[0] - A[0] - t * vx, p[1] - A[1] - t * vy); if (d < bd) { bd = d; b = k; } });
+    return b;
+  }
+  // the grid point under the pointer; a joint that has moved on screen is still caught where it is drawn
+  function snap(p) {
+    const i = jointAt(p, 15); if (i >= 0) return { x: state.M.nodes[i].x, y: state.M.nodes[i].y };
+    const cl = (v, hi) => Math.max(0, Math.min(hi, v));
+    return { x: cl(Math.round((p[0] - V.mx) / V.c), GX / GRID) * GRID, y: cl(Math.round((V.mt + GY / GRID * V.c - p[1]) / V.c), GY / GRID) * GRID };
+  }
+
+  // Where a joint letter goes: the direction with the most room between the members, the support and the load.
+  function labelDir(M, i, blocked) {
+    const n = M.nodes[i], used = blocked.slice();
+    M.members.forEach(mb => { if (mb.a === i || mb.b === i) { const o = M.nodes[mb.a === i ? mb.b : mb.a]; used.push(Math.atan2(o.y - n.y, o.x - n.x)); } });
+    const out = [];
+    for (let k = 0; k < 16; k++) { const a = k * Math.PI / 8; out.push({ a, sc: gapTo(used, a) + 0.03 * Math.sin(a) }); }
+    return out.sort((p, q) => q.sc - p.sc).map(q => [Math.cos(q.a), Math.sin(q.a)]);      // best first
+  }
+  function gapTo(used, a) { let gap = Math.PI; used.forEach(q => { let d = Math.abs(a - q) % (2 * Math.PI); if (d > Math.PI) d = 2 * Math.PI - d; gap = Math.min(gap, d); }); return gap; }
+
+  /* ----- draw everything ----- */
+  function render() {
+    const M = state.M, an = last = analyze(M), res = an.res, ok = !!res;
+    if (state.sel >= M.members.length) state.sel = -1;
+    if (state.loadSel >= M.nodes.length || (state.loadSel >= 0 && !M.nodes[state.loadSel].load)) state.loadSel = -1;
+    if (state.armed >= M.nodes.length) state.armed = -1;
+    layout();
+    const k = V.k, fs = V.fs, pxPerIn = V.c / (GRID * FT);
+    // keep the picture on the grid: if the largest drawn movement FROM THE LOADS would pass a cell and a quarter, step the
+    // magnification down. Temperatures are left out on purpose: the factor must never change while the slider moves,
+    // or the drawn shape jumps (a joint "snaps" back) in the middle of a drag.
+    if (ok) { const r0 = analyze(Object.assign({}, M, { members: M.members.map(m => Object.assign({}, m, { dT: 0 })) })).res;
+      const big = r0 ? r0.u.reduce((q, v) => Math.max(q, Math.abs(v)), 0) : 0; let mi = MAGS.indexOf(state.mag); while (mi > 0 && MAGS[mi] * big * pxPerIn > 1.25 * V.c) mi--; if (MAGS[mi] !== state.mag) { state.mag = MAGS[mi]; $('hi-mag').value = String(state.mag); } }
+    const mag = state.mag, inView = (x, y, hw, hh) => [Math.max(hw + 2, Math.min(V.W - hw - 2, x)), Math.max(hh + 2, Math.min(V.H - hh - 2, y))];
+    const P0 = M.nodes.map(n => [X(n.x), Y(n.y)]);
+    P = M.nodes.map((n, i) => (ok ? [P0[i][0] + mag * res.u[2 * i] * pxPerIn, P0[i][1] - mag * res.u[2 * i + 1] * pxPerIn] : P0[i]));
+    const anyForce = ok && res.N.some(v => zap(v, FORCE_TOL) !== 0);
+    const focusKey = document.activeElement && document.activeElement.getAttribute ? document.activeElement.getAttribute('data-k') : null;
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    svg.setAttribute('viewBox', `0 0 ${V.W} ${V.H}`); svg.setAttribute('width', V.W); svg.setAttribute('height', V.H);
+    svg.setAttribute('class', (V.narrow ? 'narrow ' : '') + 't-' + state.tool);
+    const line = (cls, a, b, parent) => el('line', { class: cls, x1: r1(a[0]), y1: r1(a[1]), x2: r1(b[0]), y2: r1(b[1]) }, parent);
+    const boxes = [];     // screen boxes already taken by text, so later labels can step aside
+    const hits = (b) => boxes.some(q => b[0] < q[2] && q[0] < b[2] && b[1] < q[3] && q[1] < b[3]);
+
+    // grid
+    const gGrid = el('g', { 'aria-hidden': 'true' }, svg);
+    for (let gx = 0; gx <= GX; gx += GRID) for (let gy = 0; gy <= GY; gy += GRID) el('circle', { class: 'dot', cx: r1(X(gx)), cy: r1(Y(gy)), r: state.tool === 'draw' ? 2.2 : 1.4 }, gGrid);
+
+    // original shape, once something has moved
+    const moved = ok && P.some((p, i) => Math.hypot(p[0] - P0[i][0], p[1] - P0[i][1]) > 0.5);
+    if (moved) { const g = el('g', { 'aria-hidden': 'true' }, svg); M.members.forEach(mb => line('ghost', P0[mb.a], P0[mb.b], g)); }
+
+    // supports: the ground stays put, the symbol rides with the joint. Drawn pointing down, turned for a wall roller.
+    const gSup = el('g', { 'aria-hidden': 'true' }, svg);
+    const tw = 14 * k, th = 24 * k;
+    M.nodes.forEach((n, i) => {
+      if (!n.sup) return;
+      const rot = n.sup === 'rollerV' ? ' rotate(90)' : '', roll = n.sup !== 'pin', gy = roll ? 35 * k : th;
+      const g0 = el('g', { transform: `translate(${r1(P0[i][0])} ${r1(P0[i][1])})` + rot }, gSup), g1 = el('g', { transform: `translate(${r1(P[i][0])} ${r1(P[i][1])})` + rot }, gSup);
+      const slide = n.sup === 'rollerV' ? -(P[i][1] - P0[i][1]) : P[i][0] - P0[i][0], a = Math.min(0, slide) - 24 * k, b = Math.max(0, slide) + 24 * k;
+      el('path', { class: 'ground', d: `M${r1(a)} ${r1(gy)}L${r1(b)} ${r1(gy)}` }, g0);
+      let hd = ''; for (let hx = a + 6 * k; hx <= b + 0.1; hx += 8 * k) hd += `M${r1(hx)} ${r1(gy)}L${r1(hx - 6 * k)} ${r1(gy + 7 * k)}`;
+      el('path', { class: 'hatch', d: hd }, g0);
+      el('path', { class: 'sup', d: `M0 0L${r1(-tw)} ${r1(th)}L${r1(tw)} ${r1(th)}Z` }, g1);
+      if (roll) [-8, 8].forEach(q => el('circle', { class: 'sup', cx: r1(q * k), cy: r1(th + 5.5 * k), r: r1(4.5 * k) }, g1));
+    });
+
+    // members
+    const gMem = el('g', null, svg);
+    M.members.forEach((mb, i) => {
+      const f = ok ? fForce(res.N[i]) : null, name = mname(mb);
+      const g = el('g', { class: 'mem' + (i === state.sel ? ' sel' : ''), role: 'button', tabindex: '0', 'data-k': 'm' + i, 'data-m': name, 'aria-pressed': i === state.sel ? 'true' : 'false',
+        'aria-label': `Member ${name}. Temperature change ${fSigned(mb.dT)} degrees F.` + (f ? ` Force ${f.zero ? '0 kips' : f.mag + ' kips ' + (f.tag === 'T' ? 'tension' : 'compression')}.` : '') }, gMem);
+      line('halo', P[mb.a], P[mb.b], g); line('base', P[mb.a], P[mb.b], g);
+      if (mb.dT) line('temp ' + (mb.dT > 0 ? 'hot' : 'cold'), P[mb.a], P[mb.b], g).style.strokeOpacity = (0.45 + 0.55 * Math.abs(mb.dT) / DT_MAX).toFixed(2);
+      g.addEventListener('keydown', ev => {
+        let used = true;
+        if (ev.key === 'Enter' || ev.key === ' ') { state.sel = i; if (state.tool !== 'heat') state.tool = 'heat'; }
+        else if (ev.key === 'ArrowUp' || ev.key === 'ArrowRight') { state.sel = i; setDT(mb.dT + DT_STEP); }
+        else if (ev.key === 'ArrowDown' || ev.key === 'ArrowLeft') { state.sel = i; setDT(mb.dT - DT_STEP); }
+        else if (ev.key === 'Delete' || ev.key === 'Backspace') { removeMember(M, i); state.sel = -1; svg.focus(); }
+        else used = false;
+        if (used) { ev.preventDefault(); ev.stopPropagation(); changed(); }
+      });
+    });
+
+    // loads: an arrow into the joint, or out of it when there is no room on that side
+    const gLoad = el('g', { 'aria-hidden': 'true' }, svg), blocked = M.nodes.map(() => []);
+    M.nodes.forEach((n, i) => {
+      if (n.sup === 'rollerV') blocked[i].push(Math.PI, 3 * Math.PI / 4, -3 * Math.PI / 4); else if (n.sup) blocked[i].push(-Math.PI / 2, -Math.PI / 4, -3 * Math.PI / 4);
+      if (!n.load) return;
+      const Fm = Math.hypot(n.load[0], n.load[1]), d = [n.load[0] / Fm, -n.load[1] / Fm], len = 34 * k, gap = 9 * k, txt = mag2(Fm, Fm % 1 ? 1 : 0) + ' k', tw2 = txt.length * fs * 0.62;
+      // the arrow points into the joint from the side with more room (no member, no support); with members on both sides it sits beside them
+      const used = blocked[i].slice(); M.members.forEach(mb => { if (mb.a === i || mb.b === i) { const o = M.nodes[mb.a === i ? mb.b : mb.a]; used.push(Math.atan2(o.y - n.y, o.x - n.x)); } });
+      const place = side => {
+        const ang = Math.atan2(-side * d[1], side * d[0]), room = gapTo(used, ang), sh = room < 0.3 ? 12 * k : 0, q = [P[i][0] + (d[0] ? 0 : sh), P[i][1] - (d[0] ? sh : 0)];
+        const tail = side < 0 ? [q[0] - d[0] * (len + gap), q[1] - d[1] * (len + gap)] : [q[0] + d[0] * gap, q[1] + d[1] * gap];
+        const head = side < 0 ? [q[0] - d[0] * gap, q[1] - d[1] * gap] : [q[0] + d[0] * (len + gap), q[1] + d[1] * (len + gap)];
+        const far = side < 0 ? tail : head, lab = [far[0] + side * d[0] * (tw2 / 2 + 5), far[1] + side * d[1] * (fs / 2 + 6)];
+        const fits = lab[0] - tw2 / 2 > 2 && lab[0] + tw2 / 2 < V.W - 2 && lab[1] > fs / 2 + 2 && lab[1] < V.H - fs / 2 - 2;
+        return { ang, room: !fits ? -1 : gapTo(blocked[i], ang) < 0.3 ? -0.5 : room, tail, head, lab };   // never through the support symbol
+      };
+      const into = place(-1), away = place(1), A = away.room > into.room + 0.01 ? away : into, tail = A.tail, head = A.head, lab = A.lab, p = P[i];
+      line('load', tail, [head[0] - d[0] * 5, head[1] - d[1] * 5], gLoad);
+      const hx = 5 * k + 2, bx = head[0] - d[0] * 2.2 * hx, by = head[1] - d[1] * 2.2 * hx;
+      el('path', { class: 'loadhead', d: `M${r1(head[0])} ${r1(head[1])}L${r1(bx - d[1] * hx)} ${r1(by + d[0] * hx)}L${r1(bx + d[1] * hx)} ${r1(by - d[0] * hx)}Z` }, gLoad);
+      el('text', { class: 'll', x: r1(lab[0]), y: r1(lab[1]), 'font-size': fs }, gLoad).textContent = txt;
+      boxes.push([lab[0] - tw2 / 2 - 2, lab[1] - fs / 2 - 2, lab[0] + tw2 / 2 + 2, lab[1] + fs / 2 + 2], [Math.min(tail[0], head[0]) - 5, Math.min(tail[1], head[1]) - 5, Math.max(tail[0], head[0]) + 5, Math.max(tail[1], head[1]) + 5]);
+      blocked[i].push(A.ang, A.ang + 0.4, A.ang - 0.4);
+      if (i === state.loadSel && state.tool === 'load') el('circle', { class: 'ring', cx: r1(p[0]), cy: r1(p[1]), r: r1(11 * k) }, gLoad);
+    });
+
+    // joints and their letters
+    const gJ = el('g', null, svg);
+    M.nodes.forEach((n, i) => {
+      const p = P[i], off = 19 * k + 3, hw = 8 * k, hh = 9 * k; let lp = null;
+      for (const d of labelDir(M, i, blocked[i]).slice(0, 8)) { const q = inView(p[0] + d[0] * off, p[1] - d[1] * off, hw, hh); if (!lp) lp = q; if (!hits([q[0] - hw, q[1] - hh, q[0] + hw, q[1] + hh])) { lp = q; break; } }
+      let desc = `Joint ${letter(i)}` + (n.sup ? (n.sup === 'pin' ? ', pin' : n.sup === 'roller' ? ', roller' : ', roller on a wall') : '') + (an.stray[i] ? ', not connected' : '') + '.';
+      if (n.load) desc += ` Load ${Math.hypot(n.load[0], n.load[1])} kips ${n.load[1] < 0 ? 'down' : n.load[1] > 0 ? 'up' : n.load[0] < 0 ? 'left' : 'right'}.`;
+      if (ok && !an.stray[i]) {
+        const ux = zap(res.u[2 * i], DISP_TOL), uy = zap(res.u[2 * i + 1], DISP_TOL), Rx = zap(res.R[2 * i], FORCE_TOL), Ry = zap(res.R[2 * i + 1], FORCE_TOL);
+        desc += ux || uy ? ` Moves ${fDisp(ux)} inches ${ux < 0 ? 'left' : 'right'} and ${fDisp(uy)} inches ${uy < 0 ? 'down' : 'up'}.` : ' Does not move.';
+        if (n.sup) desc += Rx || Ry ? ` Reaction ${fReact(Rx, 'kips right', 'kips left')} and ${fReact(Ry, 'kips up', 'kips down')}.` : ' Reaction 0.';
+      }
+      const g = el('g', { role: 'img', 'aria-label': desc }, gJ);
+      el('circle', { class: 'joint' + (an.stray[i] ? ' stray' : ''), cx: r1(p[0]), cy: r1(p[1]), r: r1(5.5 * k) }, g);
+      el('text', { class: 'jl', x: r1(lp[0]), y: r1(lp[1]), 'font-size': r1(16 * k) }, g).textContent = letter(i);
+      boxes.push([lp[0] - hw, lp[1] - hh, lp[0] + hw, lp[1] + hh], [p[0] - 6, p[1] - 6, p[0] + 6, p[1] + 6]);
+      if (i === state.armed && state.tool === 'draw') el('circle', { class: 'ring', cx: r1(p[0]), cy: r1(p[1]), r: r1(11 * k) }, gJ);
+    });
+
+    // reactions at the supports, only when there are any
+    const gT = el('g', { 'aria-hidden': 'true' }, svg);
+    if (ok) M.nodes.forEach((n, i) => {
+      if (!n.sup || an.stray[i]) return;
+      const Rx = zap(res.R[2 * i], FORCE_TOL), Ry = zap(res.R[2 * i + 1], FORCE_TOL), lines = [], unit = V.tiny ? ' ' : ' k ';
+      if (Rx) lines.push(fReact(Rx, '→', '←').replace(' ', unit)); if (Ry) lines.push(fReact(Ry, '↑', '↓').replace(' ', unit));
+      const wall = n.sup === 'rollerV', y0 = P0[i][1] + (wall ? 16 * k : (n.sup === 'pin' ? th : 35 * k) + 7 * k) + fs;
+      lines.forEach((t, q) => {
+        const w = t.length * fs * 0.62, x = Math.max(w / 2 + 2, Math.min(V.W - w / 2 - 2, P0[i][0] - (wall ? 20 * k : 0)));
+        let y = y0 + q * (fs + 3); for (let tries = 0; tries < 4 && hits([x - w / 2, y - fs, x + w / 2, y + 3]); tries++) y += fs + 3;
+        el('text', { class: 'rx', x: r1(x), y: r1(y), 'font-size': fs }, gT).textContent = t;
+        boxes.push([x - w / 2, y - fs, x + w / 2, y + 3]);
+      });
+    });
+
+    // member forces, only when at least one is not zero; each label slides along its member to a free spot
+    if (anyForce) M.members.forEach((mb, i) => {
+      const f = fForce(res.N[i]), a = P[mb.a], b = P[mb.b], txt = f.zero ? '0' : f.mag + (V.tiny ? '' : V.narrow ? ' ' : ' k ') + f.tag;
+      const w = txt.length * fs * 0.62 + (V.tiny ? 6 : 9), h = fs + (V.tiny ? 4 : 7);
+      const Lp = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, nx = -(b[1] - a[1]) / Lp, ny = (b[0] - a[0]) / Lp, so = h / 2 + 7;
+      let box = null, at = null;
+      for (const [t, o] of [[0.5, 0], [0.4, 0], [0.6, 0], [0.31, 0], [0.69, 0], [0.5, so], [0.5, -so], [0.36, so], [0.64, -so], [0.36, -so], [0.64, so], [0.24, 0], [0.76, 0], [0.27, so], [0.73, -so], [0.27, -so], [0.73, so], [0.5, 2 * so], [0.5, -2 * so]]) {
+        const q = inView(a[0] + (b[0] - a[0]) * t + nx * o, a[1] + (b[1] - a[1]) * t + ny * o, w / 2, h / 2), bb = [q[0] - w / 2, q[1] - h / 2, q[0] + w / 2, q[1] + h / 2];
+        if (!box) { box = bb; at = q; } if (!hits(bb)) { box = bb; at = q; break; }
+      }
+      boxes.push(box);
+      const g = el('g', { class: 'flab ' + (f.zero ? 'zero' : 'on') }, gT);
+      el('rect', { rx: 4, x: r1(box[0]), y: r1(box[1]), width: r1(w), height: r1(h) }, g);
+      el('text', { x: r1(at[0]), y: r1(at[1]), 'font-size': fs }, g).textContent = txt;
+    });
+
+    // the member being drawn, and the keyboard cursor
+    const from = state.drag ? state.drag.from : state.armed >= 0 && state.tool === 'draw' ? M.nodes[state.armed] : null, to = state.drag ? state.drag.to : state.hover;
+    if (from && to && (from.x !== to.x || from.y !== to.y)) line('rubber', [X(from.x), Y(from.y)], [X(to.x), Y(to.y)], el('g', { 'aria-hidden': 'true' }, svg));
+    drawCursor();
+    if (focusKey) { const f = svg.querySelector(`[data-k="${focusKey}"]`); if (f) f.focus(); }
+
+    /* ----- the few words around the drawing ----- */
+    document.querySelectorAll('#hi-tools button').forEach(b => b.setAttribute('aria-pressed', b.dataset.t === state.tool ? 'true' : 'false'));
+    $('hi-count').innerHTML = (an.m ? `<span class="mono">r = ${an.r}${an.ec ? ' &middot; e<sub>c</sub> = ' + an.ec : ''}</span>` : '') +
+      `<span class="pill ${an.cls === 'unstable' ? 'bad' : an.cls === 'empty' ? '' : an.dE > 0 ? 'ask' : 'good'}" id="hi-pill">${verdict(an)}</span>` +
+      (verdictInt(an) ? `<span class="pill ask" id="hi-pill-int">${verdictInt(an)}</span>` : '');
+
+    const selM = state.sel >= 0 ? M.members[state.sel] : null, heat = state.tool === 'heat', ld = state.tool === 'load' && state.loadSel >= 0 ? M.nodes[state.loadSel] : null;
+    $('hi-heat').hidden = !heat; $('hi-load').hidden = !ld; $('hi-hint').hidden = heat || !!ld;
+    $('hi-hint').textContent = HINTS[state.tool] || '';
+    const slider = $('hi-dt'), out = $('hi-dt-out'), who = $('hi-who'), cur = selM ? selM.dT : 0;
+    who.textContent = selM ? mname(selM) : 'Pick a member'; who.className = selM ? '' : 'none';
+    slider.disabled = !selM; slider.value = cur; slider.setAttribute('aria-valuetext', fSigned(cur) + ' degrees F');
+    slider.setAttribute('aria-label', selM ? `Temperature change of member ${mname(selM)}, degrees F` : 'Temperature change of the selected member, degrees F');
+    out.textContent = fSigned(cur) + ' °F'; out.className = 'mono' + (cur > 0 ? ' hot' : cur < 0 ? ' cold' : '');
+    if (ld) {
+      $('hi-load-who').textContent = 'Load at ' + letter(state.loadSel);
+      const Fm = Math.hypot(ld.load[0], ld.load[1]), key = Math.sign(ld.load[0]) + ',' + Math.sign(ld.load[1]);
+      document.querySelectorAll('#hi-load .dirs button').forEach(b => b.setAttribute('aria-pressed', b.dataset.d === key ? 'true' : 'false'));
+      if (document.activeElement !== $('hi-load-mag')) $('hi-load-mag').value = Fm;
+    }
+
+    // one short line of results
+    const parts = [], said = [verdict(an) + '.']; if (verdictInt(an)) said.push(verdictInt(an) + '.');
+    if (an.cls === 'unstable') { parts.push('<span class="bad">Unstable: no solution.</span>'); said.push('No solution.'); }
+    else if (ok) {
+      const anyR = res.R.some(v => zap(v, FORCE_TOL) !== 0);
+      if (!anyForce) { parts.push(`<span class="zero">All member forces${anyR ? '' : ' and reactions'}: <b>0</b></span>`); said.push(`All member forces${anyR ? '' : ' and reactions'} are 0.`); }
+      else { const w = res.N.reduce((q, v, i) => (Math.abs(v) > Math.abs(res.N[q]) ? i : q), 0), f = fForce(res.N[w]); parts.push(`<span>Largest member force: <b>${f.mag} k ${f.tag}</b> in ${mname(M.members[w])}</span>`); said.push(`Largest member force ${f.mag} kips ${f.tag === 'T' ? 'tension' : 'compression'} in ${mname(M.members[w])}.`); }
+      let big = 0, at = -1; M.nodes.forEach((n, i) => { const d = Math.hypot(res.u[2 * i], res.u[2 * i + 1]); if (d > big) { big = d; at = i; } });
+      if (zap(big, DISP_TOL)) { parts.push(`<span>Largest joint movement: <b>${fDisp(big)} in</b> at ${letter(at)}</span>`); said.push(`Largest joint movement ${fDisp(big)} inches at ${letter(at)}.`); }
+      if (selM && selM.dT && heat) { const dL = PROPS.alpha * selM.dT * res.L[state.sel]; parts.push(`<span>${mname(selM)} alone would ${dL > 0 ? 'grow' : 'shrink'} <b>${Math.abs(dL).toFixed(3)} in</b></span>`); }
+    }
+    $('hi-result').innerHTML = parts.join('');
+    $('hi-live').textContent = said.join(' ');
+  }
+
+  // the keyboard cursor, shown only while the drawing itself has the keyboard focus
+  function drawCursor() {
+    const old = svg.querySelector('.cursor'); if (old) svg.removeChild(old);
+    if (V && svg.matches(':focus-visible')) el('circle', { class: 'cursor', cx: r1(X(state.cur.x)), cy: r1(Y(state.cur.y)), r: 12, 'aria-hidden': 'true' }, svg);
+  }
+
+  /* ----- actions ----- */
+  function changed() { save(); render(); }
+  function setDT(v) { const mb = state.M.members[state.sel]; if (!mb) return; mb.dT = Math.max(-DT_MAX, Math.min(DT_MAX, Math.round(v / DT_STEP) * DT_STEP)); }
+  function setTool(t) { state.tool = t; state.armed = -1; state.drag = null; state.hover = null; if (t !== 'load') state.loadSel = -1; render(); }
+  function dropJoint(i) { removeJoint(state.M, i); state.sel = -1; state.armed = -1; state.loadSel = -1; }
+  // Draw tool at a grid point: the first tap picks (or makes) a joint, the second joins it to another.
+  function drawAt(g) {
+    const M = state.M, i = findJoint(M, g.x, g.y);
+    if (state.armed >= 0 && i === state.armed) state.armed = -1;
+    else if (state.armed >= 0) { const a = state.armed, j = addJoint(M, g.x, g.y); if (j >= 0) addMember(M, a, j); state.armed = -1; }
+    else state.armed = addJoint(M, g.x, g.y);
+  }
+  // Every other tool acts on a joint (i) or a member (k) that is already there.
+  function useTool(i, k) {
+    const M = state.M, t = state.tool;
+    if (t === 'heat') { if (k >= 0) state.sel = k; }
+    else if (t === 'pin' || t === 'roller') { if (i >= 0) cycleSupport(M, i, t); }
+    else if (t === 'load') { if (i >= 0) { if (!M.nodes[i].load) M.nodes[i].load = [0, -10]; state.loadSel = i; } }
+    else if (t === 'erase') { if (i >= 0) dropJoint(i); else if (k >= 0) { removeMember(M, k); state.sel = -1; } }
+  }
+  function loadPreset(id) {
+    const Pz = PRESETS.find(p => p.id === id) || PRESETS[0];
+    state.M = fromPreset(Pz); state.start = Pz.id; state.sel = -1; state.armed = -1; state.loadSel = -1; state.tool = Pz.id === 'blank' ? 'draw' : 'heat';
+    changed();
+  }
+
+  /* ----- pointer: taps for every tool, and a drag from joint to joint with Draw ----- */
+  let down = null;
+  svg.addEventListener('pointerdown', ev => {
+    if (ev.button > 0) return;
+    const p = local(ev); down = { p, id: ev.pointerId };
+    if (state.tool === 'draw') { try { svg.setPointerCapture(ev.pointerId); } catch (e) { /* not capturable */ } const g = snap(p); state.drag = { from: g, to: g }; }
+  });
+  svg.addEventListener('pointermove', ev => {
+    if (state.tool !== 'draw') return;
+    const g = snap(local(ev));
+    if (state.drag) { if (g.x !== state.drag.to.x || g.y !== state.drag.to.y) { state.drag.to = g; render(); } }
+    else if (state.armed >= 0 && ev.pointerType === 'mouse' && (!state.hover || g.x !== state.hover.x || g.y !== state.hover.y)) { state.hover = g; render(); }
+  });
+  svg.addEventListener('pointerup', ev => {
+    if (!down || down.id !== ev.pointerId) return;
+    const p = local(ev), tap = Math.hypot(p[0] - down.p[0], p[1] - down.p[1]) < 10; down = null;
+    if (state.tool === 'draw') {
+      const d = state.drag; state.drag = null; state.hover = null; if (!d) return;
+      const g = snap(p);
+      if (g.x !== d.from.x || g.y !== d.from.y) { const a = addJoint(state.M, d.from.x, d.from.y), b = a >= 0 ? addJoint(state.M, g.x, g.y) : -1; if (b >= 0) addMember(state.M, a, b); state.armed = -1; }
+      else drawAt(g);
+      changed(); return;
+    }
+    if (!tap) return;
+    const i = jointAt(p, 20), k = memberAt(p, 18);
+    useTool(state.tool === 'heat' ? -1 : i, k); changed();
+  });
+  svg.addEventListener('pointercancel', () => { down = null; if (state.drag) { state.drag = null; render(); } });
+  svg.addEventListener('pointerleave', () => { if (state.hover) { state.hover = null; render(); } });
+
+  /* ----- keyboard: a grid cursor on the drawing ----- */
+  svg.addEventListener('keydown', ev => {
+    if (ev.target !== svg) return;
+    const c = state.cur, step = { ArrowLeft: [-GRID, 0], ArrowRight: [GRID, 0], ArrowUp: [0, GRID], ArrowDown: [0, -GRID] }[ev.key];
+    if (step) { c.x = Math.max(0, Math.min(GX, c.x + step[0])); c.y = Math.max(0, Math.min(GY, c.y + step[1])); }
+    else if (ev.key === 'Enter' || ev.key === ' ') { if (state.tool === 'draw') drawAt(c); else useTool(findJoint(state.M, c.x, c.y), -1); save(); }
+    else return;
+    ev.preventDefault(); render();
+    const i = findJoint(state.M, c.x, c.y);
+    $('hi-live').textContent = `${c.x} feet across, ${c.y} feet up` + (i >= 0 ? `, joint ${letter(i)}` : '') + '. ' + $('hi-live').textContent;
+  });
+  svg.addEventListener('focus', drawCursor); svg.addEventListener('blur', drawCursor);
+
+  /* ----- controls ----- */
+  TOOLS.forEach(([id, name, lead]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = name; b.dataset.t = id; if (lead) b.className = 'lead'; b.addEventListener('click', () => setTool(id)); $('hi-tools').appendChild(b); });
+  PRESETS.forEach(p => { const o = document.createElement('option'); o.value = p.id; o.textContent = p.name; $('hi-start').appendChild(o); });
+  $('hi-start').value = state.start;
+  $('hi-start').addEventListener('change', ev => loadPreset(ev.target.value));
+  $('hi-dt').addEventListener('input', ev => { setDT(+ev.target.value); changed(); });
+  $('hi-reset').addEventListener('click', () => { state.M.members.forEach(m => { m.dT = 0; }); state.M.nodes.forEach(n => { n.load = null; }); state.loadSel = -1; changed(); });
+  $('hi-mag').value = String(state.mag);
+  $('hi-mag').addEventListener('change', ev => { state.mag = +ev.target.value; changed(); });
+  document.querySelectorAll('#hi-load .dirs button').forEach(b => b.addEventListener('click', () => {
+    const n = state.M.nodes[state.loadSel]; if (!n || !n.load) return;
+    const d = b.dataset.d.split(',').map(Number), Fm = Math.hypot(n.load[0], n.load[1]); n.load = [d[0] * Fm, d[1] * Fm]; changed();
+  }));
+  $('hi-load-mag').addEventListener('input', ev => {
+    const n = state.M.nodes[state.loadSel], v = +ev.target.value; if (!n || !n.load || !Number.isFinite(v) || v <= 0) return;
+    const Fm = Math.hypot(n.load[0], n.load[1]), q = Math.min(500, v); n.load = [n.load[0] / Fm * q, n.load[1] / Fm * q]; changed();
+  });
+  $('hi-load-rm').addEventListener('click', () => { const n = state.M.nodes[state.loadSel]; if (n) n.load = null; state.loadSel = -1; changed(); });
+
+  render();
+  if (typeof ResizeObserver !== 'undefined') { let lastW = 0; new ResizeObserver(() => { const w = svg.parentNode.clientWidth; if (w !== lastW) { lastW = w; render(); } }).observe(svg.parentNode); }
+  else window.addEventListener('resize', render);
+  // for truss-lab/e2e-chrome.mjs: where a grid point is on screen, and the current state
+  api.state = state; api.render = render; api.setTool = setTool; api.loadPreset = loadPreset; api.last = () => last;
+  api.client = (x, y) => { const r = svg.getBoundingClientRect(); return [r.left + X(x) * r.width / V.W, r.top + Y(y) * r.height / V.H]; };
+  api.clientJoint = i => { const r = svg.getBoundingClientRect(); return [r.left + P[i][0] * r.width / V.W, r.top + P[i][1] * r.height / V.H]; };
+})();
+</script>
+</body>
+</html>
